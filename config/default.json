@@ -5,5 +5,15 @@
   "paginate": {
     "default": 10,
     "max": 50
-  }
+  },
+  "authentication": {
+    "secret": "ety85WL1k6VuW9gTFI2QyEsAt5nizxshvMuKHUK36prFm4n1q6iWasvQbMTk94BE",
+    "strategies": [
+      "jwt",
+      "local"
+    ],
+    "path": "/authentication",
+    "service": "users"
+  },
+  "mongodb": "mongodb://localhost:27017/wallet_api"
 }
