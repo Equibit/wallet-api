@@ -15,5 +15,8 @@
     "path": "/authentication",
     "service": "users"
   },
-  "mongodb": "mongodb://localhost:27017/wallet_api"
+  "mongodb": "mongodb://localhost:27017/wallet_api",
+  "postmark": {
+    "key": null
+  }
 }
