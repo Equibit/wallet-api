@@ -46,3 +46,4 @@ node_modules
 lib/
 data/
 /.vscode/settings.json
+/config/local-development.json
