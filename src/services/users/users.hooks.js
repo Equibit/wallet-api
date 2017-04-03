@@ -8,10 +8,10 @@ module.exports = {
   before: {
     all: [
       // call the authenticate hook before every method except 'create'
-      // unless(
-      //   (hook) => hook.method === 'create',
-      //   authenticate('jwt')
-      // )
+      unless(
+        (hook) => hook.method === 'create',
+        authenticate('jwt')
+      )
     ],
     find: [],
     get: [],
@@ -97,7 +97,6 @@ module.exports = {
     all: [
       error => {
         console.log(error);
-        debugger;
       }
     ],
     find: [],

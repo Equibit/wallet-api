@@ -36,7 +36,6 @@ module.exports = function () {
     error: {
       create: [
         function (hook) {
-          debugger;
           console.log(hook);
         }
       ]

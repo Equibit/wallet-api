@@ -20,7 +20,7 @@
     "yarn": ">= 0.18.0"
   },
   "scripts": {
-    "test": "npm run eslint && npm run mocha",
+    "test": "npm run lint && npm run mocha",
     "lint": "semistandard --fix",
     "start": "node src/",
     "mocha": "mocha test/ --recursive"
@@ -43,6 +43,7 @@
     "feathers-hooks": "^1.8.1",
     "feathers-hooks-common": "^2.0.3",
     "feathers-mongoose": "^5.0.3",
+    "feathers-postmark": "^0.0.1",
     "feathers-rest": "^1.7.1",
     "feathers-socketio": "^1.5.2",
     "helmet": "^3.5.0",
