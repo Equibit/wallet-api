@@ -536,6 +536,12 @@ debug@2.6.1, debug@^2.1.1, debug@^2.2.0, debug@^2.3.1, debug@^2.6.0:
   dependencies:
     ms "0.7.2"
 
+debug@^2.6.3:
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.3.tgz#0f7eb8c30965ec08c72accfa0130c8b79984141d"
+  dependencies:
+    ms "0.7.2"
+
 deep-is@~0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
@@ -953,6 +959,14 @@ feathers-authentication-local@^0.3.3:
     lodash.omit "^4.5.0"
     lodash.pick "^4.4.0"
     passport-local "^1.0.0"
+
+feathers-authentication-signed@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/feathers-authentication-signed/-/feathers-authentication-signed-0.0.4.tgz#ef1e2415be704e76c1f2d03176712a33e9acf025"
+  dependencies:
+    debug "^2.6.3"
+    feathers-authentication-local "^0.3.3"
+    feathers-errors "^2.6.2"
 
 feathers-authentication@pre:
   version "1.2.0"
