@@ -9,7 +9,10 @@ module.exports = function (app) {
   const users = new mongooseClient.Schema({
     email: {type: String, unique: true},
     password: { type: String },
-    salt: { type: String },
+    passwordCreatedAt: { type: Date },
+    tempPassword: { type: String },
+    tempPasswordCreatedAt: { type: Date },
+    salt: { type: String }, // Salt is shared between both passwords.
     challenge: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
