@@ -14,6 +14,7 @@ module.exports = function (app) {
     tempPasswordCreatedAt: { type: Date },
     salt: { type: String }, // Salt is shared between both passwords.
     challenge: { type: String },
+    isNewUser: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   });

@@ -23,6 +23,8 @@ module.exports = function (options = {}) {
           hook.params.existingUser = user;
           // Set hook.result, so the call to the database will be skipped.
           hook.result = { email: hook.data.email };
+        } else {
+          hook.data.isNewUser = true;
         }
         return hook;
       });
