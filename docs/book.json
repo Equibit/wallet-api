@@ -1,0 +1,21 @@
+{
+    "plugins": ["theme-api", "anchors"],
+    "pluginsConfig": {
+        "theme-api": {
+            "theme": "dark",
+            "languages": [
+                {
+                    "lang": "feathers",
+                    "name": "Feathers",
+                    "default": true
+                }, {
+                    "lang": "socket.io",
+                    "name": "Socket.io"
+                }, {
+                    "lang": "http",
+                    "name": "HTTP"
+                }
+            ]
+        }
+    }
+}

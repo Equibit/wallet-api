@@ -47,3 +47,4 @@ lib/
 data/
 /.vscode/settings.json
 /config/local-development.json
+docs/_book/
