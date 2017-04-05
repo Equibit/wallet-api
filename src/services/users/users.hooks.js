@@ -55,7 +55,7 @@ module.exports = function (app) {
         )
       ],
       remove: [
-        // disallow('external')
+        disallow('external')
       ]
     },
 
