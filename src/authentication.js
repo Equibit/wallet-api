@@ -3,6 +3,7 @@
 const authentication = require('feathers-authentication');
 const jwt = require('feathers-authentication-jwt');
 const signed = require('feathers-authentication-signed');
+const { iff } = require('feathers-hooks-common');
 // const makeCryptoUtils = require('feathers-authentication-signed/');
 
 module.exports = function () {
@@ -22,15 +23,23 @@ module.exports = function () {
   app.service('authentication').hooks({
     before: {
       create: [
-        hook => {
-          if (hook.data.strategy === 'challenge') {
-            // console.log(hook.data);
-          }
-        },
         authentication.hooks.authenticate(config.strategies)
       ],
       remove: [
         authentication.hooks.authenticate('jwt')
+      ]
+    },
+    after: {
+      create: [
+        // Flag response with usingTempPassword, if applicable.
+        iff(
+          hook => hook.data.strategy === 'challenge',
+          hook => {
+            if (hook.params.usingTempPassword) {
+              hook.result.usingTempPassword = true;
+            }
+          }
+        )
       ]
     },
     error: {
