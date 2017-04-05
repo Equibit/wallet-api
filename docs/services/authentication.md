@@ -25,7 +25,18 @@ app.authenticate({
 
 {% sample lang="http" %}
 ```http
-$ go get github.com/GitbookIO/go-gitbook-api
+POST /authentication HTTP/1.1
+Host: localhost:3030
+Accept: application/json
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 2fe81cbd-2996-5aca-faa2-7c992123a928
+
+{
+	"strategy": "challenge-request",
+	"email": "my@email.com",
+	"signature": "1348h34908jew"
+}
 ```
 {% endmethod %}
 
