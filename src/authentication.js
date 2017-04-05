@@ -38,9 +38,11 @@ module.exports = function () {
             if (hook.params.usingTempPassword) {
               hook.result.usingTempPassword = true;
             }
-            if (hook.params.user && hook.params.user.isNewUser) {
-              hook.result.isNewUser = true;
-            }
+            hook.result.user = hook.params.user;
+            delete hook.result.user.password;
+            delete hook.result.user.tempPassword;
+            delete hook.result.user.salt;
+            delete hook.result.user.challenge;
           }
         )
       ]
