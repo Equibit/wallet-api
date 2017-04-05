@@ -38,6 +38,9 @@ module.exports = function () {
             if (hook.params.usingTempPassword) {
               hook.result.usingTempPassword = true;
             }
+            if (hook.params.user && hook.params.user.isNewUser) {
+              hook.result.isNewUser = true;
+            }
           }
         )
       ]
