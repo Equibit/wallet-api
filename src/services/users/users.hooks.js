@@ -1,11 +1,12 @@
 const { authenticate } = require('feathers-authentication').hooks;
-const { iff, unless, discard, disallow } = require('feathers-hooks-common');
+const { iff, unless, discard, disallow, isProvider } = require('feathers-hooks-common');
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks;
 const { randomBytes, pbkdf2 } = require('crypto');
 const isExistingUser = require('./hook.is-existing-user');
 const createTemporaryPassword = require('./hook.create-temp-password');
 const sendWelcomeEmail = require('./hook.email.welcome');
 const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup');
+const removeIsNewUser = require('./hook.remove-is-new-user');
 
 module.exports = function (app) {
   const outboundEmail = app.get('outboundEmail');
@@ -43,7 +44,8 @@ module.exports = function (app) {
         iff(
           hook => hook.data && hook.data.password,
           generateSalt({ randomBytes }),
-          hashPassword({ randomBytes, pbkdf2 })
+          hashPassword({ randomBytes, pbkdf2 }),
+          removeIsNewUser()
         )
       ],
       patch: [
@@ -51,7 +53,8 @@ module.exports = function (app) {
         iff(
           hook => hook.data && hook.data.password,
           generateSalt({ randomBytes }),
-          hashPassword({ randomBytes, pbkdf2 })
+          hashPassword({ randomBytes, pbkdf2 }),
+          removeIsNewUser()
         )
       ],
       remove: [
@@ -60,7 +63,17 @@ module.exports = function (app) {
     },
 
     after: {
-      all: [],
+      all: [
+        iff(
+          isProvider('external'),
+          discard(
+            'password',
+            'tempPassword',
+            'salt',
+            'challenge'
+          )
+        )
+      ],
       find: [],
       get: [],
       create: [
