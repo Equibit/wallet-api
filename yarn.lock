@@ -961,9 +961,9 @@ feathers-authentication-local@^0.3.3, feathers-authentication-local@^0.3.4:
     lodash.pick "^4.4.0"
     passport-local "^1.0.0"
 
-feathers-authentication-signed@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/feathers-authentication-signed/-/feathers-authentication-signed-0.0.4.tgz#ef1e2415be704e76c1f2d03176712a33e9acf025"
+feathers-authentication-signed@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/feathers-authentication-signed/-/feathers-authentication-signed-0.0.5.tgz#dfd6913c760ecd3ff529c15780cee2b7da9790fe"
   dependencies:
     debug "^2.6.3"
     feathers-authentication-local "^0.3.3"
