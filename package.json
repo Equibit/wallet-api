@@ -38,7 +38,7 @@
     "feathers-authentication": "pre",
     "feathers-authentication-jwt": "^0.3.1",
     "feathers-authentication-local": "^0.3.4",
-    "feathers-authentication-signed": "^0.0.5",
+    "feathers-authentication-signed": "^0.0.6",
     "feathers-configuration": "^0.4.1",
     "feathers-errors": "^2.6.2",
     "feathers-hooks": "^1.8.1",
