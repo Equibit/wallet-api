@@ -20,6 +20,8 @@ module.exports = function (app) {
     isNewUser: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
+  }, {
+    versionKey: false
   });
 
   return mongooseClient.model('users', users);
