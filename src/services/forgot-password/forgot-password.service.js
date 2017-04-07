@@ -5,7 +5,7 @@ const { iff } = require('feathers-hooks-common');
 const createTemporaryPassword = require('../users/hook.create-temp-password');
 const retrieveSalt = require('./hook.retrieve-salt');
 const sendForgotPasswordEmailForExistingUser = require('./hook.email.forgot-existing');
-const sendForgotPasswordEmailForNonExistingUser = require('./hook.email.forgot-non-existing');
+const sendForgotPasswordEmailForMissingUser = require('./hook.email.forgot-missing');
 const { hashPassword } = require('feathers-authentication-signed').hooks;
 const { pbkdf2 } = require('crypto');
 
@@ -67,10 +67,9 @@ module.exports = function () {
             tempPasswordField: 'tempPasswordPlain'
           })
         ).else(
-          sendForgotPasswordEmailForNonExistingUser({
+          sendForgotPasswordEmailForMissingUser({
             From: outboundEmail,
-            TemplateId: emailTemplates.forgotPasswordExisting,
-            tempPasswordField: 'tempPasswordPlain'
+            TemplateId: emailTemplates.forgotPasswordNonExisting
           })
         ),
         // Sets hook.result to make sure the response is deterministic.

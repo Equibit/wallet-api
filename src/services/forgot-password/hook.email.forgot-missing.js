@@ -17,17 +17,12 @@ module.exports = function (options = {}) {
     if (!options.TemplateId) {
       throw new Error('A `TemplateId` must be configured for the welcome email hook.');
     }
-    if (!hook.data[options.tempPasswordField]) {
-      throw new Error(`A \`${options.tempPasswordField}\` was not found on the \`hook.data\` for the welcome email hook.`);
-    }
-
+    
     const message = {
       From: fromAddress,
       To: hook.data.email,
       TemplateId: options.TemplateId,
-      TemplateModel: {
-        tempPassword: hook.data[options.tempPasswordField]
-      }
+      TemplateModel: {}
     };
     return postmarkMessages.create(message).then(message => {
       return hook;
