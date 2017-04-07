@@ -22,6 +22,8 @@
   "outboundEmail": "info@equibit.org",
   "postmarkTemplateIds": {
     "welcome": 1469183,
-    "duplicateSignup": 1472482
+    "duplicateSignup": 1472482,
+    "forgotPasswordExisting": 1480221,
+    "forgotPasswordNonExisting": 1480222
   }
 }

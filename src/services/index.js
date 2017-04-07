@@ -1,10 +1,12 @@
 'use strict';
 
-const users = require('./users/users.service.js');
-const postmark = require('./postmark-messages.js');
+const users = require('./users/users.service');
+const postmark = require('./postmark-messages');
+const forgotPassword = require('./forgot-password/forgot-password.service');
 
 module.exports = function () {
-  const app = this; // eslint-disable-line no-unused-vars
+  const app = this;
   app.configure(users);
   app.configure(postmark);
+  app.configure(forgotPassword);
 };
