@@ -17,12 +17,18 @@ module.exports = function (options = {}) {
     if (!options.TemplateId) {
       throw new Error('A `TemplateId` must be configured for the welcome email hook.');
     }
-    
+
+    let operatingSystem = (hook.params.userAgent && hook.params.userAgent.os.family) || '';
+    let browserName = (hook.params.userAgent && `${hook.params.userAgent.family} ${hook.params.userAgent.major}`) || '';
+
     const message = {
       From: fromAddress,
       To: hook.data.email,
       TemplateId: options.TemplateId,
-      TemplateModel: {}
+      TemplateModel: {
+        operatingSystem,
+        browserName
+      }
     };
     return postmarkMessages.create(message).then(message => {
       return hook;

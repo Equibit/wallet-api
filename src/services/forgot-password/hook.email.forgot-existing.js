@@ -26,7 +26,9 @@ module.exports = function (options = {}) {
       To: hook.data.email,
       TemplateId: options.TemplateId,
       TemplateModel: {
-        tempPassword: hook.data[options.tempPasswordField]
+        tempPassword: hook.data[options.tempPasswordField],
+        operatingSystem: (hook.params.userAgent && hook.params.userAgent.os.family) || '',
+        browserName: (hook.params.userAgent && `${hook.params.userAgent.family} ${hook.params.userAgent.major}`)
       }
     };
     return postmarkMessages.create(message).then(message => {

@@ -39,7 +39,16 @@ app.use('/', feathers.static(app.get('public')));
 app.configure(hooks());
 app.configure(mongodb);
 app.configure(rest());
-app.configure(socketio());
+app.use(function (req, res, next) {
+  req.feathers.ip = req.ip;
+  next();
+});
+app.configure(socketio(function (io) {
+  io.on('connection', function (socket) {
+    Object.assign(socket.feathers, {headers: socket.handshake.headers});
+    socket.feathers.ip = socket.conn.remoteAddress;
+  });
+}));
 
 app.configure(authentication);
 

@@ -2549,6 +2549,12 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
+ua-parser@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/ua-parser/-/ua-parser-0.3.5.tgz#2ff4f9c9e6e2d64d711461f17beb2c9c697f2f1a"
+  dependencies:
+    yamlparser ">=0.0.2"
+
 uberproto@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/uberproto/-/uberproto-1.2.0.tgz#61d4eab024f909c4e6ea52be867c4894a4beeb76"
@@ -2640,6 +2646,10 @@ xmlhttprequest-ssl@1.5.3:
 xtend@^4.0.0, xtend@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
+
+yamlparser@>=0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/yamlparser/-/yamlparser-0.0.2.tgz#32393e6afc70c8ca066b6650ac6738b481678ebc"
 
 yeast@0.1.2:
   version "0.1.2"
