@@ -25,5 +25,16 @@
     "duplicateSignup": 1472482,
     "forgotPasswordExisting": 1480221,
     "forgotPasswordNonExisting": 1480222
+  },
+  "fixtures": {
+    "delete": true,
+    "enabled": true,
+    "params": {
+      "internal": true
+    },
+    "services": [{
+      "path": "issuances",
+      "data": "services/issuances/issuances.seed.json"
+    }]
   }
 }

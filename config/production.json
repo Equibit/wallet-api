@@ -1,4 +1,9 @@
 {
   "host": "wallet-api-app.feathersjs.com",
-  "port": "PORT"
+  "port": "PORT",
+  "mongodb": "mongodb://localhost:27017/wallet_api",
+  "fixtures": {
+    "delete": false,
+    "enabled": false
+  }
 }

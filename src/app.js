@@ -20,6 +20,7 @@ const appHooks = require('./hooks');
 const authentication = require('./authentication');
 
 const mongodb = require('./mongodb');
+const loadFixtures = require('./load-fixtures');
 
 const app = feathers();
 
@@ -54,6 +55,7 @@ app.configure(authentication);
 
 // Set up our services (see `services/index.js`)
 app.configure(services);
+loadFixtures(app);
 // Configure middleware (see `middleware/index.js`) - always has to be last
 app.configure(middleware);
 app.hooks(appHooks);
