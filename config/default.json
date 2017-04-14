@@ -3,8 +3,8 @@
   "port": 3030,
   "public": "../public/",
   "paginate": {
-    "default": 10,
-    "max": 50
+    "default": 20,
+    "max": 100
   },
   "authentication": {
     "secret": "ety85WL1k6VuW9gTFI2QyEsAt5nizxshvMuKHUK36prFm4n1q6iWasvQbMTk94BE",
