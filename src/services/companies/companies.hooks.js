@@ -7,32 +7,13 @@ module.exports = function (app) {
       all: [
         // call the authenticate hook before every method except 'create'
         // iff(
-        //   (hook) => hook.method !== 'create' || !hook.params.internal,
+        //   (hook) => hook.method !== 'create',
         //   authenticate('jwt')
         // )
       ],
       find: [],
       get: [],
-      create: [
-        // hook => {
-        //   function cast (item) {
-        //     const fields = ['marketCap', 'change', 'changePercentage'];
-        //     fields.forEach(field => {
-        //       if (typeof item[field] === 'string') {
-        //         item[field] = parseFloat(item[field]);
-        //       }
-        //     });
-        //   }
-
-        //   if (Array.isArray(hook.data)) {
-        //     hook.data.forEach(item => {
-        //       cast(item);
-        //     });
-        //   } else {
-        //     cast(hook.data);
-        //   }
-        // }
-      ],
+      create: [],
       update: [],
       patch: [],
       remove: [

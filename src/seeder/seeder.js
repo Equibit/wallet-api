@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = function (app) {
-  const config = app.get('fixtures');
+  const config = app.get('seeder');
 
   if (config.enabled) {
     config.services.forEach(serviceObj => {
@@ -10,7 +10,7 @@ module.exports = function (app) {
 
       // If the data is a string, assume it's a file location.
       if (typeof data === 'string') {
-        data = require(path.join(__dirname, data));
+        data = require(path.join(__dirname, '..', data));
       }
 
       if (config.delete) {

@@ -6,8 +6,11 @@
 // for more of what you can do here.
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
+  const ObjectId = mongooseClient.SchemaTypes.ObjectId;
   const issuances = new mongooseClient.Schema({
-    company: {type: String},
+    companyId: { type: ObjectId },
+    companyName: { type: String },
+    companySlug: { type: String },
     domicile: { type: String },
     issuance: { type: String },
     issuanceType: { type: String },

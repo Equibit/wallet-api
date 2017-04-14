@@ -1,0 +1,702 @@
+[
+  {
+    "_id": "58f0fd23e76603f0a0ab498d",
+    "name": "Papricut",
+    "slug": "papricut",
+    "domicile": "Tajikistan",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd231eb85bded7ef2e14",
+    "name": "Isosphere",
+    "slug": "isosphere",
+    "domicile": "Togo",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23693a3f178c6dc92c",
+    "name": "Zolavo",
+    "slug": "zolavo",
+    "domicile": "Bermuda",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd234de8f424db887aa2",
+    "name": "Bedder",
+    "slug": "bedder",
+    "domicile": "Guyana",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23d81aaa1af4948cc5",
+    "name": "Quotezart",
+    "slug": "quotezart",
+    "domicile": "Australia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23591870244c5e3c81",
+    "name": "Sureplex",
+    "slug": "sureplex",
+    "domicile": "Palau",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd237a1e24ddf338d94a",
+    "name": "Orbalix",
+    "slug": "orbalix",
+    "domicile": "Laos",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23189690e38d6183e8",
+    "name": "Autograte",
+    "slug": "autograte",
+    "domicile": "Norway",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23b28d2dced27d393e",
+    "name": "Furnitech",
+    "slug": "furnitech",
+    "domicile": "Qatar",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23e22ca50444926126",
+    "name": "Strezzo",
+    "slug": "strezzo",
+    "domicile": "Oman",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2399b517d4b48f7908",
+    "name": "Equitox",
+    "slug": "equitox",
+    "domicile": "Cook Islands",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23814b37472f51204d",
+    "name": "Veraq",
+    "slug": "veraq",
+    "domicile": "Central African Republic",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd238a18ee81bf9ecc9f",
+    "name": "Concility",
+    "slug": "concility",
+    "domicile": "Iran",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239066ced07d0be4fb",
+    "name": "Viagreat",
+    "slug": "viagreat",
+    "domicile": "Bahamas",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23aa7dc96b5fe1a9e5",
+    "name": "Acumentor",
+    "slug": "acumentor",
+    "domicile": "Mexico",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd232761555e031f39b3",
+    "name": "Iplax",
+    "slug": "iplax",
+    "domicile": "Uzbekistan",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2342a1cc2845678ac5",
+    "name": "Codact",
+    "slug": "codact",
+    "domicile": "Ukraine",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23a52ea385994d3dd9",
+    "name": "Virxo",
+    "slug": "virxo",
+    "domicile": "Chad",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2374d15395f821525f",
+    "name": "Comtours",
+    "slug": "comtours",
+    "domicile": "Bolivia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23deaa9e623b1d34d3",
+    "name": "Exoblue",
+    "slug": "exoblue",
+    "domicile": "Namibia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239de78fbd3edfa17f",
+    "name": "Qualitex",
+    "slug": "qualitex",
+    "domicile": "Venezuela",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd235507e2b405538c27",
+    "name": "Kaggle",
+    "slug": "kaggle",
+    "domicile": "Trinidad and Tobago",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2371fadd75fa81ea82",
+    "name": "Cognicode",
+    "slug": "cognicode",
+    "domicile": "Brunei Darussalam",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd235e727f7bb21fdb4a",
+    "name": "Isologica",
+    "slug": "isologica",
+    "domicile": "Mayotte",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23c4b1517aa5e3e250",
+    "name": "Poshome",
+    "slug": "poshome",
+    "domicile": "Northern Mariana Islands",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23b9ca2410b872c5e3",
+    "name": "Billmed",
+    "slug": "billmed",
+    "domicile": "South Africa",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd237bfc7dd23e7aaba0",
+    "name": "Anacho",
+    "slug": "anacho",
+    "domicile": "Somalia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23827c0b37689cc8f5",
+    "name": "Tubesys",
+    "slug": "tubesys",
+    "domicile": "Guinea-Bissau",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23be37b3dbf7e677fa",
+    "name": "Netplode",
+    "slug": "netplode",
+    "domicile": "Jamaica",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd231bc32994af779923",
+    "name": "Dogspa",
+    "slug": "dogspa",
+    "domicile": "India",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23ad33554c6f777ac9",
+    "name": "Canopoly",
+    "slug": "canopoly",
+    "domicile": "Bulgaria",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23d3c4777b2a4ba2d7",
+    "name": "Icology",
+    "slug": "icology",
+    "domicile": "Peru",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239f40b6329af4dca6",
+    "name": "Ziggles",
+    "slug": "ziggles",
+    "domicile": "Sri Lanka",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239b7e1815660fa278",
+    "name": "Digigen",
+    "slug": "digigen",
+    "domicile": "Kuwait",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23057f71d79ecaf963",
+    "name": "Visualix",
+    "slug": "visualix",
+    "domicile": "Morocco",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23676dd597d16cee2d",
+    "name": "Franscene",
+    "slug": "franscene",
+    "domicile": "Hungary",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd233b4f2115eb5867af",
+    "name": "Fibrodyne",
+    "slug": "fibrodyne",
+    "domicile": "Slovak Republic",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23d5cfae0adb1b062b",
+    "name": "Omnigog",
+    "slug": "omnigog",
+    "domicile": "Finland",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239e8ee0e3b8973512",
+    "name": "Elentrix",
+    "slug": "elentrix",
+    "domicile": "Pitcairn",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2322796c26913dea1d",
+    "name": "Flexigen",
+    "slug": "flexigen",
+    "domicile": "Bhutan",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23f02e37cecea6f325",
+    "name": "Roughies",
+    "slug": "roughies",
+    "domicile": "Sweden",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239cea5be832f995f7",
+    "name": "Kage",
+    "slug": "kage",
+    "domicile": "Sierra Leone",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2326b9740f5eb2f3da",
+    "name": "Lotron",
+    "slug": "lotron",
+    "domicile": "Indonesia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23db71df4383bae9ee",
+    "name": "Avit",
+    "slug": "avit",
+    "domicile": "El Salvador",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23ce942de3c41a7baf",
+    "name": "Zanilla",
+    "slug": "zanilla",
+    "domicile": "Czech Republic",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23d44083da55958a00",
+    "name": "Magmina",
+    "slug": "magmina",
+    "domicile": "Netherlands",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23771a65a6e70fbebb",
+    "name": "Cinaster",
+    "slug": "cinaster",
+    "domicile": "French Guiana",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2332fd8b3cb3c83ba8",
+    "name": "Chillium",
+    "slug": "chillium",
+    "domicile": "Papua New Guinea",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23fd856d434dba62cd",
+    "name": "Cofine",
+    "slug": "cofine",
+    "domicile": "Zambia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23ff8ca6a5d69652ab",
+    "name": "Entropix",
+    "slug": "entropix",
+    "domicile": "Pakistan",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23fa6295209afd6575",
+    "name": "Phuel",
+    "slug": "phuel",
+    "domicile": "Turks and Caicos Islands",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23fe2e0fc01643a568",
+    "name": "Opportech",
+    "slug": "opportech",
+    "domicile": "New Caledonia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23b0a32175b2845a52",
+    "name": "Xleen",
+    "slug": "xleen",
+    "domicile": "Panama",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23bc1793c631db7f64",
+    "name": "Zensure",
+    "slug": "zensure",
+    "domicile": "United States",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23fc3a0c0d9635ba25",
+    "name": "Savvy",
+    "slug": "savvy",
+    "domicile": "Malta",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23b2e50bc6677fbe58",
+    "name": "Atgen",
+    "slug": "atgen",
+    "domicile": "Mauritania",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd235628f20a6986b1b4",
+    "name": "Snowpoke",
+    "slug": "snowpoke",
+    "domicile": "Macau",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23d335913256a9184b",
+    "name": "Rockyard",
+    "slug": "rockyard",
+    "domicile": "Tokelau",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23b78070ccb9e5b13b",
+    "name": "Katakana",
+    "slug": "katakana",
+    "domicile": "Cocos (Keeling Islands)",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23f97be677c699cca4",
+    "name": "Deepends",
+    "slug": "deepends",
+    "domicile": "Kenya",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd233b0945e11a71c883",
+    "name": "Corporana",
+    "slug": "corporana",
+    "domicile": "Aruba",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23da15393d9c229c21",
+    "name": "Gluid",
+    "slug": "gluid",
+    "domicile": "Colombia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd236a23ec27c1dffb6a",
+    "name": "Indexia",
+    "slug": "indexia",
+    "domicile": "Wallis and Futuna Islands",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23d02960c8a1d0d269",
+    "name": "Utara",
+    "slug": "utara",
+    "domicile": "Kazakhstan",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23fd475165cea58bb2",
+    "name": "Velity",
+    "slug": "velity",
+    "domicile": "Nepal",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2318da95b31bb1795a",
+    "name": "Homelux",
+    "slug": "homelux",
+    "domicile": "New Zealand",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2317e75bbe863fe970",
+    "name": "Gynk",
+    "slug": "gynk",
+    "domicile": "Georgia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23697b7f9aa7c82287",
+    "name": "Schoolio",
+    "slug": "schoolio",
+    "domicile": "Thailand",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23bb3cd6c1d49f0635",
+    "name": "Talendula",
+    "slug": "talendula",
+    "domicile": "Hong Kong",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd234fdaa32aee5560d7",
+    "name": "Centree",
+    "slug": "centree",
+    "domicile": "Bahrain",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23b33683d168e6e49d",
+    "name": "Acium",
+    "slug": "acium",
+    "domicile": "Egypt",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2366abce5f380b301a",
+    "name": "Mondicil",
+    "slug": "mondicil",
+    "domicile": "Taiwan",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23d1220d027e2906d4",
+    "name": "Hinway",
+    "slug": "hinway",
+    "domicile": "Azerbaijan",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2395efa8d5a7ddf6d6",
+    "name": "Sybixtex",
+    "slug": "sybixtex",
+    "domicile": "Malaysia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2321add7c7c96fdc58",
+    "name": "Grok",
+    "slug": "grok",
+    "domicile": "Burundi",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23a122aa4ead680b24",
+    "name": "Zaggles",
+    "slug": "zaggles",
+    "domicile": "San Marino",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23225c58cef4c66d68",
+    "name": "Noralex",
+    "slug": "noralex",
+    "domicile": "Suriname",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd234a082bae32d7dbe2",
+    "name": "Turnabout",
+    "slug": "turnabout",
+    "domicile": "Saint Vincent and The Grenadines",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23ce07ed82dae408ec",
+    "name": "Ontagene",
+    "slug": "ontagene",
+    "domicile": "Lebanon",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd238815a954ece7fa32",
+    "name": "Magnina",
+    "slug": "magnina",
+    "domicile": "Maldives",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239b526571af9bd10c",
+    "name": "Omatom",
+    "slug": "omatom",
+    "domicile": "Armenia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2319147353230114cc",
+    "name": "Limage",
+    "slug": "limage",
+    "domicile": "Honduras",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23b0aae2eae35b9e80",
+    "name": "Tropoli",
+    "slug": "tropoli",
+    "domicile": "Grenada",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd234a0e0be6be26e656",
+    "name": "Geekola",
+    "slug": "geekola",
+    "domicile": "Cameroon",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23e9f44553b14d3853",
+    "name": "Biolive",
+    "slug": "biolive",
+    "domicile": "Israel",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2342840c3e9f1b3cbf",
+    "name": "Venoflex",
+    "slug": "venoflex",
+    "domicile": "Belize",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239f953ce7c1f102eb",
+    "name": "Farmex",
+    "slug": "farmex",
+    "domicile": "Austria",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd235867e7addbdf012a",
+    "name": "Kyagoro",
+    "slug": "kyagoro",
+    "domicile": "Mozambique",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd237c860d62da04d670",
+    "name": "Solgan",
+    "slug": "solgan",
+    "domicile": "Russian Federation",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2321829d6a1b26965c",
+    "name": "Arctiq",
+    "slug": "arctiq",
+    "domicile": "Germany",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23e20506940ee0e2af",
+    "name": "Zytrek",
+    "slug": "zytrek",
+    "domicile": "Dominica",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239ac5905342e24417",
+    "name": "Earthpure",
+    "slug": "earthpure",
+    "domicile": "Madagascar",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd230cb2c1d11fbf3666",
+    "name": "Zenolux",
+    "slug": "zenolux",
+    "domicile": "Sao Tome and Principe",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23dc5d6cfc0aa4a2b4",
+    "name": "Portaline",
+    "slug": "portaline",
+    "domicile": "Samoa",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd239c5962f5086e3d93",
+    "name": "Recrisys",
+    "slug": "recrisys",
+    "domicile": "Nauru",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd231d2fb58fffb9e646",
+    "name": "Bluegrain",
+    "slug": "bluegrain",
+    "domicile": "Korea (South)",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2382977483b574a5e6",
+    "name": "Syntac",
+    "slug": "syntac",
+    "domicile": "Christmas Island",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2369d812690c355fa8",
+    "name": "Interfind",
+    "slug": "interfind",
+    "domicile": "Estonia",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd2315d738c6e464558c",
+    "name": "Sulfax",
+    "slug": "sulfax",
+    "domicile": "Uganda",
+    "issuances": []
+  },
+  {
+    "_id": "58f0fd23dc2c1a9d6e7b1af6",
+    "name": "Multiflex",
+    "slug": "multiflex",
+    "domicile": "Philippines",
+    "issuances": []
+  }
+]

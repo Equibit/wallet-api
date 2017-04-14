@@ -26,15 +26,18 @@
     "forgotPasswordExisting": 1480221,
     "forgotPasswordNonExisting": 1480222
   },
-  "fixtures": {
-    "delete": true,
+  "seeder": {
     "enabled": true,
+    "delete": true,
     "params": {
       "internal": true
     },
     "services": [{
       "path": "issuances",
       "data": "services/issuances/issuances.seed.json"
+    }, {
+      "path": "companies",
+      "data": "services/companies/companies.seed.json"
     }]
   }
 }

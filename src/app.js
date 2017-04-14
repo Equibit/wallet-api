@@ -20,10 +20,11 @@ const appHooks = require('./hooks');
 const authentication = require('./authentication');
 
 const mongodb = require('./mongodb');
-const loadFixtures = require('./load-fixtures');
+const seed = require('./seeder/seeder');
+const seedWriter = require('./seeder/seed-writer');
 
 const app = feathers();
-
+app.set('applicationRoot', path.join(__dirname));
 // Load app configuration
 app.configure(configuration(path.join(__dirname, '..')));
 // Enable CORS, security, compression, favicon and body parsing
@@ -55,7 +56,8 @@ app.configure(authentication);
 
 // Set up our services (see `services/index.js`)
 app.configure(services);
-loadFixtures(app);
+seed(app);
+seedWriter(app);
 // Configure middleware (see `middleware/index.js`) - always has to be last
 app.configure(middleware);
 app.hooks(appHooks);
