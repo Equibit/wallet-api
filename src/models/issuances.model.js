@@ -18,6 +18,19 @@ module.exports = function (app) {
     marketCap: { type: Number },
     change: { type: Number },
     changePercentage: { type: Number }
+
+    // 24h stat data:
+    // highestBid: { type: Number },
+    // lowestAsk: { type: Number },
+    // highestNumShares: { type: Number },
+    // lowestNumShares: { type: Number },
+
+    // meta data:
+    // volume24h: { type: Number },
+    // sharesAuthorized: { type: Number },
+    // sharesIssued: { type: Number },
+    // sharesDividend: { type: Number },
+    // sharesDividendYield: { type: Number }
   }, {
     versionKey: false
   });
