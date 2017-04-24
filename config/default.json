@@ -17,7 +17,7 @@
   },
   "mongodb": "mongodb://localhost:27017/wallet_api",
   "postmark": {
-    "key": null
+    "key": "POSTMARK_API_KEY"
   },
   "outboundEmail": "info@equibit.org",
   "postmarkTemplateIds": {
