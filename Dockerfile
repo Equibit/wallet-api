@@ -8,5 +8,5 @@ RUN yarn
 
 COPY . /home/www/wallet-api
 
-EXPOSE 8000
+EXPOSE 3032
 CMD [ "npm", "start" ]
