@@ -19,6 +19,10 @@ const issuanceRestrictions = [
   1,
   2
 ];
+// BTC has 8 decimals:
+function randomBtc (min, max) {
+  return Math.floor(randomFloat(min, max) * 100000000) / 100000000;
+}
 
 /**
  * Seed the issuances collection.
@@ -33,19 +37,21 @@ module.exports = function (app) {
       const issuances = [];
 
       for (var i = 0; i < 100; i++) {
-        let company = companies[Math.floor(Math.random() * companies.length)];
+        let company = companies[randomInt(companies.length - 1)];
+        let marketCap = randomBtc(1000, 10000);
+        let change = randomBtc(-1000, 1000);
         const issuance = {
           _id: objectid(),
           companyId: company._id,
           companyName: company.name,
           companySlug: company.slug,
           domicile: faker.address.country(),
-          issuanceName: issuanceSeries[Math.floor(Math.random() * issuanceSeries.length)],
-          issuanceType: issuanceTypes[Math.floor(Math.random() * issuanceTypes.length)],
-          restriction: issuanceRestrictions[Math.floor(Math.random() * issuanceRestrictions.length)],
-          marketCap: randomFloat(1000000000, 100000000000),
-          change: randomFloat(-100000000, 100000000),
-          changePercentage: Math.round(randomFloat(-100, 100) * 100) / 100,
+          issuanceName: issuanceSeries[randomInt(issuanceSeries.length - 1)],
+          issuanceType: issuanceTypes[randomInt(issuanceTypes.length - 1)],
+          restriction: issuanceRestrictions[randomInt(issuanceRestrictions.length - 1)],
+          marketCap: marketCap,
+          change: change,
+          changePercentage: Math.floor(change / marketCap * 10000) / 100,
 
           // 24h stat data:
           highestBid: randomInt(50000, 100000),
