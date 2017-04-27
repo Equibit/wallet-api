@@ -2136,6 +2136,10 @@ random-float@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/random-float/-/random-float-1.0.0.tgz#3a891cd66342108fc5f46cdfa32838e26b07b09e"
 
+random-int@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/random-int/-/random-int-1.0.0.tgz#e6a2ed3448ac9c6646a0657443b1c1521592ed08"
+
 range-parser@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"

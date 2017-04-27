@@ -1,6 +1,7 @@
 const faker = require('faker');
 const objectid = require('objectid');
 const randomFloat = require('random-float');
+const randomInt = require('random-int');
 
 const issuanceSeries = [
   'Series 1',
@@ -39,12 +40,25 @@ module.exports = function (app) {
           companyName: company.name,
           companySlug: company.slug,
           domicile: faker.address.country(),
-          issuance: issuanceSeries[Math.floor(Math.random() * issuanceSeries.length)],
+          issuanceName: issuanceSeries[Math.floor(Math.random() * issuanceSeries.length)],
           issuanceType: issuanceTypes[Math.floor(Math.random() * issuanceTypes.length)],
           restriction: issuanceRestrictions[Math.floor(Math.random() * issuanceRestrictions.length)],
           marketCap: randomFloat(1000000000, 100000000000),
           change: randomFloat(-100000000, 100000000),
-          changePercentage: Math.round(randomFloat(-100, 100) * 100) / 100
+          changePercentage: Math.round(randomFloat(-100, 100) * 100) / 100,
+
+          // 24h stat data:
+          highestBid: randomInt(50000, 100000),
+          lowestAsk: randomInt(30000, 50000),
+          highestNumShares: randomInt(1000, 2000),
+          lowestNumShares: randomInt(500, 1000),
+
+          // meta data:
+          volume24h: randomInt(1000, 3000),
+          sharesAuthorized: randomInt(1000, 5000),
+          sharesIssued: randomInt(5000, 10000),
+          sharesDividend: randomInt(500, 1000),
+          sharesDividendYield: Math.round(randomFloat(0, 10) * 100) / 100
         };
         company.issuances.push(issuance._id);
         issuances.push(issuance);
