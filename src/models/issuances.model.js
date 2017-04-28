@@ -30,7 +30,9 @@ module.exports = function (app) {
     sharesAuthorized: { type: Number },
     sharesIssued: { type: Number },
     sharesDividend: { type: Number },
-    sharesDividendYield: { type: Number }
+    sharesDividendYield: { type: Number },
+
+    tradesNum: { type: Number }
   }, {
     versionKey: false
   });

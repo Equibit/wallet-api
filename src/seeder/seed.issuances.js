@@ -64,7 +64,9 @@ module.exports = function (app) {
           sharesAuthorized: randomInt(1000, 5000),
           sharesIssued: randomInt(5000, 10000),
           sharesDividend: randomInt(500, 1000),
-          sharesDividendYield: Math.round(randomFloat(0, 10) * 100) / 100
+          sharesDividendYield: Math.round(randomFloat(0, 10) * 100) / 100,
+
+          tradesNum: randomInt(10, 100)
         };
         company.issuances.push(issuance._id);
         issuances.push(issuance);
