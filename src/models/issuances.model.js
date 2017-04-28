@@ -32,6 +32,7 @@ module.exports = function (app) {
     sharesDividend: { type: Number },
     sharesDividendYield: { type: Number },
 
+    // Most Active component:
     tradesNum: { type: Number }
   }, {
     versionKey: false
