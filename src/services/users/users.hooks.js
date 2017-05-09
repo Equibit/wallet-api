@@ -1,23 +1,23 @@
-const { authenticate } = require('feathers-authentication').hooks;
-const { iff, unless, discard, disallow, isProvider } = require('feathers-hooks-common');
-const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks;
-const { randomBytes, pbkdf2 } = require('crypto');
-const isExistingUser = require('./hook.is-existing-user');
-const createTemporaryPassword = require('./hook.create-temp-password');
-const sendWelcomeEmail = require('./hook.email.welcome');
-const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup');
-const removeIsNewUser = require('./hook.remove-is-new-user');
+const { authenticate } = require('feathers-authentication').hooks
+const { iff, unless, discard, disallow, isProvider } = require('feathers-hooks-common')
+const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
+const { randomBytes, pbkdf2 } = require('crypto')
+const isExistingUser = require('./hook.is-existing-user')
+const createTemporaryPassword = require('./hook.create-temp-password')
+const sendWelcomeEmail = require('./hook.email.welcome')
+const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
+const removeIsNewUser = require('./hook.remove-is-new-user')
 
 module.exports = function (app) {
-  const outboundEmail = app.get('outboundEmail');
-  const emailTemplates = app.get('postmarkTemplateIds');
+  const outboundEmail = app.get('outboundEmail')
+  const emailTemplates = app.get('postmarkTemplateIds')
 
   return {
     before: {
       all: [
         // call the authenticate hook before every method except 'create'
         unless(
-          (hook) => hook.method === 'create',
+          hook => hook.method === 'create',
           authenticate('jwt')
         )
       ],
@@ -93,7 +93,7 @@ module.exports = function (app) {
         // Set the response to just the email, so there's no way for a malicious user
         // to know if this email address is already being used for another account.
         hook => {
-          hook.result = { email: hook.data.email };
+          hook.result = { email: hook.data.email }
         }
       ],
       update: [],
@@ -104,7 +104,7 @@ module.exports = function (app) {
     error: {
       all: [
         error => {
-          console.log(error);
+          console.log(error)
         }
       ],
       find: [],
@@ -114,5 +114,5 @@ module.exports = function (app) {
       patch: [],
       remove: []
     }
-  };
-};
+  }
+}

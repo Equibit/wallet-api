@@ -1,5 +1,5 @@
 // const { authenticate } = require('feathers-authentication').hooks;
-const { disallow } = require('feathers-hooks-common');
+const { disallow } = require('feathers-hooks-common')
 
 module.exports = function (app) {
   return {
@@ -34,7 +34,7 @@ module.exports = function (app) {
     error: {
       all: [
         error => {
-          console.log(error);
+          console.log(error)
         }
       ],
       find: [],
@@ -44,5 +44,5 @@ module.exports = function (app) {
       patch: [],
       remove: []
     }
-  };
-};
+  }
+}

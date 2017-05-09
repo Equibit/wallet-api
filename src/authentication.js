@@ -1,21 +1,21 @@
-'use strict';
+'use strict'
 
-const authentication = require('feathers-authentication');
-const jwt = require('feathers-authentication-jwt');
-const signed = require('feathers-authentication-signed');
-const { iff } = require('feathers-hooks-common');
+const authentication = require('feathers-authentication')
+const jwt = require('feathers-authentication-jwt')
+const signed = require('feathers-authentication-signed')
+const { iff } = require('feathers-hooks-common')
 // const makeCryptoUtils = require('feathers-authentication-signed/');
 
 module.exports = function () {
-  const app = this;
-  const config = app.get('authentication');
+  const app = this
+  const config = app.get('authentication')
 
   // Set up authentication with the secret
-  app.configure(authentication(config));
-  app.configure(jwt());
+  app.configure(authentication(config))
+  app.configure(jwt())
   app.configure(signed({
     idField: '_id'
-  }));
+  }))
 
   // The `authentication` service is used to create a JWT.
   // The before `create` hook registers strategies that can be used
@@ -36,13 +36,13 @@ module.exports = function () {
           hook => hook.data.strategy === 'challenge',
           hook => {
             if (hook.params.usingTempPassword) {
-              hook.result.usingTempPassword = true;
+              hook.result.usingTempPassword = true
             }
-            hook.result.user = hook.params.user;
-            delete hook.result.user.password;
-            delete hook.result.user.tempPassword;
-            delete hook.result.user.salt;
-            delete hook.result.user.challenge;
+            hook.result.user = hook.params.user
+            delete hook.result.user.password
+            delete hook.result.user.tempPassword
+            delete hook.result.user.salt
+            delete hook.result.user.challenge
           }
         )
       ]
@@ -50,9 +50,9 @@ module.exports = function () {
     error: {
       create: [
         function (hook) {
-          console.log(hook);
+          console.log(hook)
         }
       ]
     }
-  });
-};
+  })
+}

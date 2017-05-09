@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 module.exports = function () {
-  const app = this;
+  const app = this
 
-  mongoose.connect(app.get('mongodb'));
-  mongoose.Promise = global.Promise;
+  mongoose.connect(app.get('mongodb'))
+  mongoose.Promise = global.Promise
 
-  app.set('mongooseClient', mongoose);
-};
+  app.set('mongooseClient', mongoose)
+}

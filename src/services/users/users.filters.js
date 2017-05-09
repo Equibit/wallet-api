@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   // disable all events for this service by returning false
@@ -7,4 +7,4 @@ module.exports = {
   update: [],
   patch: [],
   remove: []
-};
+}

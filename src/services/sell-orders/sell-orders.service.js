@@ -1,10 +1,8 @@
-'use strict'
-
-// Initializes the `issuances` service on path `/issuances`
+// Initializes the `sell-orders` service on path `/sell-orders`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/issuances.model')
-const hooks = require('./issuances.hooks')
-const filters = require('./issuances.filters')
+const createModel = require('../../models/sell-orders.model')
+const hooks = require('./sell-orders.hooks')
+const filters = require('./sell-orders.filters')
 
 module.exports = function () {
   const app = this
@@ -12,18 +10,18 @@ module.exports = function () {
   const paginate = app.get('paginate')
 
   const options = {
-    name: 'issuances',
+    name: 'sell-orders',
     Model,
     paginate
   }
 
   // Initialize our service with any options it requires
-  app.use('/issuances', createService(options))
+  app.use('/sell-orders', createService(options))
 
   // Get our initialized service so that we can register hooks and filters
-  const service = app.service('issuances')
+  const service = app.service('sell-orders')
 
-  service.hooks(hooks(app))
+  service.hooks(hooks)
 
   if (service.filter) {
     service.filter(filters)

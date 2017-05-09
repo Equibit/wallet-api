@@ -1,5 +1,5 @@
-const createHmac = require('create-hmac');
-const btoa = require('btoa');
+const createHmac = require('create-hmac')
+const btoa = require('btoa')
 
 /**
  * Must create hook.params.secret, first.
@@ -12,12 +12,12 @@ module.exports = function sign (hook) {
    *   url
    * }
    */
-  let data = JSON.stringify(hook.data);
-  let hmac = createHmac('sha512', new Buffer(hook.params.secret));
+  let data = JSON.stringify(hook.data)
+  let hmac = createHmac('sha512', Buffer.alloc(hook.params.secret))
 
-  hmac.update(data);
+  hmac.update(data)
 
-  let digest = hmac.digest();
+  let digest = hmac.digest()
 
-  hook.data.signature = btoa(digest);
-};
+  hook.data.signature = btoa(digest)
+}

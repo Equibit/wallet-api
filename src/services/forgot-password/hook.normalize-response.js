@@ -2,8 +2,8 @@
 module.exports = function () {
   return hook => {
     return new Promise(resolve => {
-      hook.result = { email: hook.data.email };
-      resolve(hook);
-    });
-  };
-};
+      hook.result = { email: hook.data.email }
+      resolve(hook)
+    })
+  }
+}

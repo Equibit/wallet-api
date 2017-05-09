@@ -1,12 +1,12 @@
-const postmark = require('feathers-postmark');
+const postmark = require('feathers-postmark')
 
 module.exports = function () {
-  const app = this;
-  const options = app.get('postmark');
+  const app = this
+  const options = app.get('postmark')
 
-  app.use('postmark-messages', postmark(options));
+  app.use('postmark-messages', postmark(options))
 
-  const postmarkService = app.service('postmark-messages');
+  const postmarkService = app.service('postmark-messages')
 
   postmarkService.hooks({
     before: {
@@ -22,5 +22,5 @@ module.exports = function () {
         }
       ]
     }
-  });
-};
+  })
+}

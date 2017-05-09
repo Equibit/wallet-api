@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
 // users-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const mongooseClient = app.get('mongooseClient');
-  const ObjectId = mongooseClient.SchemaTypes.ObjectId;
+  const mongooseClient = app.get('mongooseClient')
+  const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const issuances = new mongooseClient.Schema({
     companyId: { type: ObjectId },
     companyName: { type: String },
@@ -36,7 +36,7 @@ module.exports = function (app) {
     tradesNum: { type: Number }
   }, {
     versionKey: false
-  });
+  })
 
-  return mongooseClient.model('issuances', issuances);
-};
+  return mongooseClient.model('issuances', issuances)
+}
