@@ -1,45 +1,45 @@
-const faker = require('faker');
-const objectid = require('objectid');
-const randomFloat = require('random-float');
-const randomInt = require('random-int');
+const faker = require('faker')
+const objectid = require('objectid')
+const randomFloat = require('random-float')
+const randomInt = require('random-int')
 
 const issuanceSeries = [
   'Series 1',
   'Series 2',
   'Series 3'
-];
+]
 const issuanceTypes = [
   'Common Shares',
   'Trust Units',
   'Bonds',
   'Preferred Shares'
-];
+]
 const issuanceRestrictions = [
   null,
   1,
   2
-];
+]
 // BTC has 8 decimals:
 function randomBtc (min, max) {
-  return Math.floor(randomFloat(min, max) * 100000000) / 100000000;
+  return Math.floor(randomFloat(min, max) * 100000000) / 100000000
 }
 
 /**
  * Seed the issuances collection.
  */
 module.exports = function (app) {
-  const seederService = app.service('seeder');
+  const seederService = app.service('seeder')
 
   // Read the `companies.seed.json`
   return seederService.get('seeder/companies.json')
     // Create an issuance assigned to a random company.
     .then(companies => {
-      const issuances = [];
+      const issuances = []
 
       for (var i = 0; i < 100; i++) {
-        let company = companies[randomInt(companies.length - 1)];
-        let marketCap = randomBtc(1000, 10000);
-        let change = randomBtc(-1000, 1000);
+        let company = companies[randomInt(companies.length - 1)]
+        let marketCap = randomBtc(1000, 10000)
+        let change = randomBtc(-1000, 1000)
         const issuance = {
           _id: objectid(),
           companyId: company._id,
@@ -67,9 +67,9 @@ module.exports = function (app) {
           sharesDividendYield: Math.round(randomFloat(0, 10) * 100) / 100,
 
           tradesNum: randomInt(10, 100)
-        };
-        company.issuances.push(issuance._id);
-        issuances.push(issuance);
+        }
+        company.issuances.push(issuance._id)
+        issuances.push(issuance)
       }
 
       return seederService.create({
@@ -79,7 +79,7 @@ module.exports = function (app) {
         return seederService.create({
           path: 'services/issuances/issuances.seed.json',
           data: issuances
-        });
-      });
-    });
-};
+        })
+      })
+    })
+}
