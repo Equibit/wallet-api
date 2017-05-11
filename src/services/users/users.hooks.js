@@ -1,4 +1,5 @@
 const { authenticate } = require('feathers-authentication').hooks
+const { restrictToOwner } = require('feathers-authentication-hooks')
 const { iff, unless, discard, disallow, isProvider } = require('feathers-hooks-common')
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
 const { randomBytes, pbkdf2 } = require('crypto')
@@ -18,11 +19,14 @@ module.exports = function (app) {
         // call the authenticate hook before every method except 'create'
         unless(
           hook => hook.method === 'create',
-          authenticate('jwt')
+          authenticate('jwt'),
+          restrictToOwner({ idField: '_id', ownerField: '_id' })
         )
       ],
       find: [],
-      get: [],
+      get: [
+        restrictToOwner({ idField: '_id', ownerField: '_id' })
+      ],
       create: [
         // Sets `hook.params.existingUser` to the existing user.
         // Also sets hook.result to only contain the passed-in email.
@@ -77,18 +81,22 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [
+        // Only send emails if we're not using a test account.
         iff(
-          hook => hook.params.existingUser,
-          sendDuplicateSignupEmail({
-            From: outboundEmail,
-            TemplateId: emailTemplates.duplicateSignup
-          })
-        ).else(
-          sendWelcomeEmail({
-            From: outboundEmail,
-            TemplateId: emailTemplates.welcome,
-            tempPasswordField: 'tempPasswordPlain'
-          })
+          hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
+          iff(
+            hook => hook.params.existingUser,
+            sendDuplicateSignupEmail({
+              From: outboundEmail,
+              TemplateId: emailTemplates.duplicateSignup
+            })
+          ).else(
+            sendWelcomeEmail({
+              From: outboundEmail,
+              TemplateId: emailTemplates.welcome,
+              tempPasswordField: 'tempPasswordPlain'
+            })
+          )
         ),
         // Set the response to just the email, so there's no way for a malicious user
         // to know if this email address is already being used for another account.

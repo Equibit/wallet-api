@@ -2,26 +2,20 @@
 
 const assert = require('assert')
 const rp = require('request-promise')
-const app = require('../src/app')
+require('../test-utils/setup')
 
-describe('Feathers application tests', () => {
-  before(function (done) {
-    this.server = app.listen(3030)
-    this.server.once('listening', () => done())
-  })
-
-  after(function (done) {
-    this.server.close(done)
-  })
-
-  it('starts and shows the index page', () => {
-    return rp('http://localhost:3030').then(body =>
+describe('Feathers application tests', function () {
+  it('starts and shows the index page', function (done) {
+    rp('http://localhost:3030').then(body => {
       assert.ok(body.indexOf('<html>') !== -1)
-    )
+      // setTimeout(() => {
+      done()
+      // }, 1000)
+    })
   })
 
   describe('404', function () {
-    it('shows a 404 HTML page', () => {
+    it('shows a 404 HTML page', function () {
       return rp({
         url: 'http://localhost:3030/path/to/nowhere',
         headers: {
@@ -33,7 +27,7 @@ describe('Feathers application tests', () => {
       })
     })
 
-    it('shows a 404 JSON error without stack trace', () => {
+    it('shows a 404 JSON error without stack trace', function () {
       return rp({
         url: 'http://localhost:3030/path/to/nowhere',
         json: true

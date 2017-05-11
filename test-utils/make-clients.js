@@ -6,7 +6,7 @@ const socketio = require('feathers-socketio/client')
 const auth = require('feathers-authentication-client')
 const hooks = require('feathers-hooks')
 
-module.exports = function (transport = 'socketio') {
+function makeClient (transport = 'socketio') {
   const feathersClient = feathers()
 
   if (transport === 'socketio') {
@@ -24,3 +24,8 @@ module.exports = function (transport = 'socketio') {
 
   return feathersClient
 }
+
+module.exports = [
+  makeClient('socketio'),
+  makeClient('rest')
+]

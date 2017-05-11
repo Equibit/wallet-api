@@ -56,8 +56,10 @@ app.configure(authentication)
 
 // Set up our services (see `services/index.js`)
 app.configure(services)
+
 seed(app)
 seedWriter(app)
+
 // Configure middleware (see `middleware/index.js`) - always has to be last
 app.configure(middleware)
 app.hooks(appHooks)

@@ -1,0 +1,9 @@
+{
+  "authentication": {
+    "secret": "FEATHERS_SECRET"
+  },
+  "mongodb": "MONGO_DB_URI",
+  "postmark": {
+    "key": "POSTMARK_API_TEST"
+  }
+}
