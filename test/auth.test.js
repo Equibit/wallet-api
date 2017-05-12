@@ -101,7 +101,7 @@ function runTests (feathersClient) {
         assert(payload.iss === 'Equibit', 'the jwt issuer was correct')
         console.log('payload.sub', payload.sub)
         assert(payload.sub === 'user', 'the jwt subject was correct')
-        assert(payload.userId === user._id, 'the jwt subject was correct')
+        assert(payload.userId === user._id, 'the jwt userId was correct')
 
         done()
       }).catch(error => {
