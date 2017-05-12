@@ -1,5 +1,5 @@
 {
-  "mongodb": "mongodb://localhost:27017/ci_wallet_api",
+  "mongodb": "mongodb://ci-test:hH3iMpiLdRTJRD2JPe@aws-us-east-1-portal.26.dblayer.com:18579/testing-ci?ssl=true",
   "authentication": {
     "secret": "b9ee0d058dbe362383350ae248bd88136fc0ab3fffe07709a8924c8174e3fb1b921deb29724b717200f04cbdf9c6931b0c0b18e8ac2b9529623b3f23974efba8556cfa2379fb372f380858efa6b9a895a5e9b9d09fa5a7bd63ccbf229f97bfece997a16dfab3397a2596f3f6c36f5df9db7c47987a4ff0be46abc7d28d2cbee2cb17db7818cf820dac0e73b0ac8b9f8a698a78656b1a7c4a7c4b549f055e954f81f31f2d1cf98dea42cc8cf7fb21c183c8c2091ee266dd023e67e642d3216eda294c0ac771a6c471740569dac354bf8697abef088b35ce3d40de80386bb48ac0249413408b5df0e15fb0ecc345e8c99288ee50e4d594f0ce3365197402a57c22"
   },
