@@ -99,6 +99,7 @@ function runTests (feathersClient) {
         const payload = decode(accessToken)
         assert(payload.aud === 'https://equibit.org', 'the jwt audience was correct')
         assert(payload.iss === 'Equibit', 'the jwt issuer was correct')
+        console.log('payload.sub', payload.sub)
         assert(payload.sub === 'user', 'the jwt subject was correct')
         assert(payload.userId === user._id, 'the jwt subject was correct')
 
@@ -106,6 +107,7 @@ function runTests (feathersClient) {
       }).catch(error => {
         console.log(error)
         assert(!error, 'this error should not have occurred')
+        done()
       })
     })
   })
