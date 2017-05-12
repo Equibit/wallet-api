@@ -100,8 +100,6 @@ function runTests (feathersClient) {
         assert(payload.aud === 'https://equibit.org', 'the jwt audience was correct')
         assert(payload.iss === 'Equibit', 'the jwt issuer was correct')
         assert(payload.sub === 'user', 'the jwt subject was correct')
-        console.log('payload.userId', payload.userId)
-        console.log('user._id', user._id)
         assert(payload.userId === user._id, 'the jwt userId was correct')
 
         done()
