@@ -93,14 +93,43 @@ function runTests (feathersClient) {
       }).then(signedData => {
         signedData.strategy = 'challenge'
         return feathersClient.authenticate(signedData)
-      }).then(({response, accessToken, user, usingTempPassword}) => {
+      }).then(({ accessToken, user, usingTempPassword }) => {
         assert(accessToken, 'got back an accessToken')
 
         const payload = decode(accessToken)
+
+        const allowedPayloadFields = [
+          'aud',
+          'exp',
+          'iat',
+          'iss',
+          'sub',
+          'userId'
+        ]
+        Object.keys(payload).forEach(field => {
+          assert(allowedPayloadFields.includes(field), `the "${field}" claim was included in the jwt payload`)
+        })
         assert(payload.aud === 'https://equibit.org', 'the jwt audience was correct')
         assert(payload.iss === 'Equibit', 'the jwt issuer was correct')
         assert(payload.sub === 'user', 'the jwt subject was correct')
         assert(payload.userId === user._id, 'the jwt userId was correct')
+
+        const allowedUserFields = [
+          '_id',
+          'email',
+          'createdAt',
+          'updatedAt',
+          'isNewUser'
+        ]
+        Object.keys(user).forEach(field => {
+          assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
+        })
+        assert(user.email, `the user's email was returned`)
+        assert(user.createdAt, `the user record's createdAt timestamp was included in the response`)
+        assert(user.updatedAt, `the user record's updatedAt timestamp was included in the response`)
+        assert(user.isNewUser, 'the user was flagged as a new user')
+
+        assert(usingTempPassword, 'the <res></res>ponse included the usingTempPassword flag')
 
         done()
       }).catch(error => {
@@ -109,5 +138,13 @@ function runTests (feathersClient) {
         done()
       })
     })
+
+    it('sends an email after three failed logins', function () {
+
+    })
+
+    // it(`doesn't accept temporary passwords after 15 minutes`, function () {
+
+    // })
   })
 };
