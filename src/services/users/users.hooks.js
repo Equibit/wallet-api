@@ -1,6 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
 const { restrictToOwner } = require('feathers-authentication-hooks')
-const { iff, unless, discard, disallow, isProvider } = require('feathers-hooks-common')
+const { iff, unless, discard, disallow, isProvider, lowerCase } = require('feathers-hooks-common')
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
 const { randomBytes, pbkdf2 } = require('crypto')
 const isExistingUser = require('./hook.is-existing-user')
@@ -28,6 +28,7 @@ module.exports = function (app) {
         restrictToOwner({ idField: '_id', ownerField: '_id' })
       ],
       create: [
+        lowerCase('email'),
         // Sets `hook.params.existingUser` to the existing user.
         // Also sets hook.result to only contain the passed-in email.
         isExistingUser(),
@@ -44,6 +45,7 @@ module.exports = function (app) {
         )
       ],
       update: [
+        lowerCase('email'),
         // If a password is provided, hash it and generate a salt.
         iff(
           hook => hook.data && hook.data.password,
@@ -53,6 +55,7 @@ module.exports = function (app) {
         )
       ],
       patch: [
+        lowerCase('email'),
         // If a password is provided, hash it and generate a salt.
         iff(
           hook => hook.data && hook.data.password,

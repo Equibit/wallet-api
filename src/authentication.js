@@ -34,16 +34,18 @@ module.exports = function () {
         // Flag response with usingTempPassword, if applicable.
         iff(
           hook => hook.data.strategy === 'challenge',
-          hook => {
-            if (hook.params.usingTempPassword) {
-              hook.result.usingTempPassword = true
-            }
-            hook.result.user = hook.params.user
-            delete hook.result.user.password
-            delete hook.result.user.tempPassword
-            delete hook.result.user.salt
-            delete hook.result.user.challenge
-          }
+          hook => hook.app.service('/users').get(hook.params.user._id)
+            .then(user => {
+              if (hook.params.usingTempPassword && user.tempPassword) {
+                hook.result.usingTempPassword = true
+              }
+              hook.result.user = user
+              delete hook.result.user.password
+              delete hook.result.user.tempPassword
+              delete hook.result.user.salt
+              delete hook.result.user.challenge
+              return hook
+            })
         )
       ]
     },

@@ -8,6 +8,18 @@ const clients = require('../test-utils/make-clients')
 
 const signed = makeSigned(crypto)
 
+// Remove all users before all tests run.
+before(function (done) {
+  app.service('/users')
+    .remove(null, {})
+    .then(() => {
+      done()
+    })
+    .catch(error => {
+      console.log(error)
+    })
+})
+
 clients.forEach(client => {
   runTests(client)
 })
@@ -16,9 +28,9 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`Authentication tests - ${transport}`, function () {
-    before(function (done) {
-      app.service('/users')
-        .create({ email: 'test@equibit.org' })
+    beforeEach(function (done) {
+      feathersClient.logout()
+        .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
         .then(user => app.service('/users').find({ query: {} }))
         .then(users => {
           users = users.data || users
@@ -30,10 +42,10 @@ function runTests (feathersClient) {
         })
     })
 
-    after(function (done) {
+    afterEach(function (done) {
       // Remove all users after tests run.
-      app.service('/users')
-        .remove(null, {})
+      feathersClient.logout()
+        .then(() => app.service('/users').remove(null, {}))
         .then(() => {
           done()
         })
@@ -65,7 +77,31 @@ function runTests (feathersClient) {
         })
     })
 
-    it('allows user login with temporary password', function (done) {
+    it('requires an email for the challenge-request auth strategy', function (done) {
+      feathersClient.authenticate({
+        strategy: 'challenge-request',
+        signature: 'test'
+      }).catch(error => {
+        assert(error.code === 400)
+        assert(error.message === 'Missing credentials')
+        done()
+      })
+    })
+
+    it('requires a signature for the challenge-request auth strategy', function (done) {
+      const user = this.user
+      const { email } = user
+      feathersClient.authenticate({
+        strategy: 'challenge-request',
+        email
+      }).catch(error => {
+        assert(error.code === 400)
+        assert(error.message === 'Missing credentials')
+        done()
+      })
+    })
+
+    it('allows user to login with temporary password', function (done) {
       const user = this.user
       const { email } = user
       const plainPassword = 'b67c67a3c3725b40'
@@ -129,7 +165,7 @@ function runTests (feathersClient) {
         assert(user.updatedAt, `the user record's updatedAt timestamp was included in the response`)
         assert(user.isNewUser, 'the user was flagged as a new user')
 
-        assert(usingTempPassword, 'the <res></res>ponse included the usingTempPassword flag')
+        assert(usingTempPassword, 'the response included the usingTempPassword flag')
 
         done()
       }).catch(error => {
@@ -139,7 +175,160 @@ function runTests (feathersClient) {
       })
     })
 
-    it('sends an email after three failed logins', function () {
+    it('allows user to login with a real password', function (done) {
+      const user = this.user
+      const { email } = user
+      const plainPassword = 'b67c67a3c3725b40'
+      const hashedPassword = signed.createHash(plainPassword)
+      // Patch the user with a known-to-be-working password/salt combo.
+      app.service('/users').patch(user._id, {
+        tempPassword: undefined,
+        password: hashedPassword
+      }).then(user => {
+        assert(user.isNewUser === false, 'the user is no longer flagged as new')
+
+        const data = { email }
+        return signed.sign(data, hashedPassword)
+      }).then(({email, signature}) => {
+        return feathersClient.authenticate({
+          strategy: 'challenge-request',
+          email,
+          signature
+        })
+      }).then(({challenge, salt}) => {
+        return signed.generateSecret(hashedPassword, salt).then(secret => {
+          // The secret is the same as the stored password, but it
+          // never gets sent across the wire.
+          let data = {email, challenge}
+          return signed.sign(data, secret)
+        })
+      }).then(signedData => {
+        signedData.strategy = 'challenge'
+        return feathersClient.authenticate(signedData)
+      }).then(({ accessToken, user, usingTempPassword }) => {
+        assert(accessToken, 'got back an accessToken')
+
+        const payload = decode(accessToken)
+
+        const allowedPayloadFields = [
+          'aud',
+          'exp',
+          'iat',
+          'iss',
+          'sub',
+          'userId'
+        ]
+        Object.keys(payload).forEach(field => {
+          assert(allowedPayloadFields.includes(field), `the "${field}" claim was included in the jwt payload`)
+        })
+        assert(payload.aud === 'https://equibit.org', 'the jwt audience was correct')
+        assert(payload.iss === 'Equibit', 'the jwt issuer was correct')
+        assert(payload.sub === 'user', 'the jwt subject was correct')
+        assert(payload.userId === user._id, 'the jwt userId was correct')
+
+        const allowedUserFields = [
+          '_id',
+          'email',
+          'createdAt',
+          'updatedAt',
+          'isNewUser'
+        ]
+        Object.keys(user).forEach(field => {
+          assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
+        })
+        assert(user.email, `the user's email was returned`)
+        assert(user.createdAt, `the user record's createdAt timestamp was included in the response`)
+        assert(user.updatedAt, `the user record's updatedAt timestamp was included in the response`)
+        assert(!user.isNewUser, 'the user is not flagged as a new user')
+
+        assert(!usingTempPassword, 'the response did not include the usingTempPassword flag')
+
+        done()
+      }).catch(error => {
+        console.log(error)
+        assert(!error, 'this error should not have occurred')
+        done()
+      })
+    })
+
+    it('requires signature for challenge strategy', function (done) {
+      const user = this.user
+      const { email } = user
+      const plainPassword = 'b67c67a3c3725b40'
+      const hashedPassword = signed.createHash(plainPassword)
+      // Patch the user with a new password
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+        .then(user => signed.sign({ email }, hashedPassword))
+        .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
+        .then(({challenge, salt}) => {
+          return signed.generateSecret(hashedPassword, salt).then(secret => {
+            return signed.sign({email, challenge}, secret)
+          })
+        })
+        .then(signedData => {
+          signedData.strategy = 'challenge'
+          delete signedData.signature
+          return feathersClient.authenticate(signedData)
+        })
+        .catch(error => {
+          assert(error.code === 400)
+          assert(error.message === 'Missing credentials')
+          done()
+        })
+    })
+
+    it('requires email for challenge strategy', function (done) {
+      const user = this.user
+      const { email } = user
+      const plainPassword = 'b67c67a3c3725b40'
+      const hashedPassword = signed.createHash(plainPassword)
+      // Patch the user with a new password
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+        .then(user => signed.sign({ email }, hashedPassword))
+        .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
+        .then(({challenge, salt}) => {
+          return signed.generateSecret(hashedPassword, salt).then(secret => {
+            return signed.sign({challenge}, secret)
+          })
+        })
+        .then(signedData => {
+          signedData.strategy = 'challenge'
+          return feathersClient.authenticate(signedData)
+        })
+        .catch(error => {
+          assert(error.code === 400)
+          assert(error.message === 'Missing credentials')
+          done()
+        })
+    })
+
+    it('requires challenge in the challenge strategy signature', function (done) {
+      const user = this.user
+      const { email } = user
+      const plainPassword = 'b67c67a3c3725b40'
+      const hashedPassword = signed.createHash(plainPassword)
+      // Patch the user with a new password
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+        .then(user => signed.sign({ email }, hashedPassword))
+        .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
+        .then(({challenge, salt}) => {
+          return signed.generateSecret(hashedPassword, salt).then(secret => {
+            // the challenge is missing from the signature, so login should fail
+            return signed.sign({email}, secret)
+          })
+        })
+        .then(signedData => {
+          signedData.strategy = 'challenge'
+          return feathersClient.authenticate(signedData)
+        })
+        .catch(error => {
+          assert(error.code === 401)
+          assert(error.message === 'invalid login')
+          done()
+        })
+    })
+
+    it('lowerCases email addresses', function () {
 
     })
 
