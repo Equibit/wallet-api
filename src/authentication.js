@@ -116,8 +116,6 @@ module.exports = function () {
             status: 'FAILURE'
           }).then(() => {
             return hook
-          }).catch(error => {
-            debugger
           })
         }
       ]

@@ -49,7 +49,7 @@ function runTests (feathersClient) {
         strategy: 'challenge',
         email: user.email,
         challenge: '62e67d3a4e96fb45bb7e2f1a993f08f610e8b39b981e6000bf52ff5e4f77c87217f9681e4d645e7d944831c43577968b125f72ed43328767701141ed67360efb',
-        signature: '0f6a2edd0c133c561f0f6ae017061733c87ef282676270d28d887f5889ee3dee35346b44d64e53ff6dba84516d799df6609db1ef6d60e4b01b26d5ea4cd45f60',
+        signature: '0f6a2edd0c133c561f0f6ae017061733c87ef282676270d28d887f5889ee3dee35346b44d64e53ff6dba84516d799df6609db1ef6d60e4b01b26d5ea4cd45f60'
       }
       const loginAttempts = app.service('login-attempts')
 
@@ -75,7 +75,7 @@ function runTests (feathersClient) {
         strategy: 'challenge',
         email: user.email,
         challenge: '62e67d3a4e96fb45bb7e2f1a993f08f610e8b39b981e6000bf52ff5e4f77c87217f9681e4d645e7d944831c43577968b125f72ed43328767701141ed67360efb',
-        signature: '0f6a2edd0c133c561f0f6ae017061733c87ef282676270d28d887f5889ee3dee35346b44d64e53ff6dba84516d799df6609db1ef6d60e4b01b26d5ea4cd45f60',
+        signature: '0f6a2edd0c133c561f0f6ae017061733c87ef282676270d28d887f5889ee3dee35346b44d64e53ff6dba84516d799df6609db1ef6d60e4b01b26d5ea4cd45f60'
       }
       const userService = app.service('users')
 
@@ -97,7 +97,7 @@ function runTests (feathersClient) {
         strategy: 'challenge',
         email: user.email,
         challenge: '62e67d3a4e96fb45bb7e2f1a993f08f610e8b39b981e6000bf52ff5e4f77c87217f9681e4d645e7d944831c43577968b125f72ed43328767701141ed67360efb',
-        signature: '0f6a2edd0c133c561f0f6ae017061733c87ef282676270d28d887f5889ee3dee35346b44d64e53ff6dba84516d799df6609db1ef6d60e4b01b26d5ea4cd45f60',
+        signature: '0f6a2edd0c133c561f0f6ae017061733c87ef282676270d28d887f5889ee3dee35346b44d64e53ff6dba84516d799df6609db1ef6d60e4b01b26d5ea4cd45f60'
       }
       const loginAttempts = app.service('login-attempts')
 
@@ -113,7 +113,6 @@ function runTests (feathersClient) {
           })
           // assert(attempt.status === 'FAILURE', 'the login attempt failed')
           // assert.deepEqual(attempt.data, invalidLoginParams, 'the logged attempt matched the login data')
-          debugger
           done()
         })
     })

@@ -31,11 +31,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [
-      hook => {
-        debugger
-      }
-    ],
+    create: [],
     update: [],
     patch: [],
     remove: []

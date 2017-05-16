@@ -8,7 +8,7 @@ const forgotPassword = require('./forgot-password/forgot-password.service')
 const buyOrders = require('./buy-orders/buy-orders.service.js')
 const sellOrders = require('./sell-orders/sell-orders.service.js')
 
-const loginAttempts = require('./login-attempts/login-attempts.service.js');
+const loginAttempts = require('./login-attempts/login-attempts.service.js')
 
 module.exports = function () {
   const app = this
@@ -19,5 +19,5 @@ module.exports = function () {
   app.configure(forgotPassword)
   app.configure(buyOrders)
   app.configure(sellOrders)
-  app.configure(loginAttempts);
+  app.configure(loginAttempts)
 }
