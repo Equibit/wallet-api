@@ -17,6 +17,10 @@ module.exports = function (app) {
     twoFactor: {
       sms: { type: Boolean }
     },
+    failedLogins: [{
+      date: Date
+    }],
+    lastFailedLoginAt: { type: Date },
     isNewUser: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }

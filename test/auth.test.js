@@ -5,20 +5,12 @@ const makeSigned = require('feathers-authentication-signed/client')
 const decode = require('jwt-decode')
 require('../test-utils/setup')
 const clients = require('../test-utils/make-clients')
+const removeUsers = require('../test-utils/utils').removeUsers
 
 const signed = makeSigned(crypto)
 
 // Remove all users before all tests run.
-before(function (done) {
-  app.service('/users')
-    .remove(null, {})
-    .then(() => {
-      done()
-    })
-    .catch(error => {
-      console.log(error)
-    })
-})
+before(removeUsers(app))
 
 clients.forEach(client => {
   runTests(client)
@@ -51,29 +43,6 @@ function runTests (feathersClient) {
         })
         .catch(error => {
           console.log(error)
-        })
-    })
-
-    it('returns a generic response when creating a user', function () {
-      const userService = feathersClient.service('/users')
-      const email = 'some-user@equibit.org'
-
-      return userService.create({ email })
-        .then(body => {
-          let expectedResponse = { email }
-          assert.deepEqual(body, expectedResponse, `the response only included the new user's email`)
-        })
-    })
-
-    it(`doesn't allow outside access to users`, function () {
-      const userService = feathersClient.service('/users')
-
-      return userService.find({ query: {} })
-        .then(response => {
-          assert(!response)
-        })
-        .catch(error => {
-          assert(error.name === 'NotAuthenticated')
         })
     })
 
@@ -326,10 +295,6 @@ function runTests (feathersClient) {
           assert(error.message === 'invalid login')
           done()
         })
-    })
-
-    it('lowerCases email addresses', function () {
-
     })
 
     // it(`doesn't accept temporary passwords after 15 minutes`, function () {

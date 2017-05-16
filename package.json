@@ -51,6 +51,7 @@
     "feathers-rest": "^1.7.2",
     "feathers-socketio": "^2.0.0",
     "helmet": "^3.6.0",
+    "lodash.pick": "^4.4.0",
     "mocha": "^3.3.0",
     "mongoose": "^4.9.8",
     "postmark": "^1.3.1",
