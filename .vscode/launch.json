@@ -15,7 +15,8 @@
       "--timeout",
       "999999",
       "--colors",
-      "${workspaceRoot}/test/"
+      "${workspaceRoot}/test/",
+      "--recursive"
     ],
     "env": {
       "NODE_ENV": "ci"
