@@ -18,7 +18,7 @@ module.exports = function verifyFailedLogins (options) {
       date: Date.now(),
       sendEmail: false
     }
-    let { failedLogins } = user
+    let failedLogins = user.failedLogins || []
 
     // If there's a failed login with {email:true}, check its date.
     const lastEmailed = failedLogins.filter(login => login.sendEmail === true)[0]
