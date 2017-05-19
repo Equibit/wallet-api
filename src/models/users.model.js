@@ -19,7 +19,8 @@ module.exports = function (app) {
       sms: { type: Boolean }
     },
     failedLogins: [{
-      date: Date
+      date: Date,
+      sendEmail: Boolean
     }],
     isNewUser: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
