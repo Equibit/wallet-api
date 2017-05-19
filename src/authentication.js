@@ -5,6 +5,8 @@ const jwt = require('feathers-authentication-jwt')
 const signed = require('feathers-authentication-signed')
 const { iff } = require('feathers-hooks-common')
 const pick = require('lodash.pick')
+const verifyFailedLoginEmail = require('./hooks/failed-logins.verify')
+const sendFailedLoginEmail = require('./hooks/failed-logins.email')
 // const makeCryptoUtils = require('feathers-authentication-signed/');
 
 const refreshUser = () => hook => {
@@ -25,6 +27,8 @@ const refreshUser = () => hook => {
 module.exports = function () {
   const app = this
   const config = app.get('authentication')
+  const outboundEmail = app.get('outboundEmail')
+  const emailTemplates = app.get('postmarkTemplateIds')
 
   // Set up authentication with the secret
   app.configure(authentication(config))
@@ -64,6 +68,7 @@ module.exports = function () {
             delete hook.result.user.salt
             delete hook.result.user.challenge
             delete hook.result.user.failedLogins
+            delete hook.result.user.pastPasswordHashes
             return hook
           }
         ),
@@ -79,34 +84,22 @@ module.exports = function () {
     error: {
       create: [
         refreshUser(),
-        hook => {
-          // debugger
-        },
         // Check if this is the third failed login, today, for this user.
-        // iff(
-        //   hook => hook.params.user,
-        //   hook => {
-        //     const user = hook.params.user
-        //     const { failedLogins } = user
-        //     const oneDayAgo = new Date(Date.now() - (24 * 60 * 60 * 1000))
-
-        //     failedLogins.push({
-        //       date: Date.now()
-        //     })
-
-        //     const failedLoginsToday = failedLogins.reduce(function (acc, current) {
-        //       if (oneDayAgo < current.date) {
-        //         acc++
-        //       }
-        //       return acc
-        //     }, 0)
-        //     if (failedLoginsToday === 3) {
-        //       // Send email notification
-        //     }
-        //     debugger
-        //     return hook
-        //   }
-        // ),
+        iff(
+          hook => hook.params.user && hook.data.strategy === 'challenge',
+          // Send a notification at most every 6 hours.
+          verifyFailedLoginEmail({
+            failureCount: 3,
+            timeBetweenEmails: 6 * 60 * 60 * 1000
+          }),
+          iff(
+            hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST' && hook.params.notifyFailedLogins,
+            sendFailedLoginEmail({
+              From: outboundEmail,
+              TemplateId: emailTemplates.securityAlertFailedLogins
+            })
+          )
+        ),
         // Log all login attempts
         hook => {
           const error = pick(hook.error, ['className', 'code', 'message', 'name', 'type'])

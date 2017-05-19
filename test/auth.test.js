@@ -153,7 +153,7 @@ function runTests (feathersClient) {
       app.service('/users').patch(user._id, {
         tempPassword: undefined,
         password: hashedPassword
-      }).then(user => {
+      }, { user }).then(user => {
         assert(user.isNewUser === false, 'the user is no longer flagged as new')
 
         const data = { email }
@@ -226,7 +226,7 @@ function runTests (feathersClient) {
       const plainPassword = 'b67c67a3c3725b40'
       const hashedPassword = signed.createHash(plainPassword)
       // Patch the user with a new password
-      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword }, { user })
         .then(user => signed.sign({ email }, hashedPassword))
         .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
         .then(({challenge, salt}) => {
@@ -252,7 +252,7 @@ function runTests (feathersClient) {
       const plainPassword = 'b67c67a3c3725b40'
       const hashedPassword = signed.createHash(plainPassword)
       // Patch the user with a new password
-      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword }, { user })
         .then(user => signed.sign({ email }, hashedPassword))
         .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
         .then(({challenge, salt}) => {
@@ -277,7 +277,7 @@ function runTests (feathersClient) {
       const plainPassword = 'b67c67a3c3725b40'
       const hashedPassword = signed.createHash(plainPassword)
       // Patch the user with a new password
-      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword }, { user })
         .then(user => signed.sign({ email }, hashedPassword))
         .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
         .then(({challenge, salt}) => {
@@ -297,8 +297,48 @@ function runTests (feathersClient) {
         })
     })
 
-    // it(`doesn't accept temporary passwords after 15 minutes`, function () {
+    it(`returns an error with incorrect signature`, function (done) {
+      const user = this.user
+      const wrongSignature = '38rhgoisevo9jw4eonsd'
+      const params = {
+        strategy: 'challenge',
+        email: user.email,
+        signature: wrongSignature
+      }
 
-    // })
+      feathersClient.authenticate(params)
+        .then(res => {
+          assert(!res, `should not have gotten a response with an invalid login`)
+          done()
+        })
+        .catch(error => {
+          assert(error.message === 'invalid login', `an error was returned for an invalid login.`)
+          done()
+        })
+    })
+
+    it(`sends an email after 3 failed logins`, function (done) {
+      const user = this.user
+      const wrongSignature = '38rhgoisevo9jw4eonsd'
+      const params = {
+        strategy: 'challenge',
+        email: user.email,
+        signature: wrongSignature
+      }
+
+      feathersClient.authenticate(params)
+        .catch(() => feathersClient.authenticate(params))
+        .catch(() => feathersClient.authenticate(params))
+        .catch(() => {
+          return app.service('users').get(user._id)
+        })
+        .then(user => {
+          assert(user.failedLogins.length === 3, 'there were 3 failed logins saved to the user')
+          assert(user.failedLogins[0].sendEmail === false, 'on the first failed login no email was sent')
+          assert(user.failedLogins[1].sendEmail === false, 'on the second failed login no email was sent')
+          assert(user.failedLogins[2].sendEmail === true, 'on the third failed login an email was sent')
+          done()
+        })
+    })
   })
 };

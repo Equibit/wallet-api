@@ -7,6 +7,7 @@ module.exports = function (app) {
   const Mixed = mongooseClient.Schema.Types.Mixed
   const loginAttempts = new mongooseClient.Schema({
     data: { type: Mixed },
+    connection: { type: Mixed },
     error: { type: Mixed },
     status: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },

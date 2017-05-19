@@ -12,15 +12,16 @@ module.exports = function (app) {
     passwordCreatedAt: { type: Date },
     tempPassword: { type: String },
     tempPasswordCreatedAt: { type: Date },
+    pastPasswordHashes: [ String ],
     salt: { type: String }, // Salt is shared between both passwords.
     challenge: { type: String },
     twoFactor: {
       sms: { type: Boolean }
     },
     failedLogins: [{
-      date: Date
+      date: Date,
+      sendEmail: Boolean
     }],
-    lastFailedLoginAt: { type: Date },
     isNewUser: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
