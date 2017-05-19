@@ -153,7 +153,7 @@ function runTests (feathersClient) {
       app.service('/users').patch(user._id, {
         tempPassword: undefined,
         password: hashedPassword
-      }).then(user => {
+      }, { user }).then(user => {
         assert(user.isNewUser === false, 'the user is no longer flagged as new')
 
         const data = { email }
@@ -226,7 +226,7 @@ function runTests (feathersClient) {
       const plainPassword = 'b67c67a3c3725b40'
       const hashedPassword = signed.createHash(plainPassword)
       // Patch the user with a new password
-      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword }, { user })
         .then(user => signed.sign({ email }, hashedPassword))
         .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
         .then(({challenge, salt}) => {
@@ -252,7 +252,7 @@ function runTests (feathersClient) {
       const plainPassword = 'b67c67a3c3725b40'
       const hashedPassword = signed.createHash(plainPassword)
       // Patch the user with a new password
-      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword }, { user })
         .then(user => signed.sign({ email }, hashedPassword))
         .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
         .then(({challenge, salt}) => {
@@ -277,7 +277,7 @@ function runTests (feathersClient) {
       const plainPassword = 'b67c67a3c3725b40'
       const hashedPassword = signed.createHash(plainPassword)
       // Patch the user with a new password
-      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword })
+      app.service('/users').patch(user._id, { tempPassword: undefined, password: hashedPassword }, { user })
         .then(user => signed.sign({ email }, hashedPassword))
         .then(({email, signature}) => feathersClient.authenticate({strategy: 'challenge-request', email, signature}))
         .then(({challenge, salt}) => {
