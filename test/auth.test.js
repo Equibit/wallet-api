@@ -317,6 +317,28 @@ function runTests (feathersClient) {
         })
     })
 
-    // })
+    it(`sends an email after 3 failed logins`, function (done) {
+      const user = this.user
+      const wrongSignature = '38rhgoisevo9jw4eonsd'
+      const params = {
+        strategy: 'challenge',
+        email: user.email,
+        signature: wrongSignature
+      }
+
+      feathersClient.authenticate(params)
+        .catch(() => feathersClient.authenticate(params))
+        .catch(() => feathersClient.authenticate(params))
+        .catch(() => {
+          return app.service('users').get(user._id)
+        })
+        .then(user => {
+          assert(user.failedLogins.length === 3, 'there were 3 failed logins saved to the user')
+          assert(user.failedLogins[0].sendEmail === false, 'on the first failed login no email was sent')
+          assert(user.failedLogins[1].sendEmail === false, 'on the second failed login no email was sent')
+          assert(user.failedLogins[2].sendEmail === true, 'on the third failed login an email was sent')
+          done()
+        })
+    })
   })
 };
