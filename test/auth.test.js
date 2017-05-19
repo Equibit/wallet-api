@@ -297,7 +297,25 @@ function runTests (feathersClient) {
         })
     })
 
-    // it(`doesn't accept temporary passwords after 15 minutes`, function () {
+    it(`returns an error with incorrect signature`, function (done) {
+      const user = this.user
+      const wrongSignature = '38rhgoisevo9jw4eonsd'
+      const params = {
+        strategy: 'challenge',
+        email: user.email,
+        signature: wrongSignature
+      }
+
+      feathersClient.authenticate(params)
+        .then(res => {
+          assert(!res, `should not have gotten a response with an invalid login`)
+          done()
+        })
+        .catch(error => {
+          assert(error.message === 'invalid login', `an error was returned for an invalid login.`)
+          done()
+        })
+    })
 
     // })
   })
