@@ -70,7 +70,7 @@ describe('Hook: Failed Logins', function (done) {
   it(`clears the failedLogins after the timeBetweenEmails has passed`, function (done) {
     const verifyFailedLogins = testHook({
       failureCount: 3,
-      timeBetweenEmails: 100 // 1 second
+      timeBetweenEmails: 100 // shorten the time for testing
     })
     const user = this.user
     const context = {
