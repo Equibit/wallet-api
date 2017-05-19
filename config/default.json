@@ -30,7 +30,8 @@
     "welcome": 1469183,
     "duplicateSignup": 1472482,
     "forgotPasswordExisting": 1480221,
-    "forgotPasswordNonExisting": 1480222
+    "forgotPasswordNonExisting": 1480222,
+    "securityAlertFailedLogins": 1854481
   },
   "seeder": {
     "enabled": true,
