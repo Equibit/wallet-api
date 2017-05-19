@@ -8,6 +8,7 @@ const createTemporaryPassword = require('./hook.create-temp-password')
 const sendWelcomeEmail = require('./hook.email.welcome')
 const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
 const removeIsNewUser = require('./hook.remove-is-new-user')
+const enforcePastPasswordPolicy = require('./hook.password.past-policy')
 
 module.exports = function (app) {
   const outboundEmail = app.get('outboundEmail')
@@ -49,6 +50,10 @@ module.exports = function (app) {
         // If a password is provided, hash it and generate a salt.
         iff(
           hook => hook.data && hook.data.password,
+          enforcePastPasswordPolicy({
+            oldPasswordsAttr: 'pastPasswordHashes',
+            passwordCount: 3
+          }),
           generateSalt({ randomBytes }),
           hashPassword({ randomBytes, pbkdf2 }),
           removeIsNewUser()
@@ -59,6 +64,10 @@ module.exports = function (app) {
         // If a password is provided, hash it and generate a salt.
         iff(
           hook => hook.data && hook.data.password,
+          enforcePastPasswordPolicy({
+            oldPasswordsAttr: 'pastPasswordHashes',
+            passwordCount: 3
+          }),
           generateSalt({ randomBytes }),
           hashPassword({ randomBytes, pbkdf2 }),
           removeIsNewUser()
