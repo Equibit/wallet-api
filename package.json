@@ -24,7 +24,7 @@
     "test-local": "NODE_ENV=testing npm run lint && npm run mocha",
     "lint": "standard --fix",
     "start": "node src/",
-    "mocha": "mocha -u tdd --timeout 999999 --colors test/"
+    "mocha": "mocha -u tdd --timeout 999999 --colors test/ --recursive"
   },
   "standard": {
     "env": [
