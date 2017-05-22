@@ -49,3 +49,4 @@ data/
 /config/local-development.json
 docs/_book/
 /config/local-ci.json
+/.nyc_output

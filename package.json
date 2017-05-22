@@ -24,7 +24,7 @@
     "test-local": "NODE_ENV=testing npm run lint && npm run mocha",
     "lint": "standard --fix",
     "start": "node src/",
-    "mocha": "mocha -u tdd --timeout 999999 --colors test/ --recursive"
+    "mocha": "nyc mocha -u tdd --timeout 999999 --colors test/ --recursive"
   },
   "standard": {
     "env": [
@@ -66,6 +66,7 @@
     "faker": "^4.1.0",
     "feathers-authentication-client": "^0.3.2",
     "jwt-decode": "^2.2.0",
+    "nyc": "^10.3.2",
     "objectid": "^3.2.1",
     "random-float": "^1.0.0",
     "random-int": "^1.0.0",
