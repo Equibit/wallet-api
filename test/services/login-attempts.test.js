@@ -116,5 +116,71 @@ function runTests (feathersClient) {
           done()
         })
     })
+
+    it(`is rejects find requests from the client`, function (done) {
+      feathersClient.service('login-attempts').find()
+        .then(res => {
+          assert(!res, 'should not have received a response')
+        })
+        .catch(error => {
+          assert(error.className === 'method-not-allowed')
+          done()
+        })
+    })
+
+    it(`is rejects get requests from the client`, function (done) {
+      feathersClient.service('login-attempts').get(1)
+        .then(res => {
+          assert(!res, 'should not have received a response')
+        })
+        .catch(error => {
+          assert(error.className === 'method-not-allowed')
+          done()
+        })
+    })
+
+    it(`is rejects create requests from the client`, function (done) {
+      feathersClient.service('login-attempts').create({test: true})
+        .then(res => {
+          assert(!res, 'should not have received a response')
+        })
+        .catch(error => {
+          assert(error.className === 'method-not-allowed')
+          done()
+        })
+    })
+
+    it(`is rejects update requests from the client`, function (done) {
+      feathersClient.service('login-attempts').update(1, {test: true})
+        .then(res => {
+          assert(!res, 'should not have received a response')
+        })
+        .catch(error => {
+          assert(error.className === 'method-not-allowed')
+          done()
+        })
+    })
+
+    it(`is rejects patch requests from the client`, function (done) {
+      feathersClient.service('login-attempts').patch(1, {test: true})
+        .then(res => {
+          assert(!res, 'should not have received a response')
+        })
+        .catch(error => {
+          assert(error.className === 'method-not-allowed')
+          done()
+        })
+    })
+
+    it(`is rejects remove requests from the client`, function (done) {
+      feathersClient.service('login-attempts').remove(1)
+        .then(res => {
+          assert(!res, 'should not have received a response')
+        })
+        .catch(error => {
+          assert(error.className === 'method-not-allowed')
+          done()
+        })
+    })
   })
 }
