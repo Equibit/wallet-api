@@ -69,7 +69,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it.skip(`adds to the user's failedLogins[]`, function (done) {
+    it(`adds to the user's failedLogins[]`, function (done) {
       const user = this.user
       const invalidLoginParams = {
         strategy: 'challenge',
@@ -91,7 +91,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it.skip(`sends an email after three failed login attempts`, function (done) {
+    it(`sends an email after three failed login attempts`, function (done) {
       const user = this.user
       const invalidLoginParams = {
         strategy: 'challenge',
