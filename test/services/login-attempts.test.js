@@ -5,6 +5,7 @@ const app = require('../../src/app')
 require('../../test-utils/setup')
 const clients = require('../../test-utils/make-clients')
 const removeUsers = require('../../test-utils/utils').removeUsers
+const assertDisallowed = require('../../test-utils/disallow-method')
 
 // Remove all users before all tests run.
 before(removeUsers(app))
@@ -117,70 +118,28 @@ function runTests (feathersClient) {
         })
     })
 
-    it(`is rejects find requests from the client`, function (done) {
-      feathersClient.service('login-attempts').find()
-        .then(res => {
-          assert(!res, 'should not have received a response')
-        })
-        .catch(error => {
-          assert(error.className === 'method-not-allowed')
-          done()
-        })
+    it(`rejects find requests from the client`, function (done) {
+      assertDisallowed(feathersClient.service('login-attempts'), 'find', assert, done)
     })
 
-    it(`is rejects get requests from the client`, function (done) {
-      feathersClient.service('login-attempts').get(1)
-        .then(res => {
-          assert(!res, 'should not have received a response')
-        })
-        .catch(error => {
-          assert(error.className === 'method-not-allowed')
-          done()
-        })
+    it(`rejects get requests from the client`, function (done) {
+      assertDisallowed(feathersClient.service('login-attempts'), 'get', assert, done)
     })
 
-    it(`is rejects create requests from the client`, function (done) {
-      feathersClient.service('login-attempts').create({test: true})
-        .then(res => {
-          assert(!res, 'should not have received a response')
-        })
-        .catch(error => {
-          assert(error.className === 'method-not-allowed')
-          done()
-        })
+    it(`rejects create requests from the client`, function (done) {
+      assertDisallowed(feathersClient.service('login-attempts'), 'create', assert, done)
     })
 
-    it(`is rejects update requests from the client`, function (done) {
-      feathersClient.service('login-attempts').update(1, {test: true})
-        .then(res => {
-          assert(!res, 'should not have received a response')
-        })
-        .catch(error => {
-          assert(error.className === 'method-not-allowed')
-          done()
-        })
+    it(`rejects update requests from the client`, function (done) {
+      assertDisallowed(feathersClient.service('login-attempts'), 'update', assert, done)
     })
 
-    it(`is rejects patch requests from the client`, function (done) {
-      feathersClient.service('login-attempts').patch(1, {test: true})
-        .then(res => {
-          assert(!res, 'should not have received a response')
-        })
-        .catch(error => {
-          assert(error.className === 'method-not-allowed')
-          done()
-        })
+    it(`rejects patch requests from the client`, function (done) {
+      assertDisallowed(feathersClient.service('login-attempts'), 'patch', assert, done)
     })
 
-    it(`is rejects remove requests from the client`, function (done) {
-      feathersClient.service('login-attempts').remove(1)
-        .then(res => {
-          assert(!res, 'should not have received a response')
-        })
-        .catch(error => {
-          assert(error.className === 'method-not-allowed')
-          done()
-        })
+    it(`rejects remove requests from the client`, function (done) {
+      assertDisallowed(feathersClient.service('login-attempts'), 'remove', assert, done)
     })
   })
 }
