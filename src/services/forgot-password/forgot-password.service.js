@@ -59,17 +59,20 @@ module.exports = function () {
     after: {
       create: [
         iff(
-          hook => hook.params.user,
+          hook => hook.params.user && hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
           sendForgotPasswordEmailForExistingUser({
             From: outboundEmail,
             TemplateId: emailTemplates.forgotPasswordExisting,
             tempPasswordField: 'tempPasswordPlain'
           })
         ).else(
-          sendForgotPasswordEmailForMissingUser({
-            From: outboundEmail,
-            TemplateId: emailTemplates.forgotPasswordNonExisting
-          })
+          iff(
+            hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
+            sendForgotPasswordEmailForMissingUser({
+              From: outboundEmail,
+              TemplateId: emailTemplates.forgotPasswordNonExisting
+            })
+          )
         ),
         // Sets hook.result to make sure the response is deterministic.
         normalizeResponse()
