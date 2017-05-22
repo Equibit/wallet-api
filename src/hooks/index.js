@@ -1,7 +1,7 @@
 'use strict'
 
 // Application hooks that run for every service
-const logger = require('./logger')
+// const logger = require('./logger')
 const addUserAgent = require('./user-agent')
 
 module.exports = {
@@ -16,7 +16,9 @@ module.exports = {
   },
 
   after: {
-    all: [ logger() ],
+    all: [
+      // logger()
+    ],
     find: [],
     get: [],
     create: [],
@@ -26,7 +28,9 @@ module.exports = {
   },
 
   error: {
-    all: [ logger() ],
+    all: [
+      // logger()
+    ],
     find: [],
     get: [],
     create: [],

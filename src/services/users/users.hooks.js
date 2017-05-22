@@ -122,11 +122,7 @@ module.exports = function (app) {
     },
 
     error: {
-      all: [
-        error => {
-          console.log(error)
-        }
-      ],
+      all: [],
       find: [],
       get: [],
       create: [],
