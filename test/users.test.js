@@ -1,10 +1,9 @@
 const assert = require('assert')
 const app = require('../src/app')
-// const makeSigned = require('feathers-authentication-signed/client')
-// const crypto = require('crypto')
 require('../test-utils/setup')
 const clients = require('../test-utils/make-clients')
 const removeUsers = require('../test-utils/utils').removeUsers
+const userUtils = require('../test-utils/user')
 
 // Remove all users before all tests run.
 before(removeUsers(app))
