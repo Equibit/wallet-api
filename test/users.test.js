@@ -82,5 +82,31 @@ function runTests (feathersClient) {
           done()
         })
     })
+
+    it(`doesn't leak any data in the change password response`, function (done) {
+      const user = this.user
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => {
+          return feathersClient.service('users').patch(user._id, { password: 'new password' })
+        })
+        .then(user => {
+          const allowedUserFields = [
+            '_id',
+            'email',
+            'createdAt',
+            'updatedAt',
+            'isNewUser'
+          ]
+          Object.keys(user).forEach(field => {
+            assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
+          })
+          done()
+        })
+        .catch(error => {
+          assert(error.className === 'not-authenticated', 'auth was required')
+          done()
+        })
+    })
   })
 }
