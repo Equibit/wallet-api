@@ -71,5 +71,16 @@ function runTests (feathersClient) {
           assert(user.email === 'admin@equibit.org', 'the signup email was lowerCased')
         })
     })
+
+    it(`requires auth to change a password`, function (done) {
+      const user = this.user
+
+      feathersClient.service('users')
+        .patch(user._id, { password: 'new password' })
+        .catch(error => {
+          assert(error.className === 'not-authenticated', 'auth was required')
+          done()
+        })
+    })
   })
 }
