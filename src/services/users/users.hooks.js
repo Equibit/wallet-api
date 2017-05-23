@@ -8,6 +8,7 @@ const createTemporaryPassword = require('./hook.create-temp-password')
 const sendWelcomeEmail = require('./hook.email.welcome')
 const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
 const removeIsNewUser = require('./hook.remove-is-new-user')
+const removeTempPassword = require('./hook.remove-temp-password')
 const enforcePastPasswordPolicy = require('./hook.password.past-policy')
 
 module.exports = function (app) {
@@ -56,7 +57,8 @@ module.exports = function (app) {
           }),
           generateSalt({ randomBytes }),
           hashPassword({ randomBytes, pbkdf2 }),
-          removeIsNewUser()
+          removeIsNewUser(),
+          removeTempPassword()
         )
       ],
       patch: [
@@ -70,7 +72,8 @@ module.exports = function (app) {
           }),
           generateSalt({ randomBytes }),
           hashPassword({ randomBytes, pbkdf2 }),
-          removeIsNewUser()
+          removeIsNewUser(),
+          removeTempPassword()
         )
       ],
       remove: [
@@ -86,7 +89,9 @@ module.exports = function (app) {
             'password',
             'tempPassword',
             'salt',
-            'challenge'
+            'challenge',
+            'failedLogins',
+            'pastPasswordHashes'
           )
         )
       ],

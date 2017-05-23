@@ -19,10 +19,12 @@ function runTests (feathersClient) {
     beforeEach(function (done) {
       feathersClient.logout()
         .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
+        .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
         .then(user => app.service('/users').find({ query: {} }))
         .then(users => {
           users = users.data || users
           this.user = users[0]
+          this.user2 = users[1]
           done()
         })
         .catch(error => {
@@ -123,6 +125,23 @@ function runTests (feathersClient) {
         })
         .catch(error => {
           assert(!error, error.message)
+          done()
+        })
+    })
+
+    it(`removes the tempPassword from the user after password change`, function (done) {
+      const user = this.user
+      const user2 = this.user2
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => feathersClient.service('users').patch(user2._id, { password: 'new password' }))
+        .then(res => {
+          assert(!res, 'the request should have failed')
+          done()
+        })
+        .catch(error => {
+          assert(error.code === 403, 'the correct error code was returned')
+          assert(error.name === 'Forbidden', `the user could not change another user's password`)
           done()
         })
     })
