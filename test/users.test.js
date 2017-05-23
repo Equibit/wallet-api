@@ -108,5 +108,23 @@ function runTests (feathersClient) {
           done()
         })
     })
+
+    it(`allows an authenticated user to change passwords`, function (done) {
+      const user = this.user
+
+      assert(user.password === undefined, 'there was no password for a new user')
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => feathersClient.service('users').patch(user._id, { password: 'new password' }))
+        .then(res => app.service('users').get(user._id))
+        .then(patchedUser => {
+          assert(typeof patchedUser.password === 'string', 'the user now has a password')
+          done()
+        })
+        .catch(error => {
+          assert(!error, error.message)
+          done()
+        })
+    })
   })
 }
