@@ -5,8 +5,7 @@ const companies = require('./companies/companies.service')
 const issuances = require('./issuances/issuances.service')
 const postmark = require('./postmark-messages')
 const forgotPassword = require('./forgot-password/forgot-password.service')
-const buyOrders = require('./buy-orders/buy-orders.service.js')
-const sellOrders = require('./sell-orders/sell-orders.service.js')
+const orders = require('./orders/orders.service.js')
 
 const loginAttempts = require('./login-attempts/login-attempts.service.js')
 
@@ -17,7 +16,6 @@ module.exports = function () {
   app.configure(issuances)
   app.configure(postmark)
   app.configure(forgotPassword)
-  app.configure(buyOrders)
-  app.configure(sellOrders)
+  app.configure(orders)
   app.configure(loginAttempts)
 }
