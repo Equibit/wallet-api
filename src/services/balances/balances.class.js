@@ -19,10 +19,10 @@ class Service {
       }
     })
       .then(res => {
-        debugger
+        // debugger
       })
-      .catch(error => {
-        debugger
+      .catch(() => {
+        // debugger
       })
     // return Promise.resolve([{
     //   type: 'equibit',
