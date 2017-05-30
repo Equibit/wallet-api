@@ -5,7 +5,7 @@ const app = require('../../src/app')
 require('../../test-utils/setup')
 const clients = require('../../test-utils/make-clients')
 const removeUsers = require('../../test-utils/utils').removeUsers
-const assertDisallowed = require('../../test-utils/disallow-method')
+const assertDisallowed = require('../../test-utils/method.disallow')
 
 // Remove all users before all tests run.
 before(removeUsers(app))
