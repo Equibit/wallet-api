@@ -50,7 +50,7 @@ app.configure(socketio(function (io) {
     Object.assign(socket.feathers, {headers: socket.handshake.headers})
     socket.feathers.ip = socket.conn.remoteAddress
   })
-}))
+}, { timeout: app.get('socketTimeout') }))
 
 app.configure(authentication)
 
