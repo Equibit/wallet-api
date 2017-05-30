@@ -151,7 +151,6 @@ function runTests (feathersClient) {
       const hashedPassword = signed.createHash(plainPassword)
       // Patch the user with a known-to-be-working password/salt combo.
       app.service('/users').patch(user._id, {
-        tempPassword: undefined,
         password: hashedPassword
       }, { user }).then(user => {
         assert(user.isNewUser === false, 'the user is no longer flagged as new')
