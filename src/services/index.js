@@ -10,6 +10,8 @@ const orders = require('./orders/orders.service.js')
 const loginAttempts = require('./login-attempts/login-attempts.service.js')
 
 const balances = require('./balances/balances.service.js')
+const portfolios = require('./portfolios/portfolios.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -20,4 +22,5 @@ module.exports = function () {
   app.configure(orders)
   app.configure(loginAttempts)
   app.configure(balances)
+  app.configure(portfolios)
 }
