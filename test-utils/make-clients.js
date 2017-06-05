@@ -24,8 +24,10 @@ function makeClient (transport = 'socketio') {
 
   return feathersClient
 }
+const socketClient = () => makeClient('socketio')
+const restClient = () => makeClient('rest')
 
-module.exports = [
-  makeClient('socketio'),
-  makeClient('rest')
-]
+
+module.exports = [ socketClient(), restClient() ]
+module.exports.socket = socketClient
+module.exports.rest = restClient
