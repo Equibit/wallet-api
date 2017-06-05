@@ -6,6 +6,7 @@ class Service {
   }
 
   find (params) {
+    console.log('find params.query: ', params.query)
     return axios({
       method: 'POST',
       // url: 'http://99.227.230.43:8331',
@@ -13,7 +14,7 @@ class Service {
       data: {
         jsonrpc: '1.0',
         method: params.query.method,
-        params: params.query.params
+        params: formatParams(params.query.params)
       },
       auth: {
         username: 'equibit',
@@ -21,7 +22,10 @@ class Service {
       }
     })
     .then(res => res.data)
-    .catch(err => console.log('_______ PROXY ERROR: ', err))
+    .catch(err => {
+      console.log('_______ PROXY ERROR: ', err.response.data)
+      return err.response.data
+    })
   }
 
   get (id, params) {
@@ -49,6 +53,10 @@ class Service {
   remove (id, params) {
     return Promise.resolve({ id })
   }
+}
+
+function formatParams (params) {
+  return params && params.map(p => isNaN(Number(p)) ? p : Number(p))
 }
 
 module.exports = function (options) {
