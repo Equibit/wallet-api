@@ -6,12 +6,9 @@ const schema = {
   properties: {
     name: {
       type: 'string'
-    },
-    address: {
-      type: 'string'
     }
   },
-  required: ['name', 'address'],
+  required: ['name'],
   not: {
     required: [ 'balance' ]
   }
