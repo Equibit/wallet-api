@@ -27,6 +27,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       feathersClient.logout()
         .then(() => userUtils.removeAll(app))
+        .then(() => app.service('portfolios').remove(null, {}))
         .then(() => done())
     })
 
@@ -83,14 +84,17 @@ function runTests (feathersClient) {
         })
     })
 
-    it('allows the create method for an authenticated user', function (done) {
+    it.skip('allows the create method for an authenticated user', function (done) {
       const user = this.user
 
       userUtils.authenticate(app, feathersClient, user)
-        .then(response => feathersClient.service('portfolios').find({ query: {} }))
+        .then(response => feathersClient.service('portfolios').create({
+          name: 'my portfolio',
+          address: 'mmxdeWW5h2nJ9qk7jXjzMBNnJewTnR8ubx'
+        }))
         .then(res => {
           const portfolios = res.data
-          assert(portfolios.length === 0, 'the user has no portfolio by default')
+          assert(!portfolios, 'the user has no portfolio by default')
           done()
         })
         .catch(error => {

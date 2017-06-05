@@ -23,6 +23,8 @@ module.exports = function (app) {
       sendEmail: Boolean
     }],
     isNewUser: { type: Boolean, default: true },
+    encryptedKey: { type: String },
+    encryptedSeed: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   }, {

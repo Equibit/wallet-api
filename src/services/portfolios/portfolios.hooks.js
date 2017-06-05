@@ -1,4 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
+const validate = require('./hook.validate')
+const addBalance = require('./hook.add-balance')
 
 module.exports = {
   before: {
@@ -7,7 +9,10 @@ module.exports = {
     ],
     find: [],
     get: [],
-    create: [],
+    create: [
+      validate(),
+      addBalance()
+    ],
     update: [],
     patch: [],
     remove: []

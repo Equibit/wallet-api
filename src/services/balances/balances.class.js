@@ -33,10 +33,26 @@ class Service {
     // }])
   }
 
-  get (id, params) {
-    return Promise.resolve({
-      id, text: `A new message with ID: ${id}!`
+  get (accountName, params) {
+    return axios({
+      method: 'POST',
+      url: 'http://99.227.230.43:8331',
+      data: {
+        jsonrpc: '1.0',
+        method: 'getbalance',
+        account: accountName
+      },
+      auth: {
+        username: 'equibit',
+        password: 'equibit'
+      }
     })
+      .then(res => {
+        // debugger
+      })
+      .catch(() => {
+        // debugger
+      })
   }
 
   create (data, params) {
