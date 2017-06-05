@@ -7,11 +7,11 @@ module.exports = function (app) {
   const portfolios = new mongooseClient.Schema({
     name: { type: String, required: true },
     index: { type: Number, required: true },
-    balance: { type: Number, required: true },
-    totalCash: { type: Number, required: true },
-    totalSecurities: { type: Number, required: true },
-    unrealizedPL: { type: Number, required: true },
-    unrealizedPLPercent: { type: Number, required: true },
+    balance: { type: Number },
+    totalCash: { type: Number },
+    totalSecurities: { type: Number },
+    unrealizedPL: { type: Number },
+    unrealizedPLPercent: { type: Number },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   })
