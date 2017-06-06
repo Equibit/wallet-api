@@ -6,7 +6,7 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const portfolios = new mongooseClient.Schema({
     name: { type: String, required: true },
-    index: { type: Number, required: true },
+    index: { type: Number, required: false },
     balance: { type: Number },
     totalCash: { type: Number },
     totalSecurities: { type: Number },
