@@ -47,19 +47,13 @@ module.exports = function (app) {
         )
       ],
       update: [
-        lowerCase('email'),
-        // If a password is provided, hash it and generate a salt.
-        iff(
-          hook => hook.data && hook.data.password,
-          enforcePastPasswordPolicy({
-            oldPasswordsAttr: 'pastPasswordHashes',
-            passwordCount: 3
-          }),
-          generateSalt({ randomBytes }),
-          hashPassword({ randomBytes, pbkdf2 }),
-          removeIsNewUser(),
-          removeTempPassword()
-        )
+        context => {
+          return context.service.patch(context.id, context.data, context.params)
+            .then(result => {
+              context.result = result
+              return context
+            })
+        }
       ],
       patch: [
         lowerCase('email'),

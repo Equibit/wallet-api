@@ -1,9 +1,9 @@
 const assert = require('assert')
-const app = require('../src/app')
-require('../test-utils/setup')
-const clients = require('../test-utils/make-clients')
-const removeUsers = require('../test-utils/utils').removeUsers
-const userUtils = require('../test-utils/user')
+const app = require('../../../src/app')
+require('../../../test-utils/setup')
+const clients = require('../../../test-utils/make-clients')
+const removeUsers = require('../../../test-utils/utils').removeUsers
+const userUtils = require('../../../test-utils/user')
 
 // Remove all users before all tests run.
 before(removeUsers(app))
@@ -142,6 +142,26 @@ function runTests (feathersClient) {
         .catch(error => {
           assert(error.code === 403, 'the correct error code was returned')
           assert(error.name === 'Forbidden', `the user could not change another user's password`)
+          done()
+        })
+    })
+
+    it.only('performs a patch in place of an update request', function (done) {
+      const user = this.user
+
+      userUtils.authenticate(app, feathersClient, user)
+        .then(res => {
+          const newUser = res.user
+          assert(newUser.isNewUser === false, 'the user is not a new user')
+          return feathersClient.service('users').update(user._id, { isNewUser: true })
+        })
+        .then(updatedUser => {
+          assert(updatedUser.isNewUser === true, 'the request should have failed')
+          assert(updatedUser.email === user.email, 'the user still has an email, so the record was patched')
+          done()
+        })
+        .catch(error => {
+          assert(!error, 'should not have received an error here')
           done()
         })
     })
