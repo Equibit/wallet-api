@@ -14,6 +14,8 @@ module.exports = function (app) {
     unrealizedPLPercent: { type: Number },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
+  }, {
+    timestamps: true
   })
 
   return mongooseClient.model('portfolios', portfolios)
