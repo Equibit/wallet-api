@@ -82,10 +82,14 @@ module.exports = function (app) {
           discard(
             'password',
             'tempPassword',
-            'salt',
             'challenge',
             'failedLogins',
             'pastPasswordHashes'
+          ),
+          // don't remove salt for update and patch
+          iff(
+            context => context.method !== 'update' && context.method !== 'patch',
+            discard('salt')
           )
         )
       ],

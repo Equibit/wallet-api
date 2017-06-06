@@ -98,6 +98,7 @@ function runTests (feathersClient) {
             'email',
             'createdAt',
             'updatedAt',
+            'salt',
             'isNewUser'
           ]
           Object.keys(user).forEach(field => {
@@ -146,7 +147,50 @@ function runTests (feathersClient) {
         })
     })
 
-    it.only('performs a patch in place of an update request', function (done) {
+    it('performs a patch in place of an update request', function (done) {
+      const user = this.user
+
+      userUtils.authenticate(app, feathersClient, user)
+        .then(res => {
+          const newUser = res.user
+          assert(newUser.isNewUser === false, 'the user is not a new user')
+          return feathersClient.service('users').update(user._id, { isNewUser: true })
+        })
+        .then(updatedUser => {
+          assert(updatedUser.isNewUser === true, 'the request should have failed')
+          assert(updatedUser.email === user.email, 'the user still has an email, so the record was patched')
+          done()
+        })
+        .catch(error => {
+          assert(!error, 'should not have received an error here')
+          done()
+        })
+    })
+
+    it('sends back a salt when the password is changed', function (done) {
+      const user = this.user
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => {
+          const newUser = res.user
+          assert(newUser.isNewUser === true, 'the user is a new user')
+          return feathersClient.service('users').update(user._id, { isNewUser: true })
+        })
+        .then(updatedUser => {
+          assert(updatedUser.salt, 'we should have received a salt back after update')
+          return feathersClient.service('users').patch(user._id, { isNewUser: true })
+        })
+        .then(updatedUser => {
+          assert(updatedUser.salt, 'we should have received a salt back after patch')
+          done()
+        })
+        .catch(error => {
+          assert(!error, 'should not have received an error here')
+          done()
+        })
+    })
+
+    it.skip('does not allow removing the password', function (done) {
       const user = this.user
 
       userUtils.authenticate(app, feathersClient, user)

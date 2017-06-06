@@ -27,7 +27,6 @@ function makeClient (transport = 'socketio') {
 const socketClient = () => makeClient('socketio')
 const restClient = () => makeClient('rest')
 
-
 module.exports = [ socketClient(), restClient() ]
 module.exports.socket = socketClient
 module.exports.rest = restClient
