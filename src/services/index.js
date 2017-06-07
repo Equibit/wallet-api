@@ -13,6 +13,8 @@ const balances = require('./balances/balances.service.js')
 const portfolios = require('./portfolios/portfolios.service.js')
 const proxycore = require('./proxycore/proxycore.service.js')
 
+const addresses = require('./addresses/addresses.service.js');
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -25,4 +27,5 @@ module.exports = function () {
   app.configure(balances)
   app.configure(portfolios)
   app.configure(proxycore)
+  app.configure(addresses);
 }
