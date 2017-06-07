@@ -1,4 +1,5 @@
 const { authenticate } = require('feathers-authentication').hooks
+const { associateCurrentUser } = require('feathers-authentication-hooks')
 const validate = require('./hook.validate')
 const getNextIndex = require('./hook.get-next-index')
 const addBalance = require('./hook.add-balance')
@@ -12,8 +13,9 @@ module.exports = {
     find: [],
     get: [],
     create: [
-      validate(),
+      associateCurrentUser({ idField: '_id', as: 'userId' }),
       getNextIndex(),
+      validate(),
       addBalance()
     ],
     update: [],

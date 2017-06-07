@@ -4,6 +4,7 @@
 // for more of what you can do here.
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
+  const { ObjectId } = mongooseClient.Schema.Types
   const portfolios = new mongooseClient.Schema({
     name: { type: String, required: true },
     index: { type: Number, required: false },
@@ -12,6 +13,7 @@ module.exports = function (app) {
     totalSecurities: { type: Number },
     unrealizedPL: { type: Number },
     unrealizedPLPercent: { type: Number },
+    userId: { type: ObjectId, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   }, {

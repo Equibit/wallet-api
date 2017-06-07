@@ -86,13 +86,15 @@ function runTests (feathersClient) {
               'index',
               'balance',
               'createdAt',
-              'updatedAt'
+              'updatedAt',
+              'userId'
             ]
             Object.keys(portfolio).forEach(field => {
               assert(allowedFields.includes(field), `the ${field} field was allowed in the response.`)
             })
             assert(portfolio.name === name, 'portfolio was created')
             assert(portfolio.index === 1, 'the portfolio has the correct index')
+            assert(portfolio.userId === user._id.toString(), 'the portfolio was assigned to the user')
             done()
           })
           .catch(error => {
