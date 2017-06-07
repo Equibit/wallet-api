@@ -101,6 +101,27 @@ function runTests (feathersClient) {
           })
       })
 
+      it('returns an error when attempting to manually edit the portfolio balance', function (done) {
+        const user = this.user
+        const name = 'My Portfolio'
+
+        userUtils.authenticateTemp(app, feathersClient, user)
+          .then(response => feathersClient.service('portfolios').create({
+            name,
+            balance: 0
+          }))
+          .then(portfolio => {
+            assert(!portfolio, 'should have received an error')
+            done()
+          })
+          .catch(error => {
+            assert(error.className === 'bad-request', 'returned a bad request error')
+            assert(error.code === 400, 'returned the proper error code')
+            assert(error.message.includes('cannot be manually adjusted'), 'returned a descriptive error message')
+            done()
+          })
+      })
+
       it('user has no portfolio by default', function (done) {
         const user = this.user
 

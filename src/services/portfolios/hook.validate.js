@@ -1,19 +1,9 @@
-const Ajv = require('ajv')
-const { validateSchema } = require('feathers-hooks-common')
-const schema = {
-  title: 'Portfolio',
-  type: 'object',
-  properties: {
-    name: {
-      type: 'string'
-    }
-  },
-  required: ['name'],
-  not: {
-    required: [ 'balance' ]
-  }
-}
+const errors = require('feathers-errors')
 
 module.exports = function () {
-  return validateSchema(schema, Ajv)
+  return function validatePortfolios (context) {
+    if (context.data.hasOwnProperty('balance')) {
+      return Promise.reject(new errors.BadRequest('`balance` cannot be manually adjusted.'))
+    }
+  }
 }
