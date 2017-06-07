@@ -13,7 +13,7 @@ function makeClient (transport = 'socketio') {
     var socket = io('http://localhost:3030', {
       transports: ['websocket']
     })
-    feathersClient.configure(socketio(socket))
+    feathersClient.configure(socketio(socket, { timeout: 60000 }))
   }
   if (transport === 'rest') {
     feathersClient.configure(rest('http://localhost:3030').superagent(superagent))
