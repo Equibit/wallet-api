@@ -16,7 +16,6 @@ module.exports = function () {
       updatePortfolioBalance(context.service, portfolio, context.params)
     })
 
-
     // Resolve immediately. The balance will be sent in an `updated` event.
     return Promise.resolve(context)
   }
