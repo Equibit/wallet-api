@@ -1,5 +1,5 @@
 const { authenticate } = require('feathers-authentication').hooks
-// const validate = require('./hook.validate')
+const validate = require('./hook.validate')
 const getNextIndex = require('./hook.get-next-index')
 const addBalance = require('./hook.add-balance')
 const { discard } = require('feathers-hooks-common')
@@ -12,7 +12,7 @@ module.exports = {
     find: [],
     get: [],
     create: [
-      // validate(),
+      validate(),
       getNextIndex(),
       addBalance()
     ],
