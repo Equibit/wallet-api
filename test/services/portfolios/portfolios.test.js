@@ -37,7 +37,7 @@ function runTests (feathersClient) {
       assert.ok(service, 'Registered the service')
     })
 
-    describe('No Auth', function () {
+    describe('Client Without Auth', function () {
       it(`requires auth for find requests from the client`, function (done) {
         assertRequiresAuth(feathersClient.service('portfolios'), 'find', assert, done)
       })
@@ -77,7 +77,7 @@ function runTests (feathersClient) {
         const name = 'My Portfolio'
 
         userUtils.authenticateTemp(app, feathersClient, user)
-          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(response => feathersClient.service('portfolios').create({ name, xPub: '123' }))
           .then(portfolio => {
             const allowedFields = [
               '__v',
@@ -87,7 +87,9 @@ function runTests (feathersClient) {
               'balance',
               'createdAt',
               'updatedAt',
-              'userId'
+              'userId',
+              'xPub',
+              'isBalanceCalculating'
             ]
             Object.keys(portfolio).forEach(field => {
               assert(allowedFields.includes(field), `the ${field} field was allowed in the response.`)
@@ -95,10 +97,33 @@ function runTests (feathersClient) {
             assert(portfolio.name === name, 'portfolio was created')
             assert(portfolio.index === 1, 'the portfolio has the correct index')
             assert(portfolio.userId === user._id.toString(), 'the portfolio was assigned to the user')
+            assert(portfolio.isBalanceCalculating === true, 'the balance is calculating')
             done()
           })
           .catch(error => {
             assert(!error, 'this error should not have occurred')
+            done()
+          })
+      })
+
+      it.skip('validates the xPub', function (done) {
+
+      })
+
+      it('requires xPub to create a portfolio', function (done) {
+        const user = this.user
+        const name = 'My Portfolio'
+
+        userUtils.authenticateTemp(app, feathersClient, user)
+          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(portfolio => {
+            assert(!portfolio, 'should not be able to create a portfolio without xPub')
+            done()
+          })
+          .catch(error => {
+            assert(error.code === 400, 'returned the correct error code')
+            assert(error.className === 'bad-request', 'returned the correct error className')
+            assert(error.message.includes('`xPub` is required'), 'returned a descriptive error message')
             done()
           })
       })
@@ -132,7 +157,7 @@ function runTests (feathersClient) {
             feathersClient.service('portfolios')
               .find({ query: {} })
               .then(res => {
-                const portfolios = res.data
+                const portfolios = res.data || res
                 assert(portfolios.length === 0, 'the user has no portfolio by default')
                 done()
               })
@@ -149,7 +174,7 @@ function runTests (feathersClient) {
         userUtils.authenticate(app, feathersClient, user)
           .then(response => feathersClient.service('portfolios').create({
             name: 'my portfolio',
-            address: 'mmxdeWW5h2nJ9qk7jXjzMBNnJewTnR8ubx'
+            xPub: 'mmxdeWW5h2nJ9qk7jXjzMBNnJewTnR8ubx'
           }))
           .then(res => {
             const portfolios = res.data
@@ -160,6 +185,37 @@ function runTests (feathersClient) {
             assert(!error, 'this error should not have occurred')
             done()
           })
+      })
+
+      it('sends the balance asynchronously after creating a portfolio', function (done) {
+        const user = this.user
+        let patchedEventReceived = false
+
+        // Only run for socket transport, since rest can't receive realtime updates.
+        if (transport === 'feathers-socketio') {
+          feathersClient.service('portfolios').on('patched', function () {
+            patchedEventReceived = true
+          })
+          feathersClient.service('portfolios').on('updated', function () {
+            assert(patchedEventReceived === true, 'both events were received')
+            done()
+          })
+          userUtils.authenticate(app, feathersClient, user)
+            .then(response => feathersClient.service('portfolios').create({
+              name: 'my portfolio',
+              xPub: 'mmxdeWW5h2nJ9qk7jXjzMBNnJewTnR8ubx'
+            }))
+            .then(res => {
+              const portfolios = res.data
+              assert(!portfolios, 'the user has no portfolio by default')
+            })
+            .catch(error => {
+              assert(!error, 'this error should not have occurred')
+              done()
+            })
+        } else {
+          done()
+        }
       })
     })
   })
