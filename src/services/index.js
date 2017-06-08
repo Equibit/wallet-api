@@ -10,6 +10,7 @@ const loginAttempts = require('./login-attempts/login-attempts.service.js')
 const portfolios = require('./portfolios/portfolios.service.js')
 const proxycore = require('./proxycore/proxycore.service.js')
 const addresses = require('./addresses/addresses.service.js')
+const watchlist = require('./watchlist/watchlist.service.js')
 
 module.exports = function () {
   const app = this
@@ -23,4 +24,5 @@ module.exports = function () {
   app.configure(portfolios)
   app.configure(proxycore)
   app.configure(addresses)
+  app.configure(watchlist)
 }
