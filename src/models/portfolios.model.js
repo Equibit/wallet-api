@@ -17,7 +17,8 @@ module.exports = function (app) {
     unrealizedPLPercent: { type: Number },
     userId: { type: ObjectId, required: true },
     createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+    updatedAt: { type: Date, default: Date.now },
+    addresses: { type: Array }
   }, {
     timestamps: true
   })
