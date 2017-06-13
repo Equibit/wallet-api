@@ -77,7 +77,7 @@ function runTests (feathersClient) {
         const name = 'My Portfolio'
 
         userUtils.authenticateTemp(app, feathersClient, user)
-          .then(response => feathersClient.service('portfolios').create({ name, xPub: '123' }))
+          .then(response => feathersClient.service('portfolios').create({ name }))
           .then(portfolio => {
             const allowedFields = [
               '__v',
@@ -87,9 +87,7 @@ function runTests (feathersClient) {
               'balance',
               'createdAt',
               'updatedAt',
-              'userId',
-              'xPub',
-              'isBalanceCalculating'
+              'userId'
             ]
             Object.keys(portfolio).forEach(field => {
               assert(allowedFields.includes(field), `the ${field} field was allowed in the response.`)
@@ -97,7 +95,6 @@ function runTests (feathersClient) {
             assert(portfolio.name === name, 'portfolio was created')
             assert(portfolio.index === 1, 'the portfolio has the correct index')
             assert(portfolio.userId === user._id.toString(), 'the portfolio was assigned to the user')
-            assert(portfolio.isBalanceCalculating === true, 'the balance is calculating')
             done()
           })
           .catch(error => {
@@ -108,24 +105,6 @@ function runTests (feathersClient) {
 
       it.skip('validates the xPub', function (done) {
 
-      })
-
-      it('requires xPub to create a portfolio', function (done) {
-        const user = this.user
-        const name = 'My Portfolio'
-
-        userUtils.authenticateTemp(app, feathersClient, user)
-          .then(response => feathersClient.service('portfolios').create({ name }))
-          .then(portfolio => {
-            assert(!portfolio, 'should not be able to create a portfolio without xPub')
-            done()
-          })
-          .catch(error => {
-            assert(error.code === 400, 'returned the correct error code')
-            assert(error.className === 'bad-request', 'returned the correct error className')
-            assert(error.message.includes('`xPub` is required'), 'returned a descriptive error message')
-            done()
-          })
       })
 
       it('returns an error when attempting to manually edit the portfolio balance', function (done) {
@@ -173,8 +152,7 @@ function runTests (feathersClient) {
 
         userUtils.authenticate(app, feathersClient, user)
           .then(response => feathersClient.service('portfolios').create({
-            name: 'my portfolio',
-            xPub: 'mmxdeWW5h2nJ9qk7jXjzMBNnJewTnR8ubx'
+            name: 'my portfolio'
           }))
           .then(res => {
             const portfolios = res.data

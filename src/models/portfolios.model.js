@@ -10,7 +10,6 @@ module.exports = function (app) {
     index: { type: Number, required: false },
     xPub: { type: String },
     balance: { type: Number },
-    isBalanceCalculating: { type: Boolean, default: false },
     totalCash: { type: Number },
     totalSecurities: { type: Number },
     unrealizedPL: { type: Number },
