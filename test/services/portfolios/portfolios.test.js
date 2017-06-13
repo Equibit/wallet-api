@@ -186,37 +186,6 @@ function runTests (feathersClient) {
             done()
           })
       })
-
-      it('sends the balance asynchronously after creating a portfolio', function (done) {
-        const user = this.user
-        let patchedEventReceived = false
-
-        // Only run for socket transport, since rest can't receive realtime updates.
-        if (transport === 'feathers-socketio') {
-          feathersClient.service('portfolios').on('patched', function () {
-            patchedEventReceived = true
-          })
-          feathersClient.service('portfolios').on('updated', function () {
-            assert(patchedEventReceived === true, 'both events were received')
-            done()
-          })
-          userUtils.authenticate(app, feathersClient, user)
-            .then(response => feathersClient.service('portfolios').create({
-              name: 'my portfolio',
-              xPub: 'mmxdeWW5h2nJ9qk7jXjzMBNnJewTnR8ubx'
-            }))
-            .then(res => {
-              const portfolios = res.data
-              assert(!portfolios, 'the user has no portfolio by default')
-            })
-            .catch(error => {
-              assert(!error, 'this error should not have occurred')
-              done()
-            })
-        } else {
-          done()
-        }
-      })
     })
   })
 }

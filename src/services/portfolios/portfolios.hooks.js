@@ -29,15 +29,9 @@ module.exports = {
     all: [
       discard('__v')
     ],
-    find: [
-      calculateBalance()
-    ],
-    get: [
-      calculateBalance()
-    ],
-    create: [
-      calculateBalance()
-    ],
+    find: [],
+    get: [],
+    create: [],
     update: [],
     patch: [],
     remove: []
