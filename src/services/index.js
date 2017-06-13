@@ -12,6 +12,8 @@ const proxycore = require('./proxycore/proxycore.service.js')
 const watchlist = require('./watchlist/watchlist.service.js')
 const listunspent = require('./listunspent/listunspent.service.js')
 
+const transactions = require('./transactions/transactions.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -25,4 +27,5 @@ module.exports = function () {
   app.configure(proxycore)
   app.configure(watchlist)
   app.configure(listunspent)
+  app.configure(transactions)
 }
