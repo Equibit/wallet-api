@@ -18,7 +18,13 @@ module.exports = function (app) {
     userId: { type: ObjectId, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    addresses: { type: Array }
+    addresses: [{
+      index: { type: Number, required: true },
+      type: { type: String, required: true }, // EQB or BTC
+      isUsed: { type: Boolean, default: false },
+      createdAt: { type: Date, default: Date.now },
+      updatedAt: { type: Date, default: Date.now }
+    }]
   }, {
     timestamps: true
   })
