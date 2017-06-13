@@ -56,7 +56,7 @@ class Service {
 }
 
 function formatParams (params) {
-  return params && params.map(p => isNaN(Number(p)) ? ((p === 'true' || p === 'false') ? (p === 'true' ? true : false) : p) : Number(p))
+  return params && params.map(p => isNaN(Number(p)) ? ((p === 'true' || p === 'false') ? (p === 'true') : p) : Number(p))
 }
 
 module.exports = function (options) {

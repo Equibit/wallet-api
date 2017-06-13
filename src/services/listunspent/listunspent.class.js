@@ -10,7 +10,7 @@ class Service {
   // Given a list of addresses return amounts by address and a summary.
   find (params) {
     console.log('listunspent.find params.query: ', params.query)
-    const addresses = params.query.addr instanceof Array ? params.query.addr : [params.query.addr];
+    const addresses = params.query.addr instanceof Array ? params.query.addr : [params.query.addr]
     return axios({
       method: 'POST',
       // url: 'http://99.227.230.43:8331',
@@ -28,7 +28,7 @@ class Service {
     .then(res => {
       return res.data.result.reduce((acc, txout) => {
         acc.summary.total += txout.amount
-        if (!acc[txout.address]){
+        if (!acc[txout.address]) {
           acc[txout.address] = {
             amount: 0,
             txouts: []
@@ -36,7 +36,7 @@ class Service {
         }
         acc[txout.address].amount += txout.amount
         acc[txout.address].txouts.push(txout)
-        return acc;
+        return acc
       }, {summary: {total: 0}})
     })
     .catch(err => {
@@ -72,9 +72,9 @@ class Service {
   }
 }
 
-function formatParams (params) {
-  return params && params.map(p => isNaN(Number(p)) ? ((p === 'true' || p === 'false') ? (p === 'true' ? true : false) : p) : Number(p))
-}
+// function formatParams (params) {
+//   return params && params.map(p => isNaN(Number(p)) ? ((p === 'true' || p === 'false') ? (p === 'true') : p) : Number(p))
+// }
 
 module.exports = function (options) {
   return new Service(options)
