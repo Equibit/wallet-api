@@ -87,6 +87,7 @@ function runTests (feathersClient) {
               'balance',
               'createdAt',
               'updatedAt',
+              'addressesMeta',
               'userId'
             ]
             Object.keys(portfolio).forEach(field => {
