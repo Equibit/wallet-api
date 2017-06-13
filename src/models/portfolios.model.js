@@ -8,7 +8,7 @@ module.exports = function (app) {
   const portfolios = new mongooseClient.Schema({
     name: { type: String, required: true },
     index: { type: Number, required: false },
-    xPub: { type: String, required: true },
+    xPub: { type: String },
     balance: { type: Number },
     isBalanceCalculating: { type: Boolean, default: false },
     totalCash: { type: Number },
