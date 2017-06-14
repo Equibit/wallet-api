@@ -7,37 +7,21 @@ class Service {
     this.options = options || {}
   }
 
-  // Given a list of addresses return amounts by address and a summary.
+  // Given a list of addresses return txouts and a summary OR amounts by address and a summary.
   find (params) {
     console.log('listunspent.find params.query: ', params.query)
-    const addresses = params.query.addr instanceof Array ? params.query.addr : [params.query.addr]
-    return axios({
-      method: 'POST',
-      // url: 'http://99.227.230.43:8331',
-      url: 'http://localhost:18332',
-      data: {
-        jsonrpc: '1.0',
-        method: 'listunspent',
-        params: [0, 99999, addresses]
-      },
-      auth: {
-        username: 'equibit',
-        password: 'equibit'
+    const addressesBtc = params.query.btc || []
+    const addressesEqb = params.query.eqb || []
+    const byAddress = params.query.byaddress ? true : false;
+    
+    return Promise.all([
+      fetchListunspent('btc', addressesBtc),
+      fetchListunspent('eqb', addressesEqb)
+    ]).then(results => {
+      return {
+        btc: byAddress ? aggregateByAddress(results[0].data.result) : addSummary(results[0].data.result),
+        eqb: byAddress ? aggregateByAddress(results[1].data.result) : addSummary(results[1].data.result)
       }
-    })
-    .then(res => {
-      return res.data.result.reduce((acc, txout) => {
-        acc.summary.total += txout.amount
-        if (!acc[txout.address]) {
-          acc[txout.address] = {
-            amount: 0,
-            txouts: []
-          }
-        }
-        acc[txout.address].amount += txout.amount
-        acc[txout.address].txouts.push(txout)
-        return acc
-      }, {summary: {total: 0}})
     })
     .catch(err => {
       console.log('_______ PROXY ERROR: ', err.response.data)
@@ -72,9 +56,51 @@ class Service {
   }
 }
 
-// function formatParams (params) {
-//   return params && params.map(p => isNaN(Number(p)) ? ((p === 'true' || p === 'false') ? (p === 'true') : p) : Number(p))
-// }
+function fetchListunspent (type, addresses = []) {
+  if (!addresses.length) {
+    return Promise.resolve({data: {result: []}})
+  }
+  console.log('fetchListunspent', arguments)
+  // 'http://99.227.230.43:8331'
+  const url = type === 'btc' ? 'http://localhost:18332' : 'http://localhost:18332';
+  return axios({
+    method: 'POST',
+    url,
+    data: {
+      jsonrpc: '1.0',
+      method: 'listunspent',
+      params: [0, 99999, addresses]
+    },
+    auth: {
+      username: 'equibit',
+      password: 'equibit'
+    }
+  })
+}
+
+function aggregateByAddress (result) {
+  return result.reduce((acc, txout) => {
+    acc.summary.total += txout.amount
+    if (!acc[txout.address]) {
+      acc[txout.address] = {
+        amount: 0,
+        txouts: []
+      }
+    }
+    acc[txout.address].amount += txout.amount
+    acc[txout.address].txouts.push(txout)
+    return acc
+  }, {summary: {total: 0}})
+}
+
+function addSummary (result) {
+  const summary = result.reduce((acc, txout) => {
+    acc.summary.total += txout.amount
+    return acc
+  }, {summary: {total: 0}})
+  summary.txouts = result
+  return summary
+}
 
 module.exports = function (options) {
   return new Service(options)
