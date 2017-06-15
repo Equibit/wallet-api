@@ -12,8 +12,8 @@ class Service {
     console.log('listunspent.find params.query: ', params.query)
     const addressesBtc = params.query.btc || []
     const addressesEqb = params.query.eqb || []
-    const byAddress = params.query.byaddress ? true : false;
-    
+    const byAddress = !!params.query.byaddress
+
     return Promise.all([
       fetchListunspent('btc', addressesBtc),
       fetchListunspent('eqb', addressesEqb)
@@ -62,7 +62,7 @@ function fetchListunspent (type, addresses = []) {
   }
   console.log('fetchListunspent', arguments)
   // 'http://99.227.230.43:8331'
-  const url = type === 'btc' ? 'http://localhost:18332' : 'http://localhost:18332';
+  const url = type === 'btc' ? 'http://localhost:18332' : 'http://localhost:18332'
   return axios({
     method: 'POST',
     url,
