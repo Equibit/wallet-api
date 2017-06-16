@@ -5,7 +5,7 @@
     "slug": "papricut",
     "domicile": "Tajikistan",
     "issuances": [
-      "593b00b7e7bdf70000000058"
+      "5942a4d4a33287dc13000036"
     ]
   },
   {
@@ -14,8 +14,8 @@
     "slug": "isosphere",
     "domicile": "Togo",
     "issuances": [
-      "593b00b7e7bdf70000000030",
-      "593b00b7e7bdf70000000059"
+      "5942a4d4a33287dc13000007",
+      "5942a4d4a33287dc13000034"
     ]
   },
   {
@@ -23,18 +23,18 @@
     "name": "Zolavo",
     "slug": "zolavo",
     "domicile": "Bermuda",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300003c",
+      "5942a4d4a33287dc13000043",
+      "5942a4d4a33287dc13000052"
+    ]
   },
   {
     "_id": "58f0fd234de8f424db887aa2",
     "name": "Bedder",
     "slug": "bedder",
     "domicile": "Guyana",
-    "issuances": [
-      "593b00b7e7bdf70000000011",
-      "593b00b7e7bdf7000000004c",
-      "593b00b7e7bdf70000000060"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23d81aaa1af4948cc5",
@@ -42,7 +42,7 @@
     "slug": "quotezart",
     "domicile": "Australia",
     "issuances": [
-      "593b00b7e7bdf7000000003c"
+      "5942a4d4a33287dc1300005d"
     ]
   },
   {
@@ -50,7 +50,10 @@
     "name": "Sureplex",
     "slug": "sureplex",
     "domicile": "Palau",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000022",
+      "5942a4d4a33287dc1300002b"
+    ]
   },
   {
     "_id": "58f0fd237a1e24ddf338d94a",
@@ -58,7 +61,8 @@
     "slug": "orbalix",
     "domicile": "Laos",
     "issuances": [
-      "593b00b7e7bdf7000000004d"
+      "5942a4d4a33287dc13000033",
+      "5942a4d4a33287dc13000038"
     ]
   },
   {
@@ -66,28 +70,38 @@
     "name": "Autograte",
     "slug": "autograte",
     "domicile": "Norway",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000010",
+      "5942a4d4a33287dc13000011",
+      "5942a4d4a33287dc13000063"
+    ]
   },
   {
     "_id": "58f0fd23b28d2dced27d393e",
     "name": "Furnitech",
     "slug": "furnitech",
     "domicile": "Qatar",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300002d"
+    ]
   },
   {
     "_id": "58f0fd23e22ca50444926126",
     "name": "Strezzo",
     "slug": "strezzo",
     "domicile": "Oman",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000006"
+    ]
   },
   {
     "_id": "58f0fd2399b517d4b48f7908",
     "name": "Equitox",
     "slug": "equitox",
     "domicile": "Cook Islands",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000015"
+    ]
   },
   {
     "_id": "58f0fd23814b37472f51204d",
@@ -102,8 +116,8 @@
     "slug": "concility",
     "domicile": "Iran",
     "issuances": [
-      "593b00b7e7bdf7000000005a",
-      "593b00b7e7bdf7000000005d"
+      "5942a4d4a33287dc13000032",
+      "5942a4d4a33287dc13000057"
     ]
   },
   {
@@ -111,7 +125,9 @@
     "name": "Viagreat",
     "slug": "viagreat",
     "domicile": "Bahamas",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000037"
+    ]
   },
   {
     "_id": "58f0fd23aa7dc96b5fe1a9e5",
@@ -125,7 +141,9 @@
     "name": "Iplax",
     "slug": "iplax",
     "domicile": "Uzbekistan",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300004e"
+    ]
   },
   {
     "_id": "58f0fd2342a1cc2845678ac5",
@@ -133,8 +151,7 @@
     "slug": "codact",
     "domicile": "Ukraine",
     "issuances": [
-      "593b00b7e7bdf70000000034",
-      "593b00b7e7bdf70000000062"
+      "5942a4d4a33287dc13000030"
     ]
   },
   {
@@ -143,8 +160,12 @@
     "slug": "virxo",
     "domicile": "Chad",
     "issuances": [
-      "593b00b7e7bdf70000000027",
-      "593b00b7e7bdf70000000046"
+      "5942a4d4a33287dc1300000a",
+      "5942a4d4a33287dc13000026",
+      "5942a4d4a33287dc13000035",
+      "5942a4d4a33287dc13000044",
+      "5942a4d4a33287dc13000046",
+      "5942a4d4a33287dc13000056"
     ]
   },
   {
@@ -152,33 +173,34 @@
     "name": "Comtours",
     "slug": "comtours",
     "domicile": "Bolivia",
-    "issuances": [
-      "593b00b7e7bdf70000000042"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23deaa9e623b1d34d3",
     "name": "Exoblue",
     "slug": "exoblue",
     "domicile": "Namibia",
-    "issuances": [
-      "593b00b7e7bdf70000000013",
-      "593b00b7e7bdf70000000021"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd239de78fbd3edfa17f",
     "name": "Qualitex",
     "slug": "qualitex",
     "domicile": "Venezuela",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000013",
+      "5942a4d4a33287dc13000041"
+    ]
   },
   {
     "_id": "58f0fd235507e2b405538c27",
     "name": "Kaggle",
     "slug": "kaggle",
     "domicile": "Trinidad and Tobago",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300003a",
+      "5942a4d4a33287dc1300003d"
+    ]
   },
   {
     "_id": "58f0fd2371fadd75fa81ea82",
@@ -186,7 +208,9 @@
     "slug": "cognicode",
     "domicile": "Brunei Darussalam",
     "issuances": [
-      "593b00b7e7bdf70000000052"
+      "5942a4d4a33287dc13000004",
+      "5942a4d4a33287dc1300000f",
+      "5942a4d4a33287dc1300003f"
     ]
   },
   {
@@ -194,21 +218,28 @@
     "name": "Isologica",
     "slug": "isologica",
     "domicile": "Mayotte",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300001c"
+    ]
   },
   {
     "_id": "58f0fd23c4b1517aa5e3e250",
     "name": "Poshome",
     "slug": "poshome",
     "domicile": "Northern Mariana Islands",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300002a"
+    ]
   },
   {
     "_id": "58f0fd23b9ca2410b872c5e3",
     "name": "Billmed",
     "slug": "billmed",
     "domicile": "South Africa",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300004c",
+      "5942a4d4a33287dc13000059"
+    ]
   },
   {
     "_id": "58f0fd237bfc7dd23e7aaba0",
@@ -216,7 +247,7 @@
     "slug": "anacho",
     "domicile": "Somalia",
     "issuances": [
-      "593b00b7e7bdf70000000006"
+      "5942a4d4a33287dc13000051"
     ]
   },
   {
@@ -232,8 +263,7 @@
     "slug": "netplode",
     "domicile": "Jamaica",
     "issuances": [
-      "593b00b7e7bdf70000000038",
-      "593b00b7e7bdf7000000003f"
+      "5942a4d4a33287dc1300004a"
     ]
   },
   {
@@ -242,8 +272,7 @@
     "slug": "dogspa",
     "domicile": "India",
     "issuances": [
-      "593b00b7e7bdf7000000002f",
-      "593b00b7e7bdf70000000053"
+      "5942a4d4a33287dc1300005c"
     ]
   },
   {
@@ -251,19 +280,14 @@
     "name": "Canopoly",
     "slug": "canopoly",
     "domicile": "Bulgaria",
-    "issuances": [
-      "593b00b7e7bdf7000000004b",
-      "593b00b7e7bdf7000000005b"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23d3c4777b2a4ba2d7",
     "name": "Icology",
     "slug": "icology",
     "domicile": "Peru",
-    "issuances": [
-      "593b00b7e7bdf70000000023"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd239f40b6329af4dca6",
@@ -278,9 +302,7 @@
     "slug": "digigen",
     "domicile": "Kuwait",
     "issuances": [
-      "593b00b7e7bdf70000000001",
-      "593b00b7e7bdf70000000029",
-      "593b00b7e7bdf7000000002d"
+      "5942a4d4a33287dc13000048"
     ]
   },
   {
@@ -289,7 +311,7 @@
     "slug": "visualix",
     "domicile": "Morocco",
     "issuances": [
-      "593b00b7e7bdf7000000004a"
+      "5942a4d4a33287dc1300004f"
     ]
   },
   {
@@ -298,7 +320,7 @@
     "slug": "franscene",
     "domicile": "Hungary",
     "issuances": [
-      "593b00b7e7bdf70000000018"
+      "5942a4d4a33287dc13000049"
     ]
   },
   {
@@ -314,11 +336,7 @@
     "slug": "omnigog",
     "domicile": "Finland",
     "issuances": [
-      "593b00b7e7bdf70000000008",
-      "593b00b7e7bdf7000000000f",
-      "593b00b7e7bdf70000000033",
-      "593b00b7e7bdf70000000063",
-      "593b00b7e7bdf70000000064"
+      "5942a4d4a33287dc13000029"
     ]
   },
   {
@@ -326,9 +344,7 @@
     "name": "Elentrix",
     "slug": "elentrix",
     "domicile": "Pitcairn",
-    "issuances": [
-      "593b00b7e7bdf7000000003b"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd2322796c26913dea1d",
@@ -336,7 +352,7 @@
     "slug": "flexigen",
     "domicile": "Bhutan",
     "issuances": [
-      "593b00b7e7bdf7000000001b"
+      "5942a4d4a33287dc1300002c"
     ]
   },
   {
@@ -344,7 +360,9 @@
     "name": "Roughies",
     "slug": "roughies",
     "domicile": "Sweden",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000031"
+    ]
   },
   {
     "_id": "58f0fd239cea5be832f995f7",
@@ -366,7 +384,8 @@
     "slug": "avit",
     "domicile": "El Salvador",
     "issuances": [
-      "593b00b7e7bdf7000000003d"
+      "5942a4d4a33287dc13000018",
+      "5942a4d4a33287dc1300005b"
     ]
   },
   {
@@ -375,7 +394,7 @@
     "slug": "zanilla",
     "domicile": "Czech Republic",
     "issuances": [
-      "593b00b7e7bdf7000000001d"
+      "5942a4d4a33287dc1300001f"
     ]
   },
   {
@@ -384,7 +403,8 @@
     "slug": "magmina",
     "domicile": "Netherlands",
     "issuances": [
-      "593b00b7e7bdf7000000001f"
+      "5942a4d4a33287dc13000017",
+      "5942a4d4a33287dc13000050"
     ]
   },
   {
@@ -393,7 +413,8 @@
     "slug": "cinaster",
     "domicile": "French Guiana",
     "issuances": [
-      "593b00b7e7bdf7000000005e"
+      "5942a4d4a33287dc13000012",
+      "5942a4d4a33287dc1300004d"
     ]
   },
   {
@@ -409,7 +430,7 @@
     "slug": "cofine",
     "domicile": "Zambia",
     "issuances": [
-      "593b00b7e7bdf7000000004e"
+      "5942a4d4a33287dc13000001"
     ]
   },
   {
@@ -425,7 +446,10 @@
     "slug": "phuel",
     "domicile": "Turks and Caicos Islands",
     "issuances": [
-      "593b00b7e7bdf70000000040"
+      "5942a4d4a33287dc13000005",
+      "5942a4d4a33287dc1300001e",
+      "5942a4d4a33287dc13000025",
+      "5942a4d4a33287dc13000055"
     ]
   },
   {
@@ -433,10 +457,7 @@
     "name": "Opportech",
     "slug": "opportech",
     "domicile": "New Caledonia",
-    "issuances": [
-      "593b00b7e7bdf70000000015",
-      "593b00b7e7bdf70000000036"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23b0a32175b2845a52",
@@ -444,7 +465,7 @@
     "slug": "xleen",
     "domicile": "Panama",
     "issuances": [
-      "593b00b7e7bdf70000000050"
+      "5942a4d4a33287dc13000028"
     ]
   },
   {
@@ -452,7 +473,9 @@
     "name": "Zensure",
     "slug": "zensure",
     "domicile": "United States",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300000d"
+    ]
   },
   {
     "_id": "58f0fd23fc3a0c0d9635ba25",
@@ -460,7 +483,8 @@
     "slug": "savvy",
     "domicile": "Malta",
     "issuances": [
-      "593b00b7e7bdf70000000045"
+      "5942a4d4a33287dc13000020",
+      "5942a4d4a33287dc13000061"
     ]
   },
   {
@@ -482,17 +506,16 @@
     "name": "Rockyard",
     "slug": "rockyard",
     "domicile": "Tokelau",
-    "issuances": [
-      "593b00b7e7bdf70000000020",
-      "593b00b7e7bdf7000000003a"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23b78070ccb9e5b13b",
     "name": "Katakana",
     "slug": "katakana",
     "domicile": "Cocos (Keeling Islands)",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300005a"
+    ]
   },
   {
     "_id": "58f0fd23f97be677c699cca4",
@@ -500,8 +523,7 @@
     "slug": "deepends",
     "domicile": "Kenya",
     "issuances": [
-      "593b00b7e7bdf7000000000d",
-      "593b00b7e7bdf70000000016"
+      "5942a4d4a33287dc13000060"
     ]
   },
   {
@@ -510,7 +532,7 @@
     "slug": "corporana",
     "domicile": "Aruba",
     "issuances": [
-      "593b00b7e7bdf70000000026"
+      "5942a4d4a33287dc13000021"
     ]
   },
   {
@@ -519,7 +541,8 @@
     "slug": "gluid",
     "domicile": "Colombia",
     "issuances": [
-      "593b00b7e7bdf70000000055"
+      "5942a4d4a33287dc1300001a",
+      "5942a4d4a33287dc1300002e"
     ]
   },
   {
@@ -527,7 +550,10 @@
     "name": "Indexia",
     "slug": "indexia",
     "domicile": "Wallis and Futuna Islands",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300001b",
+      "5942a4d4a33287dc1300004b"
+    ]
   },
   {
     "_id": "58f0fd23d02960c8a1d0d269",
@@ -535,7 +561,8 @@
     "slug": "utara",
     "domicile": "Kazakhstan",
     "issuances": [
-      "593b00b7e7bdf70000000014"
+      "5942a4d4a33287dc13000002",
+      "5942a4d4a33287dc13000047"
     ]
   },
   {
@@ -543,10 +570,7 @@
     "name": "Velity",
     "slug": "velity",
     "domicile": "Nepal",
-    "issuances": [
-      "593b00b7e7bdf70000000019",
-      "593b00b7e7bdf70000000061"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd2318da95b31bb1795a",
@@ -554,7 +578,8 @@
     "slug": "homelux",
     "domicile": "New Zealand",
     "issuances": [
-      "593b00b7e7bdf70000000049"
+      "5942a4d4a33287dc13000009",
+      "5942a4d4a33287dc1300005e"
     ]
   },
   {
@@ -562,7 +587,9 @@
     "name": "Gynk",
     "slug": "gynk",
     "domicile": "Georgia",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000008"
+    ]
   },
   {
     "_id": "58f0fd23697b7f9aa7c82287",
@@ -577,8 +604,7 @@
     "slug": "talendula",
     "domicile": "Hong Kong",
     "issuances": [
-      "593b00b7e7bdf70000000024",
-      "593b00b7e7bdf70000000057"
+      "5942a4d4a33287dc13000027"
     ]
   },
   {
@@ -586,9 +612,7 @@
     "name": "Centree",
     "slug": "centree",
     "domicile": "Bahrain",
-    "issuances": [
-      "593b00b7e7bdf70000000056"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23b33683d168e6e49d",
@@ -596,9 +620,7 @@
     "slug": "acium",
     "domicile": "Egypt",
     "issuances": [
-      "593b00b7e7bdf7000000001a",
-      "593b00b7e7bdf7000000002b",
-      "593b00b7e7bdf70000000043"
+      "5942a4d4a33287dc1300002f"
     ]
   },
   {
@@ -614,7 +636,7 @@
     "slug": "hinway",
     "domicile": "Azerbaijan",
     "issuances": [
-      "593b00b7e7bdf70000000010"
+      "5942a4d4a33287dc13000054"
     ]
   },
   {
@@ -623,7 +645,7 @@
     "slug": "sybixtex",
     "domicile": "Malaysia",
     "issuances": [
-      "593b00b7e7bdf70000000035"
+      "5942a4d4a33287dc13000062"
     ]
   },
   {
@@ -632,8 +654,7 @@
     "slug": "grok",
     "domicile": "Burundi",
     "issuances": [
-      "593b00b7e7bdf7000000000e",
-      "593b00b7e7bdf70000000044"
+      "5942a4d4a33287dc13000064"
     ]
   },
   {
@@ -642,7 +663,7 @@
     "slug": "zaggles",
     "domicile": "San Marino",
     "issuances": [
-      "593b00b7e7bdf70000000041"
+      "5942a4d4a33287dc13000040"
     ]
   },
   {
@@ -650,13 +671,7 @@
     "name": "Noralex",
     "slug": "noralex",
     "domicile": "Suriname",
-    "issuances": [
-      "593b00b7e7bdf70000000002",
-      "593b00b7e7bdf7000000001e",
-      "593b00b7e7bdf70000000025",
-      "593b00b7e7bdf7000000002e",
-      "593b00b7e7bdf7000000005f"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd234a082bae32d7dbe2",
@@ -670,7 +685,11 @@
     "name": "Ontagene",
     "slug": "ontagene",
     "domicile": "Lebanon",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000003",
+      "5942a4d4a33287dc13000016",
+      "5942a4d4a33287dc13000019"
+    ]
   },
   {
     "_id": "58f0fd238815a954ece7fa32",
@@ -684,7 +703,9 @@
     "name": "Omatom",
     "slug": "omatom",
     "domicile": "Armenia",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300005f"
+    ]
   },
   {
     "_id": "58f0fd2319147353230114cc",
@@ -692,7 +713,7 @@
     "slug": "limage",
     "domicile": "Honduras",
     "issuances": [
-      "593b00b7e7bdf70000000032"
+      "5942a4d4a33287dc13000045"
     ]
   },
   {
@@ -700,17 +721,17 @@
     "name": "Tropoli",
     "slug": "tropoli",
     "domicile": "Grenada",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300003b",
+      "5942a4d4a33287dc13000042"
+    ]
   },
   {
     "_id": "58f0fd234a0e0be6be26e656",
     "name": "Geekola",
     "slug": "geekola",
     "domicile": "Cameroon",
-    "issuances": [
-      "593b00b7e7bdf7000000002a",
-      "593b00b7e7bdf7000000003e"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23e9f44553b14d3853",
@@ -718,8 +739,7 @@
     "slug": "biolive",
     "domicile": "Israel",
     "issuances": [
-      "593b00b7e7bdf7000000000c",
-      "593b00b7e7bdf70000000054"
+      "5942a4d4a33287dc1300003e"
     ]
   },
   {
@@ -727,30 +747,21 @@
     "name": "Venoflex",
     "slug": "venoflex",
     "domicile": "Belize",
-    "issuances": [
-      "593b00b7e7bdf70000000022",
-      "593b00b7e7bdf7000000002c"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd239f953ce7c1f102eb",
     "name": "Farmex",
     "slug": "farmex",
     "domicile": "Austria",
-    "issuances": [
-      "593b00b7e7bdf70000000004"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd235867e7addbdf012a",
     "name": "Kyagoro",
     "slug": "kyagoro",
     "domicile": "Mozambique",
-    "issuances": [
-      "593b00b7e7bdf70000000009",
-      "593b00b7e7bdf70000000037",
-      "593b00b7e7bdf70000000039"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd237c860d62da04d670",
@@ -758,9 +769,7 @@
     "slug": "solgan",
     "domicile": "Russian Federation",
     "issuances": [
-      "593b00b7e7bdf70000000003",
-      "593b00b7e7bdf7000000000a",
-      "593b00b7e7bdf70000000028"
+      "5942a4d4a33287dc13000053"
     ]
   },
   {
@@ -769,8 +778,8 @@
     "slug": "arctiq",
     "domicile": "Germany",
     "issuances": [
-      "593b00b7e7bdf70000000017",
-      "593b00b7e7bdf7000000005c"
+      "5942a4d4a33287dc1300000e",
+      "5942a4d4a33287dc13000014"
     ]
   },
   {
@@ -778,24 +787,25 @@
     "name": "Zytrek",
     "slug": "zytrek",
     "domicile": "Dominica",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc13000024"
+    ]
   },
   {
     "_id": "58f0fd239ac5905342e24417",
     "name": "Earthpure",
     "slug": "earthpure",
     "domicile": "Madagascar",
-    "issuances": []
+    "issuances": [
+      "5942a4d4a33287dc1300001d"
+    ]
   },
   {
     "_id": "58f0fd230cb2c1d11fbf3666",
     "name": "Zenolux",
     "slug": "zenolux",
     "domicile": "Sao Tome and Principe",
-    "issuances": [
-      "593b00b7e7bdf7000000000b",
-      "593b00b7e7bdf70000000012"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd23dc5d6cfc0aa4a2b4",
@@ -810,7 +820,8 @@
     "slug": "recrisys",
     "domicile": "Nauru",
     "issuances": [
-      "593b00b7e7bdf7000000004f"
+      "5942a4d4a33287dc1300000c",
+      "5942a4d4a33287dc13000023"
     ]
   },
   {
@@ -818,29 +829,21 @@
     "name": "Bluegrain",
     "slug": "bluegrain",
     "domicile": "Korea (South)",
-    "issuances": [
-      "593b00b7e7bdf70000000007"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd2382977483b574a5e6",
     "name": "Syntac",
     "slug": "syntac",
     "domicile": "Christmas Island",
-    "issuances": [
-      "593b00b7e7bdf7000000001c",
-      "593b00b7e7bdf70000000031"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd2369d812690c355fa8",
     "name": "Interfind",
     "slug": "interfind",
     "domicile": "Estonia",
-    "issuances": [
-      "593b00b7e7bdf70000000047",
-      "593b00b7e7bdf70000000051"
-    ]
+    "issuances": []
   },
   {
     "_id": "58f0fd2315d738c6e464558c",
@@ -848,7 +851,7 @@
     "slug": "sulfax",
     "domicile": "Uganda",
     "issuances": [
-      "593b00b7e7bdf70000000005"
+      "5942a4d4a33287dc1300000b"
     ]
   },
   {
@@ -857,7 +860,8 @@
     "slug": "multiflex",
     "domicile": "Philippines",
     "issuances": [
-      "593b00b7e7bdf70000000048"
+      "5942a4d4a33287dc13000039",
+      "5942a4d4a33287dc13000058"
     ]
   }
 ]
