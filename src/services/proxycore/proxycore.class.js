@@ -1,4 +1,5 @@
 const axios = require('axios')
+const formatParams = require('../../utils/format-rpc-params.js')
 
 class Service {
   constructor (options) {
@@ -7,6 +8,7 @@ class Service {
 
   find (params) {
     console.log('find params.query: ', params.query)
+    const formattedParams = formatParams(params.query.params)
     return axios({
       method: 'POST',
       // url: 'http://99.227.230.43:8331',
@@ -14,7 +16,7 @@ class Service {
       data: {
         jsonrpc: '1.0',
         method: params.query.method,
-        params: formatParams(params.query.params)
+        params: formattedParams
       },
       auth: {
         username: 'equibit',
@@ -24,6 +26,7 @@ class Service {
     .then(res => res.data)
     .catch(err => {
       console.log('_______ PROXY ERROR: ', err.response.data)
+      console.log('USING PARAMS: ', formattedParams)
       return err.response.data
     })
   }
@@ -53,10 +56,6 @@ class Service {
   remove (id, params) {
     return Promise.resolve({ id })
   }
-}
-
-function formatParams (params) {
-  return params && params.map(p => isNaN(Number(p)) ? ((p === 'true' || p === 'false') ? (p === 'true') : p) : Number(p))
 }
 
 module.exports = function (options) {
