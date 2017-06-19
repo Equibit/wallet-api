@@ -10,6 +10,9 @@ module.exports = function (app) {
     // MUST BE SENT FROM BROWSER
     // Validate it by making RPCs using
     address: { type: String, required: true },
+    // These are for better efficiency in validating the sender's address
+    addressTxid: { type: String, required: true },
+    addressVout: { type: Number, required: true },
 
     // We also create a second transaction with this `toAddress` set as the `address`
     // That second transaction record will not need a `toAddress` field.
