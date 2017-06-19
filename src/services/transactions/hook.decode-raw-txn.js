@@ -26,7 +26,7 @@ module.exports = function (options) {
       }
     })
     .then(response => {
-      context.params.decodedTxn = response
+      context.params.decodedTxn = response.data.result
       return context
     })
     .catch(err => {
