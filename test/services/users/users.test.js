@@ -157,7 +157,7 @@ function runTests (feathersClient) {
           return feathersClient.service('users').update(user._id, { isNewUser: true })
         })
         .then(updatedUser => {
-          assert(updatedUser.isNewUser === true, 'the request should have failed')
+          assert(updatedUser.isNewUser === true, 'the isNewUser attribute was updated')
           assert(updatedUser.email === user.email, 'the user still has an email, so the record was patched')
           done()
         })
