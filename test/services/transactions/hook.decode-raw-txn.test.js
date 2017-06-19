@@ -12,7 +12,7 @@ const decodeRawTxn = testHook({
 })
 
 describe('Transactions Service - decodeRawTxn Hook', function () {
-  it.only('uses the core to decode a raw transaction from hex', function (done) {
+  it('uses the core to decode a raw transaction from hex', function (done) {
     const context = {
       app,
       params: { },

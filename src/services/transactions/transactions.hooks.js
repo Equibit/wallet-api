@@ -1,9 +1,11 @@
 const { authenticate } = require('feathers-authentication').hooks
+const { discard } = require('feathers-hooks-common')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const decodeRawTxn = require('./hook.decode-raw-txn')
-const validateDecodedTxn = require('./hook.validate-raw-txn')
+const validateDecodedTxn = require('./hook.validate-txn')
 const sendRawTxn = require('./hook.send-raw-txn')
 const formatTxn = require('./hook.format-txn')
+const createReceiverTxn = require('./hook.format-txn')
 
 module.exports = app => {
   return {
@@ -23,7 +25,7 @@ module.exports = app => {
         will be made to derive the from `address` from each vin's
         `txid` and `vout` property. The responses will be cached on the hook context for use in formatTxn.
         */
-        validateDecodedTxn(),
+        validateDecodedTxn(app.get('bitcoinCore')),
         // Record the transaction in the core
         sendRawTxn(app.get('bitcoinCore')),
         // Format the transaction to be saved in the wallet-api db
@@ -37,10 +39,13 @@ module.exports = app => {
     },
 
     after: {
-      all: [],
+      all: [ discard('__v') ],
       find: [],
       get: [],
-      create: [],
+      create: [
+        // Creates a separate txn for the receiver's address
+        createReceiverTxn()
+      ],
       update: [],
       patch: [],
       remove: []

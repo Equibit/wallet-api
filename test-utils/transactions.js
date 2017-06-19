@@ -57,6 +57,25 @@ exports.mock = function () {
           error: null,
           id: null
         }]
+      case 'gettxout':
+        return [200, {
+          result: {
+            'bestblock': '00000000c92356f7030b1deeab54b3b02885711320b4c48523be9daa3e0ace5d',
+            'confirmations': 0,
+            'value': 0.00100000,
+            'scriptPubKey': {
+              'asm': 'OP_DUP OP_HASH160 a11418d3c144876258ba02909514d90e71ad8443 OP_EQUALVERIFY OP_CHECKSIG',
+              'hex': '76a914a11418d3c144876258ba02909514d90e71ad844388ac',
+              'reqSigs': 1,
+              'type': 'pubkeyhash',
+              'addresses': [ 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32' ]
+            },
+            'version': 1,
+            'coinbase': false
+          },
+          error: null,
+          id: null
+        }]
     }
   })
 }
