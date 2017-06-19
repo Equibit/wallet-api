@@ -21,7 +21,10 @@ module.exports = function (options) {
     // Make sure `toAddress` matches one of the `vout.scriptPubKey.addresses` which will contain
     // the receipient's address and (likely) the change address of the sender.
     // This is done first because it doesn't require an RPC call & if it fails we can skip the RPC call.
-    if (!decodedTxn.vout[0].scriptPubKey.addresses.includes(context.data.toAddress)) {
+    const doesAddressMatch = decodedTxn.vout.reduce((acc, a) => {
+      return acc || a.scriptPubKey.addresses.includes(context.data.toAddress)
+    }, false)
+    if (!doesAddressMatch) {
       return Promise.reject(new errors.BadRequest('The `toAddress` did not match any address in the transaction\'s `vout` addresses'))
     }
 
@@ -68,7 +71,7 @@ module.exports = function (options) {
       return context
     })
     .catch(err => {
-      console.log('_______ PROXY ERROR: ', err.response.data)
+      console.log('_______ getxtout ERROR: ', err.response.data)
       console.log('USING PARAMS: ', formattedParams)
       return err.response.data
     })

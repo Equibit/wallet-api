@@ -30,7 +30,7 @@ module.exports = function (options) {
       return context
     })
     .catch(err => {
-      console.log('_______ PROXY ERROR: ', err.response.data)
+      console.log('_______ decoderawtransaction ERROR: ', err.response.data)
       console.log('USING PARAMS: ', formattedParams)
       return err.response.data
     })

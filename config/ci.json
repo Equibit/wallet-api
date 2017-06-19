@@ -5,5 +5,15 @@
   "mongodb": "MONGO_DB_URI",
   "postmark": {
     "key": "POSTMARK_API_TEST"
+  },
+  "bitcoinCore": {
+    "url": "http://localhost:18332",
+    "username": "equibit",
+    "password": "equibit"
+  },
+  "equibitCore": {
+    "url": "http://localhost:18335",
+    "username": "equibit",
+    "password": "equibit"
   }
 }
