@@ -21,7 +21,7 @@ const authentication = require('./authentication')
 
 const mongodb = require('./mongodb')
 const seed = require('./seeder/seeder')
-const seedWriter = require('./seeder/seed-writer')
+// const seedWriter = require('./seeder/seed-writer')
 
 const app = feathers()
 app.set('applicationRoot', path.join(__dirname))
