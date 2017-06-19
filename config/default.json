@@ -34,6 +34,16 @@
     "forgotPasswordNonExisting": 1480222,
     "securityAlertFailedLogins": 1854481
   },
+  "bitcoinCore": {
+    "url": "http://localhost:18332",
+    "username": "undefined",
+    "password": "undefined"
+  },
+  "equibitCore": {
+    "url": "http://localhost:18335",
+    "username": "undefined",
+    "password": "undefined"
+  },
   "seeder": {
     "enabled": true,
     "delete": true,
