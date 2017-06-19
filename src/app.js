@@ -58,7 +58,7 @@ app.configure(authentication)
 app.configure(services)
 
 seed(app)
-seedWriter(app)
+// seedWriter(app)
 
 // Configure middleware (see `middleware/index.js`) - always has to be last
 app.configure(middleware)
