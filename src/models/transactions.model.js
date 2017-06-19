@@ -18,7 +18,7 @@ module.exports = function (app) {
     toAddress: { type: String },
 
     type: { type: String, enum: [ 'out', 'in', 'buy', 'sell' ] },
-    currencyType: { type: String, enum: [ 'BTC', 'EQB' ] },
+    currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
     companyName: { type: String },
     issuanceName: { type: String },
     // status: { type: String, enum: [ 'Trading' ] }, // for Buy & Sell
