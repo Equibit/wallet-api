@@ -27,7 +27,7 @@ module.exports = function (app) {
     issuanceName: { type: String },
     // status: { type: String, enum: [ 'Trading' ] }, // for Buy & Sell
     txIdBtc: { type: String }, // Buy & Sell?
-    // txIdEqb: { type: String }, // Buy & Sell?
+    txIdEqb: { type: String }, // Buy & Sell?
     // quantity: { type: Number }, // Integer
 
     // TODO: Validate the amount.
