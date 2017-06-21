@@ -14,15 +14,16 @@ class Service {
     const addressesEqb = params.query.eqb || []
     const byAddress = !!params.query.byaddress
 
-    const config = this.options.app.get('bitcoinCore')
+    const configBtc = this.options.app.get('bitcoinCore')
+    const configEqb = this.options.app.get('equibitCore')
 
     return Promise.all([
-      fetchListunspent(config, 'btc', addressesBtc),
-      fetchListunspent(config, 'eqb', addressesEqb)
+      fetchListunspent(configBtc, addressesBtc),
+      fetchListunspent(configEqb, addressesEqb)
     ]).then(results => {
       return {
-        btc: byAddress ? aggregateByAddress(results[0].data.result) : addSummary(results[0].data.result),
-        eqb: byAddress ? aggregateByAddress(results[1].data.result) : addSummary(results[1].data.result)
+        BTC: byAddress ? aggregateByAddress(results[0].data.result) : addSummary(results[0].data.result),
+        EQB: byAddress ? aggregateByAddress(results[1].data.result) : addSummary(results[1].data.result)
       }
     })
     .catch(err => {
@@ -58,7 +59,7 @@ class Service {
   }
 }
 
-function fetchListunspent (config, type, addresses = []) {
+function fetchListunspent (config, addresses = []) {
   if (!addresses.length) {
     return Promise.resolve({data: {result: []}})
   }
