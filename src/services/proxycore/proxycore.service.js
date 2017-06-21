@@ -9,7 +9,8 @@ module.exports = function () {
 
   const options = {
     name: 'proxycore',
-    paginate
+    paginate,
+    app
   }
 
   // Initialize our service with any options it requires
