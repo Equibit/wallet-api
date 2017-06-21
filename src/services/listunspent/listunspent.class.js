@@ -14,9 +14,11 @@ class Service {
     const addressesEqb = params.query.eqb || []
     const byAddress = !!params.query.byaddress
 
+    const config = this.options.app.get('bitcoinCore')
+
     return Promise.all([
-      fetchListunspent('btc', addressesBtc),
-      fetchListunspent('eqb', addressesEqb)
+      fetchListunspent(config, 'btc', addressesBtc),
+      fetchListunspent(config, 'eqb', addressesEqb)
     ]).then(results => {
       return {
         btc: byAddress ? aggregateByAddress(results[0].data.result) : addSummary(results[0].data.result),
@@ -56,11 +58,10 @@ class Service {
   }
 }
 
-function fetchListunspent (type, addresses = []) {
+function fetchListunspent (config, type, addresses = []) {
   if (!addresses.length) {
     return Promise.resolve({data: {result: []}})
   }
-  const config = this.options.app.get('bitcoinCore')
   console.log('fetchListunspent', arguments)
 
   return axios({
