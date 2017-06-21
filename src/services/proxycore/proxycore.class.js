@@ -26,9 +26,9 @@ class Service {
     })
     .then(res => res.data)
     .catch(err => {
-      console.log('_______ PROXY ERROR: ', ((err && err.response && err.response.data) || err))
+      console.log('_______ PROXY ERROR: ', (err.response && err.response.data) || err.message)
       console.log('USING PARAMS: ', formattedParams)
-      return err.response.data
+      return (err.response && err.response.data) || {error: {message: err.message}}
     })
   }
 
