@@ -62,7 +62,7 @@ function fetchListunspent (type, addresses = []) {
   }
   const config = this.options.app.get('bitcoinCore')
   console.log('fetchListunspent', arguments)
-  
+
   return axios({
     method: 'POST',
     url: config.url,
