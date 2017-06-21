@@ -60,20 +60,20 @@ function fetchListunspent (type, addresses = []) {
   if (!addresses.length) {
     return Promise.resolve({data: {result: []}})
   }
+  const config = this.options.app.get('bitcoinCore')
   console.log('fetchListunspent', arguments)
-  // 'http://99.227.230.43:8331'
-  const url = type === 'btc' ? 'http://localhost:18332' : 'http://localhost:18332'
+  
   return axios({
     method: 'POST',
-    url,
+    url: config.url,
     data: {
       jsonrpc: '1.0',
       method: 'listunspent',
       params: [0, 99999, addresses]
     },
     auth: {
-      username: 'equibit',
-      password: 'equibit'
+      username: config.username,
+      password: config.password
     }
   })
 }

@@ -13,7 +13,6 @@ class Service {
 
     return axios({
       method: 'POST',
-      // url: 'http://99.227.230.43:8331',
       url: config.url,
       data: {
         jsonrpc: '1.0',
