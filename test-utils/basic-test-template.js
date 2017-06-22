@@ -1,11 +1,11 @@
 const assert = require('assert')
-const app = require('../src/app')
+const app = require('../../../src/app')
 // const makeSigned = require('feathers-authentication-signed/client')
 // const crypto = require('crypto')
-require('../test-utils/setup')
-const clients = require('../test-utils/make-clients')
-const removeUsers = require('../test-utils/utils').removeUsers
-const { authenticate } = require('../../test-utils/user')
+require('../../../test-utils/setup')
+const clients = require('../../../test-utils/make-clients')
+const removeUsers = require('../../../test-utils/utils').removeUsers
+const { authenticate } = require('../../../test-utils/user')
 const assertRequiresAuth = require('../../../test-utils/method.require-auth')
 
 // Remove all users before all tests run.
@@ -49,27 +49,27 @@ function runTests (feathersClient) {
     })
 
     describe('Client Without Auth', function () {
-      it(`requires auth for find requests from the client`, function (done) {
+      it.only(`requires auth for find requests from the client`, function (done) {
         assertRequiresAuth(serviceOnClient, 'find', assert, done)
       })
 
-      it(`requires auth for get requests from the client`, function (done) {
+      it.only(`requires auth for get requests from the client`, function (done) {
         assertRequiresAuth(serviceOnClient, 'get', assert, done)
       })
 
-      it(`requires auth for create requests from the client`, function (done) {
+      it.only(`requires auth for create requests from the client`, function (done) {
         assertRequiresAuth(serviceOnClient, 'create', assert, done)
       })
 
-      it(`requires auth for update requests from the client`, function (done) {
+      it.only(`requires auth for update requests from the client`, function (done) {
         assertRequiresAuth(serviceOnClient, 'update', assert, done)
       })
 
-      it(`requires auth for patch requests from the client`, function (done) {
+      it.only(`requires auth for patch requests from the client`, function (done) {
         assertRequiresAuth(serviceOnClient, 'patch', assert, done)
       })
 
-      it(`requires auth for remove requests from the client`, function (done) {
+      it.only(`requires auth for remove requests from the client`, function (done) {
         assertRequiresAuth(serviceOnClient, 'remove', assert, done)
       })
     })
