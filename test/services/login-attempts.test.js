@@ -119,27 +119,27 @@ function runTests (feathersClient) {
     })
 
     it(`rejects find requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'find', assert, done)
+      assertDisallowed(feathersClient.service('login-attempts'), 'find', done)
     })
 
     it(`rejects get requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'get', assert, done)
+      assertDisallowed(feathersClient.service('login-attempts'), 'get', done)
     })
 
     it(`rejects create requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'create', assert, done)
+      assertDisallowed(feathersClient.service('login-attempts'), 'create', done)
     })
 
     it(`rejects update requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'update', assert, done)
+      assertDisallowed(feathersClient.service('login-attempts'), 'update', done)
     })
 
     it(`rejects patch requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'patch', assert, done)
+      assertDisallowed(feathersClient.service('login-attempts'), 'patch', done)
     })
 
     it(`rejects remove requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'remove', assert, done)
+      assertDisallowed(feathersClient.service('login-attempts'), 'remove', done)
     })
   })
 }
