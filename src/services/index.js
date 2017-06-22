@@ -14,6 +14,8 @@ const listunspent = require('./listunspent/listunspent.service.js')
 
 const transactions = require('./transactions/transactions.service.js')
 
+const subscribe = require('./subscribe/subscribe.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -28,4 +30,5 @@ module.exports = function () {
   app.configure(watchlist)
   app.configure(listunspent)
   app.configure(transactions)
+  app.configure(subscribe)
 }
