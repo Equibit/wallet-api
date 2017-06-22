@@ -28,7 +28,7 @@ class Service {
       }
     })
     .catch(err => {
-      const errRes = err.response && err.response.data || {
+      const errRes = (err.response && err.response.data) || {
         message: err.message
       }
       console.log('_______ PROXY ERROR: ', errRes)
