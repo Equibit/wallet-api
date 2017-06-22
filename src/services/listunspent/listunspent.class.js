@@ -21,14 +21,18 @@ class Service {
       fetchListunspent(configBtc, addressesBtc),
       fetchListunspent(configEqb, addressesEqb)
     ]).then(results => {
+      console.log('--- results:', results)
       return {
         BTC: byAddress ? aggregateByAddress(results[0].data.result) : addSummary(results[0].data.result),
         EQB: byAddress ? aggregateByAddress(results[1].data.result) : addSummary(results[1].data.result)
       }
     })
     .catch(err => {
-      console.log('_______ PROXY ERROR: ', err.response.data)
-      return err.response.data
+      const errRes = err.response && err.response.data || {
+        message: err.message
+      }
+      console.log('_______ PROXY ERROR: ', errRes)
+      return errRes
     })
   }
 
