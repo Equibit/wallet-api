@@ -15,11 +15,11 @@ module.exports = function (app) {
     // addressTxid: { type: String, required: true },
     // addressVout: { type: Number, required: true },
 
-    // We also create a second transaction with this `toAddress` set as the `address`
-    // That second transaction record will not need a `toAddress` field.
+    // We also create a second transaction with this `otherAddress` set as the `address`
+    // That second transaction record will not need a `otherAddress` field.
     // MUST BE SENT FROM BROWSER
     // Validate that this address made it into the vout addresses
-    toAddress: { type: String },
+    otherAddress: { type: String },
 
     type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },

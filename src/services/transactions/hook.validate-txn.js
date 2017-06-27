@@ -13,19 +13,19 @@ module.exports = function (options) {
   return function validateRawTxn (context) {
     const decodedTxn = context.params.decodedTxn
 
-    // Make sure that `toAddress` was provided.
-    if (!context.data.toAddress) {
-      return Promise.reject(new errors.BadRequest('`toAddress` is required to record a transaction'))
+    // Make sure that `otherAddress` was provided.
+    if (!context.data.otherAddress) {
+      return Promise.reject(new errors.BadRequest('`otherAddress` is required to record a transaction'))
     }
 
-    // Make sure `toAddress` matches one of the `vout.scriptPubKey.addresses` which will contain
+    // Make sure `otherAddress` matches one of the `vout.scriptPubKey.addresses` which will contain
     // the receipient's address and (likely) the change address of the sender.
     // This is done first because it doesn't require an RPC call & if it fails we can skip the RPC call.
     const doesAddressMatch = decodedTxn.vout.reduce((acc, a) => {
-      return acc || a.scriptPubKey.addresses.includes(context.data.toAddress)
+      return acc || a.scriptPubKey.addresses.includes(context.data.otherAddress)
     }, false)
     if (!doesAddressMatch) {
-      return Promise.reject(new errors.BadRequest('The `toAddress` did not match any address in the transaction\'s `vout` addresses'))
+      return Promise.reject(new errors.BadRequest('The `otherAddress` did not match any address in the transaction\'s `vout` addresses'))
     }
 
     // Make sure the `address`, `addressTxid`, and `addressVout` are all provided
