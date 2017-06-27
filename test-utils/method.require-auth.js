@@ -12,7 +12,7 @@ const args = {
 module.exports = function (service, method, done) {
   assert(typeof service[method] === 'function', `the service has a ${method} method`)
 
-  service[method].apply(service, args[method])
+  service[method](...args[method])
     .then(res => {
       assert(!res, 'should not have received a response')
     })
