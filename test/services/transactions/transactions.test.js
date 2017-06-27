@@ -51,27 +51,27 @@ function runTests (feathersClient) {
 
     describe('Client Without Auth', function () {
       it(`requires auth for find requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'find', assert, done)
+        assertRequiresAuth(serviceOnClient, 'find', done)
       })
 
       it(`requires auth for get requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'get', assert, done)
+        assertRequiresAuth(serviceOnClient, 'get', done)
       })
 
       it(`requires auth for create requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'create', assert, done)
+        assertRequiresAuth(serviceOnClient, 'create', done)
       })
 
       it(`requires auth for update requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'update', assert, done)
+        assertRequiresAuth(serviceOnClient, 'update', done)
       })
 
       it(`requires auth for patch requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'patch', assert, done)
+        assertRequiresAuth(serviceOnClient, 'patch', done)
       })
 
       it(`requires auth for remove requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'remove', assert, done)
+        assertRequiresAuth(serviceOnClient, 'remove', done)
       })
     })
 

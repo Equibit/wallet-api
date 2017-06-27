@@ -1,3 +1,5 @@
+const assert = require('assert')
+
 const args = {
   find: [{}],
   get: [1],
@@ -7,7 +9,7 @@ const args = {
   remove: [1]
 }
 
-module.exports = function (service, method, assert, done) {
+module.exports = function (service, method, done) {
   assert(typeof service[method] === 'function', `the service has a ${method} method`)
 
   service[method].apply(service, args[method])
