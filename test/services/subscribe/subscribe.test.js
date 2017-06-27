@@ -17,7 +17,7 @@ const restClient = clients[1]
 
 describe(`Subscribe Service Tests - feathers-socketio`, function () {
   const feathersClient = socketClient
-  const serviceOnClient = feathersClient.service('portfolios')
+  const serviceOnClient = feathersClient.service('subscribe')
 
   beforeEach(function (done) {
     feathersClient.logout()
@@ -49,43 +49,69 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
 
   describe('Client Without Auth', function () {
     it(`requires auth for find requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'find', assert, done)
+      assertRequiresAuth(serviceOnClient, 'find', done)
     })
 
     it(`requires auth for get requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'get', assert, done)
+      assertRequiresAuth(serviceOnClient, 'get', done)
     })
 
     it(`requires auth for create requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'create', assert, done)
+      assertRequiresAuth(serviceOnClient, 'create', done)
     })
 
     it(`requires auth for update requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'update', assert, done)
+      assertRequiresAuth(serviceOnClient, 'update', done)
     })
 
     it(`requires auth for patch requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'patch', assert, done)
+      assertRequiresAuth(serviceOnClient, 'patch', done)
     })
 
     it(`requires auth for remove requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'remove', assert, done)
+      assertRequiresAuth(serviceOnClient, 'remove', done)
     })
   })
 
   describe('Client With Auth', function () {
-    it.skip('ooooooooooooo', function (done) {
-      const user = this.user
+    describe('Create', function () {
+      it('updates the socket with the provided addresses', function (done) {
+        const user = this.user
+        const addresses = [ 'address1', 'address2', 'address3' ]
 
-      authenticate(app, feathersClient, user)
-        .then(response => {
-          assert(response, 'authenticated successfully')
-          done()
-        })
-        .catch(error => {
-          assert(!error, `should have been able to authenticate`)
-          done()
-        })
+        authenticate(app, feathersClient, user)
+          .then(response => {
+            return serviceOnClient.create({ addresses })
+          })
+          .then(response => {
+            const socketId = Object.keys(app.io.sockets.sockets).filter(socketId => {
+              return app.io.sockets.sockets[socketId].feathers.user._id.toString() === user._id.toString()
+            })
+            const socketObject = app.io.sockets.sockets[socketId].feathers
+            addresses.forEach(address => {
+              assert(socketObject.addresses[address] === true, 'the address was added to the socketObject')
+            })
+            done()
+          })
+          .catch(error => {
+            assert(!error, error.message)
+            done()
+          })
+      })
+
+      it.skip('throws if socket isn\'t authenticated', function (done) {
+        const user = this.user
+
+        authenticate(app, feathersClient, user)
+          .then(response => {
+            assert(response, 'authenticated successfully')
+            done()
+          })
+          .catch(error => {
+            assert(!error, `should have been able to authenticate`)
+            done()
+          })
+      })
     })
   })
 })
@@ -123,44 +149,54 @@ describe('Subscribe Service Tests - feathers-rest', function () {
   })
 
   describe('REST client disallowed', function () {
-    it.only(`find`, function (done) {
+    it(`find`, function (done) {
       assertDisallowed(serviceOnClient, 'find', done)
     })
 
-    it.only(`get`, function (done) {
+    it(`get`, function (done) {
       assertDisallowed(serviceOnClient, 'get', done)
     })
 
-    it.only(`create`, function (done) {
+    it(`create`, function (done) {
       assertDisallowed(serviceOnClient, 'create', done)
     })
 
-    it.only(`update`, function (done) {
+    it(`update`, function (done) {
       assertDisallowed(serviceOnClient, 'update', done)
     })
 
-    it.only(`patch`, function (done) {
+    it(`patch`, function (done) {
       assertDisallowed(serviceOnClient, 'patch', done)
     })
 
-    it.only(`remove`, function (done) {
+    it(`remove`, function (done) {
       assertDisallowed(serviceOnClient, 'remove', done)
     })
   })
 
   describe('Client With Auth', function () {
-    it.skip('ooooooooooooo', function (done) {
-      const user = this.user
+    it(`find`, function (done) {
+      assertDisallowed(serviceOnClient, 'find', done)
+    })
 
-      authenticate(app, feathersClient, user)
-        .then(response => {
-          assert(response, 'authenticated successfully')
-          done()
-        })
-        .catch(error => {
-          assert(!error, `should have been able to authenticate`)
-          done()
-        })
+    it(`get`, function (done) {
+      assertDisallowed(serviceOnClient, 'get', done)
+    })
+
+    it(`create`, function (done) {
+      assertDisallowed(serviceOnClient, 'create', done)
+    })
+
+    it(`update`, function (done) {
+      assertDisallowed(serviceOnClient, 'update', done)
+    })
+
+    it(`patch`, function (done) {
+      assertDisallowed(serviceOnClient, 'patch', done)
+    })
+
+    it(`remove`, function (done) {
+      assertDisallowed(serviceOnClient, 'remove', done)
     })
   })
 })
