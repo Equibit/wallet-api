@@ -8,15 +8,17 @@ class Service {
 
   find (params) {
     const formattedParams = formatParams(params.query.params)
-    const config = this.options.app.get('bitcoinCore')
-    console.log('find params.query and config: ', params.query, config)
+    const node = params.query.node || 'btc'
+    delete formattedParams.node
+    const config = this.options.app.get(node === 'eqb' ? 'equibitCore' : 'bitcoinCore')
+    console.log('PROXYCORE: find params.query and config: ', params.query, config)
 
     return axios({
       method: 'POST',
       url: config.url,
       data: {
         jsonrpc: '1.0',
-        method: params.query.method,
+        method: (config.methodPrefix || '') + params.query.method,
         params: formattedParams
       },
       auth: {
@@ -26,7 +28,7 @@ class Service {
     })
     .then(res => res.data)
     .catch(err => {
-      console.log('_______ PROXY ERROR: ', (err.response && err.response.data) || err.message)
+      console.log('_______ PROXYCORE ERROR: ', (err.response && err.response.data) || err.message)
       console.log('USING PARAMS: ', formattedParams)
       return (err.response && err.response.data) || {error: {message: err.message}}
     })
