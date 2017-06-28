@@ -6,12 +6,15 @@ const validateDecodedTxn = require('./hook.validate-txn')
 const sendRawTxn = require('./hook.send-raw-txn')
 const formatTxn = require('./hook.format-txn')
 const createReceiverTxn = require('./hook.create-receiver-txn')
+const requireAddresses = require('./hook.require-addresses')
 
 module.exports = app => {
   return {
     before: {
       all: [ authenticate('jwt') ],
-      find: [],
+      find: [
+        requireAddresses()
+      ],
       get: [],
       create: [
         iff(
