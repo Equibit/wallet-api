@@ -74,7 +74,7 @@ function fetchListunspent (config, addresses = []) {
     url: config.url,
     data: {
       jsonrpc: '1.0',
-      method: 'listunspent',
+      method: (config.methodPrefix || '') + 'listunspent',
       params: [0, 99999, addresses]
     },
     auth: {
