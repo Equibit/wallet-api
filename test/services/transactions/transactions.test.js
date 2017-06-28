@@ -162,7 +162,7 @@ function runTests (feathersClient) {
           })
       })
 
-      it.only('throws an error for find without addresses', function (done) {
+      it.only('throws an error for find without address', function (done) {
         const user = this.user
 
         authenticate(app, feathersClient, user)
@@ -170,7 +170,7 @@ function runTests (feathersClient) {
             return serviceOnClient.find({ query: {} })
           })
           .then(response => {
-            assert(!response, 'cannot query txns without passing addresses')
+            assert(!response, 'cannot query txns without passing address')
             done()
           })
           .catch(error => {
@@ -179,15 +179,15 @@ function runTests (feathersClient) {
           })
       })
 
-      it.only('throws an error for find without `addresses.$in` length', function (done) {
+      it.only('throws an error for find without `address.$in` length', function (done) {
         const user = this.user
 
         authenticate(app, feathersClient, user)
           .then(response => {
-            return serviceOnClient.find({ query: { addresses: {$in: []} } })
+            return serviceOnClient.find({ query: { address: {$in: []} } })
           })
           .then(response => {
-            assert(!response, 'cannot query txns without passing addresses')
+            assert(!response, 'cannot query txns without passing address')
             done()
           })
           .catch(error => {
