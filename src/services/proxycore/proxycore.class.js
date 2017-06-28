@@ -9,7 +9,6 @@ class Service {
   find (params) {
     const formattedParams = formatParams(params.query.params)
     const node = params.query.node || 'btc'
-    delete formattedParams.node
     const config = this.options.app.get(node === 'eqb' ? 'equibitCore' : 'bitcoinCore')
     console.log('PROXYCORE: find params.query and config: ', params.query, config)
 
