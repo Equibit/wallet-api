@@ -15,9 +15,10 @@ before(removeUsers(app))
 const socketClient = clients[0]
 const restClient = clients[1]
 
-describe(`Subscribe Service Tests - feathers-socketio`, function () {
+describe(`address-map Service Tests - feathers-socketio`, function () {
   const feathersClient = socketClient
-  const serviceOnClient = feathersClient.service('subscribe')
+  const serviceOnServer = app.service('address-map')
+  const serviceOnClient = feathersClient.service('address-map')
 
   beforeEach(function (done) {
     feathersClient.logout()
@@ -49,95 +50,74 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
 
   describe('Client Without Auth', function () {
     it(`requires auth for find requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'find', done)
+      assertDisallowed(serviceOnClient, 'find', done)
     })
 
     it(`requires auth for get requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'get', done)
+      assertDisallowed(serviceOnClient, 'get', done)
     })
 
     it(`requires auth for create requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'create', done)
+      assertDisallowed(serviceOnClient, 'create', done)
     })
 
     it(`requires auth for update requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'update', done)
+      assertDisallowed(serviceOnClient, 'update', done)
     })
 
     it(`requires auth for patch requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'patch', done)
+      assertDisallowed(serviceOnClient, 'patch', done)
     })
 
     it(`requires auth for remove requests from the client`, function (done) {
-      assertRequiresAuth(serviceOnClient, 'remove', done)
+      assertDisallowed(serviceOnClient, 'remove', done)
     })
   })
 
   describe('Client With Auth', function () {
+    it(`requires auth for find requests from the client`, function (done) {
+      assertDisallowed(serviceOnClient, 'find', done)
+    })
+
+    it(`requires auth for get requests from the client`, function (done) {
+      assertDisallowed(serviceOnClient, 'get', done)
+    })
+
+    it(`requires auth for create requests from the client`, function (done) {
+      assertDisallowed(serviceOnClient, 'create', done)
+    })
+
+    it(`requires auth for update requests from the client`, function (done) {
+      assertDisallowed(serviceOnClient, 'update', done)
+    })
+
+    it(`requires auth for patch requests from the client`, function (done) {
+      assertDisallowed(serviceOnClient, 'patch', done)
+    })
+
+    it(`requires auth for remove requests from the client`, function (done) {
+      assertDisallowed(serviceOnClient, 'remove', done)
+    })
+
     describe('Create', function () {
-      beforeEach(function () {
-        return app.service('address-map').remove(null, {})
-      })
-
-      it('updates the socket with a uid property', function (done) {
+      it('encrypts the identifier property', function (done) {
         const user = this.user
-        const addresses = [ 'address1', 'address2', 'address3' ]
+        const identifier = '12345'
+        const address = 'address1'
 
         authenticate(app, feathersClient, user)
           .then(response => {
-            return serviceOnClient.create({ addresses })
+            return serviceOnServer.create({ identifier, address })
           })
-          .then(response => {
-            const socketId = Object.keys(app.io.sockets.sockets).filter(socketId => {
-              return app.io.sockets.sockets[socketId].feathers.user._id.toString() === user._id.toString()
-            })
-            const socket = app.io.sockets.sockets[socketId].feathers
-            assert(socket.uid, 'the socket has a uid property')
-            assert(typeof socket.uid === 'string', 'the uid is a string')
+          .then(map => {
+            assert(map.identifier !== identifier, 'the identifier was encrypted')
+            assert(map.address === address, 'the address is still the same')
+            assert(map.createdAt, 'createdAt attr is present')
+            assert(map.updatedAt, 'updatedAt attr is present')
             done()
           })
           .catch(error => {
             assert(!error, error.message)
-            done()
-          })
-      })
-
-      it('adds records to the /address-map service', function (done) {
-        const user = this.user
-        const addresses = [ 'address1', 'address2', 'address3' ]
-
-        authenticate(app, feathersClient, user)
-          .then(response => {
-            return serviceOnClient.create({ addresses })
-          })
-          .then(response => {
-            return app.service('address-map').find({ query: { address: {$in: addresses} } })
-          })
-          .then(response => {
-            const addressMappings = response.data || response
-            const recordedAddresses = addressMappings.map(map => map.address)
-            assert(addressMappings.length === 3, 'All three addresses were added to /address-map')
-            addresses.forEach((address, index) => {
-              assert(recordedAddresses[index] === address, 'the address matched')
-            })
-            done()
-          })
-          .catch(error => {
-            assert(!error, error.message)
-            done()
-          })
-      })
-
-      it.skip('throws if socket isn\'t authenticated', function (done) {
-        const user = this.user
-
-        authenticate(app, feathersClient, user)
-          .then(response => {
-            assert(response, 'authenticated successfully')
-            done()
-          })
-          .catch(error => {
-            assert(!error, `should have been able to authenticate`)
             done()
           })
       })
@@ -145,9 +125,9 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
   })
 })
 
-describe('Subscribe Service Tests - feathers-rest', function () {
+describe('address-map Service Tests - feathers-rest', function () {
   const feathersClient = restClient
-  const serviceOnClient = feathersClient.service('subscribe')
+  const serviceOnClient = feathersClient.service('address-map')
 
   beforeEach(function (done) {
     feathersClient.logout()

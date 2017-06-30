@@ -7,6 +7,7 @@ const sendRawTxn = require('./hook.send-raw-txn')
 const formatTxn = require('./hook.format-txn')
 const createReceiverTxn = require('./hook.create-receiver-txn')
 const requireAddresses = require('./hook.require-addresses')
+const findAddressMap = require('./hook.find-address-map')
 
 module.exports = app => {
   return {
@@ -57,7 +58,9 @@ module.exports = app => {
       get: [],
       create: [
         // Creates a separate txn for the receiver's address
-        createReceiverTxn()
+        createReceiverTxn(),
+        // adds the matching /address-map record to the hook params for use in filters
+        findAddressMap({ key: app.get('addressMapEncryptionKey') })
       ],
       update: [],
       patch: [],

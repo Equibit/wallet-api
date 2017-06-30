@@ -1,4 +1,5 @@
 const postmark = require('feathers-postmark')
+const { disallow } = require('feathers-hooks-common')
 
 module.exports = function () {
   const app = this
@@ -10,7 +11,9 @@ module.exports = function () {
 
   postmarkService.hooks({
     before: {
-      create: []
+      create: [
+        disallow('external')
+      ]
     },
     after: {
       create: []

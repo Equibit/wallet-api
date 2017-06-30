@@ -11,10 +11,9 @@ const portfolios = require('./portfolios/portfolios.service.js')
 const proxycore = require('./proxycore/proxycore.service.js')
 const watchlist = require('./watchlist/watchlist.service.js')
 const listunspent = require('./listunspent/listunspent.service.js')
-
 const transactions = require('./transactions/transactions.service.js')
-
 const subscribe = require('./subscribe/subscribe.service.js')
+const addressMap = require('./address-map/address-map.service.js')
 
 module.exports = function () {
   const app = this
@@ -31,4 +30,5 @@ module.exports = function () {
   app.configure(listunspent)
   app.configure(transactions)
   app.configure(subscribe)
+  app.configure(addressMap)
 }

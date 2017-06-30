@@ -1,5 +1,7 @@
 const errors = require('feathers-errors')
 const assert = require('assert')
+const objectid = require('objectid')
+const { encrypt } = require('../../utils/iv-encrypt')
 
 class Service {
   constructor (options) {
@@ -31,19 +33,23 @@ class Service {
     const socketId = Object.keys(app.io.sockets.sockets).filter(socketId => {
       return app.io.sockets.sockets[socketId].feathers.user._id.toString() === user._id.toString()
     })
-    const socketObject = app.io.sockets.sockets[socketId].feathers
+    const socket = app.io.sockets.sockets[socketId].feathers
     assert(socketId, 'A socket was found that matches this user')
 
-    // Merge in any provided addresses
-    if (!socketObject.addresses) {
-      socketObject.addresses = {}
-    }
-    socketObject.addresses = data.addresses.reduce((map, address) => {
-      map[address] = true
-      return map
-    }, socketObject.addresses)
+    // Make sure the socket has a unique identifier
+    socket.uid = socket.uid || objectid().toString()
 
-    return Promise.resolve(data)
+    // Use the uid to create `/address-map` pairs.
+    const addressMapService = app.service('address-map')
+    const mappingCreates = data.addresses.map(address => {
+      return addressMapService.create({
+        identifier: socket.uid,
+        address
+      })
+    })
+    return Promise.all(mappingCreates).then(mappings => {
+      return Promise.resolve(data)
+    })
   }
 
   update () {

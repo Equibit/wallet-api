@@ -1,8 +1,9 @@
-/* eslint no-console: 1 */
-console.warn('You are using the default filter for the transactions service. For more information about event filters see https://docs.feathersjs.com/api/events.html#event-filtering') // eslint-disable-line no-console
+console.warn('You are using the default filter for the transactions service. For more information about event filters see https://docs.feathersjs.com/api/events.html#event-filtering')
 
 module.exports = function (data, connection, hook) {
-  if (connection.addresses[data.address]) {
+  const { addressMap } = hook.params
+
+  if (connection.uid === addressMap.identifier) {
     return data
   } else {
     return false

@@ -5,14 +5,14 @@ const { encrypt, decrypt } = require('../../src/utils/iv-encrypt')
 const key = crypto.randomBytes(32)
 
 describe('IV-Encrypt Util', function () {
-  it.only('returns a different value given same inputs', function () {
+  it('returns a different value given same inputs', function () {
     const text = 'test'
     const encryptedText1 = encrypt(text, key)
     const encryptedText2 = encrypt(text, key)
     assert(encryptedText1 !== encryptedText2, 'the values were unique')
   })
 
-  it.only('encrypts & decrypts', function () {
+  it('encrypts & decrypts', function () {
     const text = 'test'
     const encryptedText1 = encrypt(text, key)
     const encryptedText2 = encrypt(text, key)

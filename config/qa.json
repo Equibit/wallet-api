@@ -13,5 +13,6 @@
     "username": "EQUIBIT_CORE_USERNAME",
     "password": "EQUIBIT_CORE_PASSWORD",
     "methodPrefix": "eb_"
-  }
+  },
+  "addressMapEncryptionKey": "ADDRESS_MAP_ENCRYPTION_KEY"
 }

@@ -27,6 +27,12 @@ const app = feathers()
 app.set('applicationRoot', path.join(__dirname))
 // Load app configuration
 app.configure(configuration(path.join(__dirname, '..')))
+
+const addressMapEncryptionKey = app.get('addressMapEncryptionKey')
+if (addressMapEncryptionKey === 'ADDRESS_MAP_ENCRYPTION_KEY') {
+  throw new Error('the env.ADDRESS_MAP_ENCRYPTION_KEY was not found.')
+}
+
 // Enable CORS, security, compression, favicon and body parsing
 app.use(cors())
 app.use(helmet())

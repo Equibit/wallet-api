@@ -134,35 +134,41 @@ function runTests (feathersClient) {
           })
       })
 
-      it('sends notifications to sockets with matching addresses', function (done) {
-        if (transport === 'feathers-rest') {
-          return done()
-        }
-        const user = this.user
+      describe('Events', function () {
+        beforeEach(function () {
+          return app.service('address-map').remove(null, {})
+        })
 
-        const handler = function (transaction) {
-          assert(transaction, 'received a transation created notification')
-          console.log(app.io.sockets.sockets)
-          feathersClient.service('transactions').off('created', handler)
-          done()
-        }
-        feathersClient.service('transactions').on('created', handler)
+        it('sends notifications to sockets with matching addresses', function (done) {
+          if (transport === 'feathers-rest') {
+            return done()
+          }
+          const user = this.user
 
-        authenticate(app, feathersClient, user)
-          .then(response => {
-            return feathersClient.service('subscribe')
-              .create({addresses: ['mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32']})
-          })
-          .then(response => {
-            return serviceOnClient.create(dummyTransaction)
-          })
-          .catch(error => {
-            assert(!error, error.message)
+          const handler = function (transaction) {
+            assert(transaction, 'received a transation created notification')
+            console.log(app.io.sockets.sockets)
+            feathersClient.service('transactions').off('created', handler)
             done()
-          })
+          }
+          feathersClient.service('transactions').on('created', handler)
+
+          authenticate(app, feathersClient, user)
+            .then(response => {
+              return feathersClient.service('subscribe')
+                .create({addresses: ['mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32']})
+            })
+            .then(response => {
+              return serviceOnClient.create(dummyTransaction)
+            })
+            .catch(error => {
+              assert(!error, error.message)
+              done()
+            })
+        })
       })
 
-      it.only('throws an error for find without address', function (done) {
+      it('throws an error for find without address', function (done) {
         const user = this.user
 
         authenticate(app, feathersClient, user)
@@ -179,7 +185,7 @@ function runTests (feathersClient) {
           })
       })
 
-      it.only('throws an error for find without `address.$in` length', function (done) {
+      it('throws an error for find without `address.$in` length', function (done) {
         const user = this.user
 
         authenticate(app, feathersClient, user)
