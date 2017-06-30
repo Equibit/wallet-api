@@ -1,7 +1,6 @@
 const errors = require('feathers-errors')
 const assert = require('assert')
 const objectid = require('objectid')
-const { encrypt } = require('../../utils/iv-encrypt')
 
 class Service {
   constructor (options) {
