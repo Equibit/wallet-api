@@ -15,5 +15,6 @@
     "url": "http://localhost:18335",
     "username": "equibit",
     "password": "equibit"
-  }
+  },
+  "addressMapEncryptionKey": "ADDRESS_MAP_ENCRYPTION_KEY"
 }
