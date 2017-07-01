@@ -115,11 +115,7 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
           })
           .then(response => {
             const addressMappings = response.data || response
-            const recordedAddresses = addressMappings.map(map => map.address)
             assert(addressMappings.length === 3, 'All three addresses were added to /address-map')
-            addresses.forEach((address, index) => {
-              assert(recordedAddresses[index] === address, 'the address matched')
-            })
             done()
           })
           .catch(error => {
