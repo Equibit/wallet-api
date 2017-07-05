@@ -30,11 +30,12 @@ module.exports = function (options) {
 
     // Make sure the `address`, `addressTxid`, and `addressVout` are all provided
     const addressAttrs = ['address', 'addressTxid', 'addressVout']
-    addressAttrs.forEach(attr => {
-      if (!context.data[attr]) {
-        return Promise.reject(new errors.BadRequest(`\`${attr}\` is required to record a transaction`))
-      }
-    })
+    const missingAttr = addressAttrs.reduce((acc, attr) => {
+      return acc || (!context.data.hasOwnProperty(attr)) || acc
+    }, '')
+    if (missingAttr) {
+      return Promise.reject(new errors.BadRequest(`\`${missingAttr}\` is required to record a transaction`))
+    }
 
     // Make sure the provided `addressTxid` and `addressVout` combination exist in the decodedTxn output
     const addressData = context.data.addressTxid + '.' + context.data.addressVout

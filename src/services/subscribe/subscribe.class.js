@@ -29,20 +29,24 @@ class Service {
     }
 
     // Find this user's socketObject
-    const socketId = Object.keys(app.io.sockets.sockets).filter(socketId => {
-      return app.io.sockets.sockets[socketId].feathers.user._id.toString() === user._id.toString()
-    })
-    const socket = app.io.sockets.sockets[socketId].feathers
+    const socketId = Object.keys(app.io.sockets.sockets).reduce((acc, socketId) => {
+      let socketFeathers = app.io.sockets.sockets[socketId].feathers
+      if (!acc && socketFeathers.user && socketFeathers.user._id.toString() === user._id.toString()) {
+        acc = socketId
+      }
+      return acc
+    }, null)
     assert(socketId, 'A socket was found that matches this user')
+    const socketFeathers = app.io.sockets.sockets[socketId].feathers
 
     // Make sure the socket has a unique identifier
-    socket.uid = socket.uid || objectid().toString()
+    socketFeathers.uid = socketFeathers.uid || objectid().toString()
 
     // Use the uid to create `/address-map` pairs.
     const addressMapService = app.service('address-map')
     const mappingCreates = data.addresses.map(address => {
       return addressMapService.create({
-        identifier: socket.uid,
+        identifier: socketFeathers.uid,
         address
       })
     })

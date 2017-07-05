@@ -9,7 +9,7 @@ class Service {
 
   // Given a list of addresses return txouts and a summary OR amounts by address and a summary.
   find (params) {
-    console.log('listunspent.find params.query: ', params.query)
+    // console.log('listunspent.find params.query: ', params.query)
     const addressesBtc = params.query.btc || []
     const addressesEqb = params.query.eqb || []
     const byAddress = !!params.query.byaddress
@@ -21,7 +21,7 @@ class Service {
       fetchListunspent(configBtc, addressesBtc),
       fetchListunspent(configEqb, addressesEqb)
     ]).then(results => {
-      console.log('--- results:', results)
+      // console.log('--- results:', results)
       return {
         BTC: byAddress ? aggregateByAddress(results[0].data.result) : addSummary(results[0].data.result),
         EQB: byAddress ? aggregateByAddress(results[1].data.result) : addSummary(results[1].data.result)
@@ -67,7 +67,7 @@ function fetchListunspent (config, addresses = []) {
   if (!addresses.length) {
     return Promise.resolve({data: {result: []}})
   }
-  console.log('fetchListunspent', arguments)
+  // console.log('fetchListunspent', arguments)
 
   return axios({
     method: 'POST',
