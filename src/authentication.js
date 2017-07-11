@@ -33,9 +33,7 @@ module.exports = function () {
   // Set up authentication with the secret
   app.configure(authentication(config))
   app.configure(jwt())
-  app.configure(signed({
-    idField: '_id'
-  }))
+  app.configure(signed({ idField: '_id' }))
 
   // The `authentication` service is used to create a JWT.
   // The before `create` hook registers strategies that can be used

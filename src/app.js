@@ -19,8 +19,8 @@ const appHooks = require('./hooks')
 
 const authentication = require('./authentication')
 
-const mongodb = require('./mongodb')
 const seed = require('./seeder/seeder')
+const mongoose = require('./mongoose')
 // const seedWriter = require('./seeder/seed-writer')
 
 const app = feathers()
@@ -45,7 +45,7 @@ app.use('/', feathers.static(app.get('public')))
 
 // Set up Plugins and providers
 app.configure(hooks())
-app.configure(mongodb)
+app.configure(mongoose)
 app.configure(rest())
 app.use(function (req, res, next) {
   req.feathers.ip = req.ip
