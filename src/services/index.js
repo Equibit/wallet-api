@@ -15,6 +15,8 @@ const transactions = require('./transactions/transactions.service.js')
 const subscribe = require('./subscribe/subscribe.service.js')
 const addressMap = require('./address-map/address-map.service.js')
 
+const addressMeta = require('./address-meta/address-meta.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -31,4 +33,5 @@ module.exports = function () {
   app.configure(transactions)
   app.configure(subscribe)
   app.configure(addressMap)
+  app.configure(addressMeta)
 }
