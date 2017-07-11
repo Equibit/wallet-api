@@ -106,7 +106,7 @@ describe(`address-map Service Tests - feathers-socketio`, function () {
 
         authenticate(app, feathersClient, user)
           .then(response => {
-            return serviceOnServer.create({ identifier, address })
+            return serviceOnServer.create({ identifier, address})
           })
           .then(map => {
             assert(map.identifier !== identifier, 'the identifier was encrypted')
@@ -120,6 +120,42 @@ describe(`address-map Service Tests - feathers-socketio`, function () {
             done()
           })
       })
+
+      it('re-uses existing addresses with different identifiers', function (done) {
+        const user = this.user
+        const identifier = '123'
+        const address = 'address1'
+
+        authenticate(app, feathersClient, user)
+          .then(response => {
+            return serviceOnServer.create({ identifier, address })
+          })
+          .then(response => {
+            const identifier1 = response.identifier
+            assert(identifier1 !== identifier, 'the identifier was encrypted')
+
+            return serviceOnServer.create({ identifier, address })
+              .then(response => {
+                const identifier2 = response.identifier
+                assert(identifier2 !== identifier1 && identifier2 !== identifier, 'all were different')
+
+                return app.service('address-map').find({ query: { address } })
+                  .then(response => {
+                    const addressMappings = response.data || response
+                    assert(addressMappings.length === 1, 'the address was reused')
+                    done()
+                  })
+              })
+          })
+          .catch(error => {
+            assert(!error, error.message)
+            done()
+          })
+      })
+
+      it.skip('only allows a single address', function () {})
+
+      it.skip('prevents createMany', function () {})
     })
   })
 })

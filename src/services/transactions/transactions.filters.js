@@ -3,7 +3,7 @@ console.warn('You are using the default filter for the transactions service. For
 module.exports = function (data, connection, hook) {
   const { addressMap } = hook.params
 
-  if (addressMap && connection.uid === addressMap.identifier) {
+  if (addressMap && addressMap.identifier === connection.uid) {
     return data
   } else {
     return false

@@ -89,7 +89,8 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
           })
           .then(response => {
             const socketId = Object.keys(app.io.sockets.sockets).filter(socketId => {
-              return app.io.sockets.sockets[socketId].feathers.user._id.toString() === user._id.toString()
+              const user = app.io.sockets.sockets[socketId].feathers.user
+              return user && (user._id.toString() === user._id.toString())
             })
             const socket = app.io.sockets.sockets[socketId].feathers
             assert(socket.uid, 'the socket has a uid property')
@@ -116,6 +117,47 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
           .then(response => {
             const addressMappings = response.data || response
             assert(addressMappings.length === 3, 'All three addresses were added to /address-map')
+            done()
+          })
+          .catch(error => {
+            assert(!error, error.message)
+            done()
+          })
+      })
+
+      it.skip('upserts', function (done) {
+        const data = { address: '123', identifier: 'my-identifier' }
+        const params = {
+          query: { address: '123' },
+          mongoose: { upsert: true }
+        }
+        app.service('address-meta').patch(null, data, params)
+          .then(response => {
+            const data = response.data || response
+            assert(Array.isArray(data), 'data should be an array')
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      })
+
+      it('re-uses existing addresses', function (done) {
+        const user = this.user
+        const addresses = [ 'address1' ]
+
+        authenticate(app, feathersClient, user)
+          .then(response => {
+            return serviceOnClient.create({ addresses })
+          })
+          .then(response => {
+            return serviceOnClient.create({ addresses })
+          })
+          .then(response => {
+            return app.service('address-map').find({ query: { address: {$in: addresses} } })
+          })
+          .then(response => {
+            const addressMappings = response.data || response
+            assert(addressMappings.length === 1, 'the address was reused')
             done()
           })
           .catch(error => {
