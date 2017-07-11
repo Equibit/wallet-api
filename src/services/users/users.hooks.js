@@ -3,13 +3,14 @@ const { restrictToOwner } = require('feathers-authentication-hooks')
 const { iff, unless, discard, disallow, isProvider, lowerCase } = require('feathers-hooks-common')
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
 const { randomBytes, pbkdf2 } = require('crypto')
+
 const isExistingUser = require('./hook.is-existing-user')
 const createTemporaryPassword = require('./hook.create-temp-password')
-const sendWelcomeEmail = require('./hook.email.welcome')
-const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
 const removeIsNewUser = require('./hook.remove-is-new-user')
 const removeTempPassword = require('./hook.remove-temp-password')
 const enforcePastPasswordPolicy = require('./hook.password.past-policy')
+const sendWelcomeEmail = require('./hook.email.welcome')
+const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
 
 module.exports = function (app) {
   const outboundEmail = app.get('outboundEmail')
@@ -26,9 +27,7 @@ module.exports = function (app) {
         )
       ],
       find: [],
-      get: [
-        restrictToOwner({ idField: '_id', ownerField: '_id' })
-      ],
+      get: [],
       create: [
         lowerCase('email'),
         // Sets `hook.params.existingUser` to the existing user.
@@ -38,10 +37,7 @@ module.exports = function (app) {
           hook => !hook.params.existingUser,
           // If the user has passed a password for account creation, delete it.
           discard('password'),
-          createTemporaryPassword({
-            hashedPasswordField: 'tempPassword',
-            plainPasswordField: 'tempPasswordPlain'
-          }),
+          createTemporaryPassword({ hashedPasswordField: 'tempPassword', plainPasswordField: 'tempPasswordPlain' }),
           generateSalt({ randomBytes }),
           hashPassword({ pbkdf2, passwordField: 'tempPassword', timeStampField: 'tempPasswordCreatedAt' })
         )
@@ -55,6 +51,7 @@ module.exports = function (app) {
             })
         }
       ],
+
       patch: [
         lowerCase('email'),
         // If a password is provided, hash it and generate a salt.
@@ -79,13 +76,7 @@ module.exports = function (app) {
       all: [
         iff(
           isProvider('external'),
-          discard(
-            'password',
-            'tempPassword',
-            'challenge',
-            'failedLogins',
-            'pastPasswordHashes'
-          ),
+          discard('password', 'tempPassword', 'challenge', 'failedLogins', 'pastPasswordHashes'),
           // don't remove salt for update and patch
           iff(
             context => context.method !== 'update' && context.method !== 'patch',
