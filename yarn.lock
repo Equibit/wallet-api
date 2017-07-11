@@ -1442,9 +1442,9 @@ feathers-memory@^1.1.0:
     feathers-query-filters "^2.0.0"
     uberproto "^1.2.0"
 
-feathers-mongoose@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/feathers-mongoose/-/feathers-mongoose-5.1.0.tgz#56cc94b631bb5177dc601d3579a425594080bd8a"
+feathers-mongoose@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/feathers-mongoose/-/feathers-mongoose-5.1.1.tgz#32ab83cda2eab191eba888040d70d6291eeb1047"
   dependencies:
     feathers-commons "^0.8.4"
     feathers-errors "^2.0.1"
@@ -2559,16 +2559,16 @@ mongodb@2.2.27:
     mongodb-core "2.1.11"
     readable-stream "2.2.7"
 
-mongoose@^4.10.4:
-  version "4.10.4"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.10.4.tgz#b9a0a033725e5c29efd9eefb4687d1371956c7b6"
+mongoose@^4.11.1:
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.11.1.tgz#2560b6d89e744b05857d024cab8b316066716e3e"
   dependencies:
     async "2.1.4"
     bson "~1.0.4"
     hooks-fixed "2.0.0"
     kareem "1.4.1"
     mongodb "2.2.27"
-    mpath "0.2.1"
+    mpath "0.3.0"
     mpromise "0.5.5"
     mquery "2.3.1"
     ms "2.0.0"
@@ -2576,9 +2576,9 @@ mongoose@^4.10.4:
     regexp-clone "0.0.1"
     sliced "1.0.1"
 
-mpath@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/mpath/-/mpath-0.2.1.tgz#3a4e829359801de96309c27a6b2e102e89f9e96e"
+mpath@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/mpath/-/mpath-0.3.0.tgz#7a58f789e9b5fd3c94520634157960f26bd5ef44"
 
 mpromise@0.5.5:
   version "0.5.5"
