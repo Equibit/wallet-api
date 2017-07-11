@@ -7,11 +7,7 @@ module.exports = {
     ],
     find: [],
     get: [],
-    create: [
-      hook => {
-        // debugger
-      }
-    ],
+    create: [],
     update: [],
     patch: [],
     remove: []
