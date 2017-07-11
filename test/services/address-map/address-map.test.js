@@ -106,7 +106,7 @@ describe(`address-map Service Tests - feathers-socketio`, function () {
 
         authenticate(app, feathersClient, user)
           .then(response => {
-            return serviceOnServer.create({ identifier, address})
+            return serviceOnServer.create({identifier, address})
           })
           .then(map => {
             assert(map.identifier !== identifier, 'the identifier was encrypted')
