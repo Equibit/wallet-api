@@ -1,12 +1,8 @@
 const assert = require('assert')
 const app = require('../../../src/app')
 require('../../../test-utils/setup')
-const clients = require('../../../test-utils/make-clients')
-const removeUsers = require('../../../test-utils/utils').removeUsers
-const userUtils = require('../../../test-utils/user')
-
-// Remove all users before all tests run.
-before(removeUsers(app))
+const { clients } = require('../../../test-utils/index')
+const userUtils = require('../../../test-utils/users')
 
 clients.forEach(client => {
   runTests(client)
@@ -16,6 +12,10 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`Users Service Tests - ${transport}`, function () {
+    before(function () {
+      return app.service('/users').remove(null, {}) // Remove all users
+    })
+
     beforeEach(function (done) {
       feathersClient.logout()
         .then(() => app.service('/users').create({ email: 'test@equibit.org' }))

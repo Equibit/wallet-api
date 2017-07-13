@@ -1,7 +1,7 @@
 const assert = require('assert')
 const app = require('../../src/app')
 const testHook = require('../../src/hooks/failed-logins.verify')
-const userUtils = require('../../test-utils/user')
+const userUtils = require('../../test-utils/users')
 
 describe('Hook: Failed Logins', function (done) {
   beforeEach(function (done) {

@@ -1,20 +1,19 @@
 const assert = require('assert')
 const app = require('../../../src/app')
-// const makeSigned = require('feathers-authentication-signed/client')
-// const crypto = require('crypto')
 require('../../../test-utils/setup')
-const clients = require('../../../test-utils/make-clients')
-const removeUsers = require('../../../test-utils/utils').removeUsers
-const { authenticate } = require('../../../test-utils/user')
-const assertDisallowed = require('../../../test-utils/method.disallow')
+const { clients } = require('../../../test-utils/index')
+const { authenticate } = require('../../../test-utils/users')
+const assertDisallowed = require('../../../test-utils/assert/disallows')
 
-// Remove all users before all tests run.
-before(removeUsers(app))
-
+const servicePath = '/address-map'
 const socketClient = clients[0]
 const restClient = clients[1]
 
-describe(`address-map Service Tests - feathers-socketio`, function () {
+describe(`${servicePath} Service Tests - feathers-socketio`, function () {
+  before(function () {
+    return app.service('/users').remove(null, {}) // Remove all users
+  })
+
   const feathersClient = socketClient
   const serviceOnServer = app.service('address-map')
   const serviceOnClient = feathersClient.service('address-map')
@@ -47,55 +46,55 @@ describe(`address-map Service Tests - feathers-socketio`, function () {
       })
   })
 
-  describe('Client Without Auth', function () {
-    it(`requires auth for find requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'find', done)
+  describe(`${servicePath} - Unauthenticated Client`, function () {
+    it(`requires auth for find requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'find')
     })
 
-    it(`requires auth for get requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'get', done)
+    it(`requires auth for get requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'get')
     })
 
-    it(`requires auth for create requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'create', done)
+    it(`requires auth for create requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'create')
     })
 
-    it(`requires auth for update requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'update', done)
+    it(`requires auth for update requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'update')
     })
 
-    it(`requires auth for patch requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'patch', done)
+    it(`requires auth for patch requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'patch')
     })
 
-    it(`requires auth for remove requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'remove', done)
+    it(`requires auth for remove requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'remove')
     })
   })
 
-  describe('Client With Auth', function () {
-    it(`requires auth for find requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'find', done)
+  describe(`${servicePath} - Authenticated Client`, function () {
+    it(`requires auth for find requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'find')
     })
 
-    it(`requires auth for get requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'get', done)
+    it(`requires auth for get requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'get')
     })
 
-    it(`requires auth for create requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'create', done)
+    it(`requires auth for create requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'create')
     })
 
-    it(`requires auth for update requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'update', done)
+    it(`requires auth for update requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'update')
     })
 
-    it(`requires auth for patch requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'patch', done)
+    it(`requires auth for patch requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'patch')
     })
 
-    it(`requires auth for remove requests from the client`, function (done) {
-      assertDisallowed(serviceOnClient, 'remove', done)
+    it(`requires auth for remove requests from the client`, function () {
+      assertDisallowed(serviceOnClient, 'remove')
     })
 
     describe('Create', function () {
@@ -192,55 +191,55 @@ describe('address-map Service Tests - feathers-rest', function () {
       })
   })
 
-  describe('REST client disallowed', function () {
-    it(`find`, function (done) {
-      assertDisallowed(serviceOnClient, 'find', done)
+  describe(`${servicePath} - REST client disallowed`, function () {
+    it(`find`, function () {
+      assertDisallowed(serviceOnClient, 'find')
     })
 
-    it(`get`, function (done) {
-      assertDisallowed(serviceOnClient, 'get', done)
+    it(`get`, function () {
+      assertDisallowed(serviceOnClient, 'get')
     })
 
-    it(`create`, function (done) {
-      assertDisallowed(serviceOnClient, 'create', done)
+    it(`create`, function () {
+      assertDisallowed(serviceOnClient, 'create')
     })
 
-    it(`update`, function (done) {
-      assertDisallowed(serviceOnClient, 'update', done)
+    it(`update`, function () {
+      assertDisallowed(serviceOnClient, 'update')
     })
 
-    it(`patch`, function (done) {
-      assertDisallowed(serviceOnClient, 'patch', done)
+    it(`patch`, function () {
+      assertDisallowed(serviceOnClient, 'patch')
     })
 
-    it(`remove`, function (done) {
-      assertDisallowed(serviceOnClient, 'remove', done)
+    it(`remove`, function () {
+      assertDisallowed(serviceOnClient, 'remove')
     })
   })
 
-  describe('Client With Auth', function () {
-    it(`find`, function (done) {
-      assertDisallowed(serviceOnClient, 'find', done)
+  describe(`${servicePath} - Authenticated Client Disallowed`, function () {
+    it(`find`, function () {
+      assertDisallowed(serviceOnClient, 'find')
     })
 
-    it(`get`, function (done) {
-      assertDisallowed(serviceOnClient, 'get', done)
+    it(`get`, function () {
+      assertDisallowed(serviceOnClient, 'get')
     })
 
-    it(`create`, function (done) {
-      assertDisallowed(serviceOnClient, 'create', done)
+    it(`create`, function () {
+      assertDisallowed(serviceOnClient, 'create')
     })
 
-    it(`update`, function (done) {
-      assertDisallowed(serviceOnClient, 'update', done)
+    it(`update`, function () {
+      assertDisallowed(serviceOnClient, 'update')
     })
 
-    it(`patch`, function (done) {
-      assertDisallowed(serviceOnClient, 'patch', done)
+    it(`patch`, function () {
+      assertDisallowed(serviceOnClient, 'patch')
     })
 
-    it(`remove`, function (done) {
-      assertDisallowed(serviceOnClient, 'remove', done)
+    it(`remove`, function () {
+      assertDisallowed(serviceOnClient, 'remove')
     })
   })
 })

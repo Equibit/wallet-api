@@ -4,13 +4,9 @@ const app = require('../src/app')
 const makeSigned = require('feathers-authentication-signed/client')
 const decode = require('jwt-decode')
 require('../test-utils/setup')
-const clients = require('../test-utils/make-clients')
-const removeUsers = require('../test-utils/utils').removeUsers
+const clients = require('../test-utils/clients')
 
 const signed = makeSigned(crypto)
-
-// Remove all users before all tests run.
-before(removeUsers(app))
 
 clients.forEach(client => {
   runTests(client)
@@ -20,6 +16,10 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`Authentication tests - ${transport}`, function () {
+    before(function () {
+      return app.service('/users').remove(null, {}) // Remove all users
+    })
+
     beforeEach(function (done) {
       feathersClient.logout()
         .then(() => app.service('/users').create({ email: 'test@equibit.org' }))

@@ -1,15 +1,8 @@
 const assert = require('assert')
 const app = require('../../src/app')
-// const makeSigned = require('feathers-authentication-signed/client')
-// const crypto = require('crypto')
-require('../../test-utils/setup')
-const clients = require('../../test-utils/make-clients')
-const removeUsers = require('../../test-utils/utils').removeUsers
+const utils = require('../../test-utils/index')
 
-// Remove all users before all tests run.
-before(removeUsers(app))
-
-clients.forEach(client => {
+utils.clients.forEach(client => {
   runTests(client)
 })
 
@@ -17,6 +10,10 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`forgot-password Service Tests - ${transport}`, function () {
+    before(function () {
+      return app.service('/users').remove(null, {}) // Remove all users
+    })
+
     beforeEach(function (done) {
       app.service('users').create({ email: 'test@equibit.org' })
         .then(user => app.service('users').find({ query: {} }))

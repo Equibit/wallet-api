@@ -2,15 +2,15 @@ const assert = require('assert')
 const app = require('../../../src/app')
 const utils = require('../../../test-utils/index')
 
-const servicePath = '/______'
-const serviceOnServer = app.service(servicePath)
+const service = '/xpub-crawl'
+const serviceOnServer = app.service(service)
 
-describe(`${servicePath} Service`, function () {
+describe(`${service} Service`, function () {
   utils.clients.forEach(client => {
     runTests(client)
   })
 
-  describe(`${servicePath} - Server`, function () {
+  describe(`${service} - Server`, function () {
     // before(function () {})
     // after(function () {})
     beforeEach(function () {
@@ -46,9 +46,9 @@ describe(`${servicePath} Service`, function () {
 
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
-  const serviceOnClient = feathersClient.service(servicePath)
+  const serviceOnClient = feathersClient.service(service)
 
-  describe(`${servicePath} - ${transport} Transport`, function () {
+  describe(`${service} - ${transport} Transport`, function () {
     before(function () {
       return app.service('/users').remove(null, {}) // Remove all users
     })
@@ -80,7 +80,7 @@ function runTests (feathersClient) {
         })
     })
 
-    describe(`${servicePath} - Unauthenticated Client`, function () {
+    describe(`${service} - Unauthenticated Client`, function () {
       const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
 
       methods.forEach(method => {
@@ -102,7 +102,7 @@ function runTests (feathersClient) {
       describe('remove', function () {})
     })
 
-    describe(`${servicePath} - Authenticated Client`, function () {
+    describe(`${service} - Authenticated Client`, function () {
       const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
 
       methods.forEach(method => {

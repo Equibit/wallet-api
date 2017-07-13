@@ -2,11 +2,11 @@ const assert = require('assert')
 const app = require('../../../src/app')
 require('../../../test-utils/setup')
 const txnUtils = require('../../../test-utils/transactions')
-const clients = require('../../../test-utils/make-clients')
-const removeUsers = require('../../../test-utils/utils').removeUsers
-const { authenticate } = require('../../../test-utils/user')
-const assertRequiresAuth = require('../../../test-utils/method.require-auth')
+const { clients } = require('../../../test-utils/index')
+const { authenticate } = require('../../../test-utils/users')
+const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
 
+const service = '/transactions'
 const dummyTransaction = {
   address: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
   addressTxid: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
@@ -20,18 +20,21 @@ const dummyTransaction = {
 
 txnUtils.mock()
 
-// Remove all users before all tests run.
-before(removeUsers(app))
-
-clients.forEach(client => {
-  runTests(client)
+describe(`${service} Service`, function () {
+  clients.forEach(client => {
+    runTests(client)
+  })
 })
 
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const serviceOnClient = feathersClient.service('transactions')
 
-  describe(`Transaction Service Tests - ${transport}`, function () {
+  describe(`${service} - ${transport} Transport`, function () {
+    before(function () {
+      return app.service('/users').remove(null, {}) // Remove all users
+    })
+
     beforeEach(function (done) {
       feathersClient.logout()
         .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
@@ -61,28 +64,28 @@ function runTests (feathersClient) {
     })
 
     describe('Client Without Auth', function () {
-      it(`requires auth for find requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'find', done)
+      it(`requires auth for find requests from the client`, function () {
+        assertRequiresAuth(serviceOnClient, 'find')
       })
 
-      it(`requires auth for get requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'get', done)
+      it(`requires auth for get requests from the client`, function () {
+        assertRequiresAuth(serviceOnClient, 'get')
       })
 
-      it(`requires auth for create requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'create', done)
+      it(`requires auth for create requests from the client`, function () {
+        assertRequiresAuth(serviceOnClient, 'create')
       })
 
-      it(`requires auth for update requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'update', done)
+      it(`requires auth for update requests from the client`, function () {
+        assertRequiresAuth(serviceOnClient, 'update')
       })
 
-      it(`requires auth for patch requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'patch', done)
+      it(`requires auth for patch requests from the client`, function () {
+        assertRequiresAuth(serviceOnClient, 'patch')
       })
 
-      it(`requires auth for remove requests from the client`, function (done) {
-        assertRequiresAuth(serviceOnClient, 'remove', done)
+      it(`requires auth for remove requests from the client`, function () {
+        assertRequiresAuth(serviceOnClient, 'remove')
       })
     })
 

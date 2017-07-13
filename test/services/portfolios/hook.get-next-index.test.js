@@ -1,5 +1,5 @@
 const assert = require('assert')
-const app = require('../../../test-utils/make-clients').rest()
+const app = require('../../../test-utils/clients').rest()
 const getNextIndex = require('../../../src/services/portfolios/hook.get-next-index')()
 const memory = require('feathers-memory')
 

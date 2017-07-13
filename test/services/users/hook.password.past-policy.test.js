@@ -1,7 +1,7 @@
 const assert = require('assert')
 const app = require('../../../src/app')
 const testHook = require('../../../src/services/users/hook.password.past-policy')
-const userUtils = require('../../../test-utils/user')
+const userUtils = require('../../../test-utils/users')
 const crypto = require('crypto')
 
 describe('Hook : Users : Enforce Past Password Policy', function (done) {

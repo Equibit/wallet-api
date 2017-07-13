@@ -1,16 +1,9 @@
 const assert = require('assert')
 const app = require('../../src/app')
-// const makeSigned = require('feathers-authentication-signed/client')
-// const crypto = require('crypto')
-require('../../test-utils/setup')
-const clients = require('../../test-utils/make-clients')
-const removeUsers = require('../../test-utils/utils').removeUsers
-const assertDisallowed = require('../../test-utils/method.disallow')
+const utils = require('../../test-utils/index')
+const assertDisallowed = require('../../test-utils/assert/disallows')
 
-// Remove all users before all tests run.
-before(removeUsers(app))
-
-clients.forEach(client => {
+utils.clients.forEach(client => {
   runTests(client)
 })
 
@@ -18,6 +11,10 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`login-attempts Service Tests - ${transport}`, function () {
+    before(function () {
+      return app.service('/users').remove(null, {}) // Remove all users
+    })
+
     beforeEach(function (done) {
       app.service('login-attempts').remove(null, {})
         .then(() => app.service('users').create({ email: 'test@equibit.org' }))
@@ -118,28 +115,28 @@ function runTests (feathersClient) {
         })
     })
 
-    it(`rejects find requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'find', done)
+    it(`rejects find requests from the client`, function () {
+      assertDisallowed(feathersClient.service('login-attempts'), 'find')
     })
 
-    it(`rejects get requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'get', done)
+    it(`rejects get requests from the client`, function () {
+      assertDisallowed(feathersClient.service('login-attempts'), 'get')
     })
 
-    it(`rejects create requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'create', done)
+    it(`rejects create requests from the client`, function () {
+      assertDisallowed(feathersClient.service('login-attempts'), 'create')
     })
 
-    it(`rejects update requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'update', done)
+    it(`rejects update requests from the client`, function () {
+      assertDisallowed(feathersClient.service('login-attempts'), 'update')
     })
 
-    it(`rejects patch requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'patch', done)
+    it(`rejects patch requests from the client`, function () {
+      assertDisallowed(feathersClient.service('login-attempts'), 'patch')
     })
 
-    it(`rejects remove requests from the client`, function (done) {
-      assertDisallowed(feathersClient.service('login-attempts'), 'remove', done)
+    it(`rejects remove requests from the client`, function () {
+      assertDisallowed(feathersClient.service('login-attempts'), 'remove')
     })
   })
 }
