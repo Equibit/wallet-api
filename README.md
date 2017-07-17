@@ -40,6 +40,25 @@ $ feathers generate model                 # Generate a new Model
 $ feathers help                           # Show all commands
 ```
 
+## Developing
+
+To run a local Bitcoin node in the regtest mode:
+
+1. Download BitcoinCore from https://bitcoin.org/en/download
+2. Run the core with params:
+```
+$ /Applications/Bitcoin-Qt.app/Contents/MacOS/Bitcoin-Qt \
+  -logtimestamps \
+  -server \
+  -port=8338 \
+  -debug \
+  -regtest \
+  -rpcuser=equibit \
+  -rpcpassword=equibit \
+  -rpcport=18332 \
+  -rpcallowip=127.0.0.1
+```
+
 ## Help
 
 For more information on all the things you can do with Feathers visit [docs.feathersjs.com](http://docs.feathersjs.com).
