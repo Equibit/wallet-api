@@ -8,13 +8,15 @@ const formatTxn = require('./hook.format-txn')
 const createReceiverTxn = require('./hook.create-receiver-txn')
 const requireAddresses = require('./hook.require-addresses')
 const findAddressMap = require('./hook.find-address-map')
+const defaultSort = require('./hook.default-sort')
 
 module.exports = app => {
   return {
     before: {
       all: [ authenticate('jwt') ],
       find: [
-        requireAddresses()
+        requireAddresses(),
+        defaultSort()
       ],
       get: [],
       create: [
