@@ -1,5 +1,3 @@
-const errors = require('feathers-errors')
-
 module.exports = function () {
   return function requireAddresses (context) {
     if (!context.params.query['$sort']) {
