@@ -1,3 +1,4 @@
+const assert = require('assert')
 const axios = require('axios')
 const formatRpcParams = require('../../utils/format-rpc-params')
 const errors = require('feathers-errors')
@@ -5,9 +6,8 @@ const errors = require('feathers-errors')
 module.exports = function (options) {
   const requestParams = [ 'url', 'username', 'password' ]
   requestParams.forEach(param => {
-    if (!options[param]) {
-      throw new Error(`You must provide an RPC \`${param}\` to the validateRawTxn hook`)
-    }
+    assert(options.btc.hasOwnProperty(param), `You must provide an RPC \`${param}\` to the sendRawTxn hook`)
+    assert(options.eqb.hasOwnProperty(param), `You must provide an RPC \`${param}\` to the sendRawTxn hook`)
   })
 
   return function validateRawTxn (context) {
@@ -47,17 +47,18 @@ module.exports = function (options) {
     }
 
     const formattedParams = formatRpcParams([context.data.addressTxid, context.data.addressVout])
+    const currencyType = context.data.currencyType.toLowerCase()
     return axios({
       method: 'POST',
-      url: options.url,
+      url: options[currencyType].url,
       data: {
         jsonrpc: '1.0',
         method: 'gettxout',
         params: formattedParams
       },
       auth: {
-        username: options.username,
-        password: options.password
+        username: options[currencyType].username,
+        password: options[currencyType].password
       }
     })
     // make a request to gettxout and validate

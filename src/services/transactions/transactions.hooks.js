@@ -11,6 +11,10 @@ const findAddressMap = require('./hook.find-address-map')
 const defaultSort = require('./hook.default-sort')
 
 module.exports = app => {
+  const coreParams = {
+    btc: app.get('bitcoinCore'),
+    eqb: app.get('equibitCore')
+  }
   return {
     before: {
       all: [ authenticate('jwt') ],
@@ -23,7 +27,7 @@ module.exports = app => {
         iff(
           isProvider('external'),
           // turn a transaction hex into transaction details.
-          decodeRawTxn(app.get('bitcoinCore')),
+          decodeRawTxn(coreParams),
           /*
           Since `address` and `otherAddress` must be sent from the
           client, we must make sure that they both appear in
@@ -33,10 +37,10 @@ module.exports = app => {
           will be made to derive the from `address` from each vin's
           `txid` and `vout` property. The responses will be cached on the hook context for use in formatTxn.
           */
-          validateDecodedTxn(app.get('bitcoinCore')),
+          validateDecodedTxn(coreParams),
 
           // Record the transaction in the core
-          sendRawTxn(app.get('bitcoinCore')),
+          sendRawTxn(coreParams),
 
           // Set the createReceiverTxn flag so that the createReceiverTxn will create the other txn.
           context => {

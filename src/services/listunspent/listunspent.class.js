@@ -67,7 +67,7 @@ function fetchListunspent (config, addresses = []) {
   if (!addresses.length) {
     return Promise.resolve({data: {result: []}})
   }
-  // console.log('fetchListunspent', arguments)
+  console.log('fetchListunspent', arguments)
 
   return axios({
     method: 'POST',
@@ -81,6 +81,9 @@ function fetchListunspent (config, addresses = []) {
       username: config.username,
       password: config.password
     }
+  }).then(a => {
+    console.log('[fetchListunspent] result:', a)
+    return a
   })
 }
 

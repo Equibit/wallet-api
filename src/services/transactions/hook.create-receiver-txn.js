@@ -17,7 +17,8 @@ module.exports = function (options) {
         currencyType: data.currencyType,
         txIdBtc: data.txIdBtc,
         txIdEqb: data.txIdEqb,
-        amount: data.amount
+        amount: data.amount,
+        fee: data.fee
       }).then(response => {
         return context
       })
