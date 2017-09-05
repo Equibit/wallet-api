@@ -40,7 +40,7 @@ const decodedTxn = {
 
 exports.decodedTxn = decodedTxn
 
-exports.mock = function () {
+exports.setupMock = function () {
   mock.onPost().reply(function (request) {
     const data = JSON.parse(request.data)
 
@@ -78,4 +78,8 @@ exports.mock = function () {
         }]
     }
   })
+}
+
+exports.resetMock = function resetTransactionsMock () {
+  mock.restore()
 }

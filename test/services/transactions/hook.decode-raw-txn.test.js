@@ -3,8 +3,6 @@ const assert = require('assert')
 const txnUtils = require('../../../test-utils/transactions')
 const testHook = require('../../../src/services/transactions/hook.decode-raw-txn')
 
-txnUtils.mock()
-
 const decodeRawTxn = testHook({
   url: 'http://localhost:18332',
   username: 'test',
@@ -12,6 +10,13 @@ const decodeRawTxn = testHook({
 })
 
 describe('Transactions Service - decodeRawTxn Hook', function () {
+  before(function () {
+    txnUtils.setupMock()
+  })
+  after(function () {
+    txnUtils.resetMock()
+  })
+
   it('uses the core to decode a raw transaction from hex', function (done) {
     const context = {
       app,

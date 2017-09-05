@@ -4,6 +4,7 @@ const utils = require('../../../test-utils/index')
 
 const service = '/xpub-crawl'
 const serviceOnServer = app.service(service)
+const xpubs = utils.xpub()
 
 describe(`${service} Service`, function () {
   utils.clients.forEach(client => {
@@ -103,6 +104,9 @@ function runTests (feathersClient) {
     })
 
     describe(`${service} - Authenticated Client`, function () {
+      beforeEach(function () {
+        utils.transactions.resetMock()
+      })
       const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
 
       methods.forEach(method => {
@@ -111,19 +115,37 @@ function runTests (feathersClient) {
         })
       })
 
-      it.skip('', function (done) {
-        const user = this.user
+      describe('find', function () {
+        it.only('crawls the gap of 20', function (done) {
+          const user = this.user
 
-        utils.user.authenticate(app, feathersClient, user)
-          .then(response => {
-            assert(response, 'authenticated successfully')
-            done()
-          })
-          .catch(error => {
-            assert(!error, `should have been able to authenticate`)
-            done()
-          })
+          utils.users.authenticate(app, feathersClient, user)
+            .then(response => serviceOnClient.find({ query: { type: 'btc', xpub: xpubs.btc } }))
+            .then(response => {
+              assert(response.addresses, 'received addresses')
+              assert(Object.keys(response.addresses).length === 1, 'One addresses was used')
+              assert(response.addressesByIndex, 'received addressesByIndex')
+              assert(Object.keys(response.addressesByIndex).length === 23, '23 addresses were crawled')
+              assert(response.summary.total, 'received summary total')
+              assert(response.type === 'BTC', 'received correct type')
+              done()
+            })
+            .catch(error => {
+              assert(!error, error)
+              done()
+            })
+        })
       })
+
+      describe('get', function () {})
+
+      describe('create', function () {})
+
+      describe('update', function () {})
+
+      describe('patch', function () {})
+
+      describe('remove', function () {})
     })
   })
 }

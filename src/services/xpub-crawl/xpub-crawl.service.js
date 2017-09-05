@@ -2,6 +2,7 @@
 const createService = require('./xpub-crawl.class.js')
 const hooks = require('./xpub-crawl.hooks')
 const filters = require('./xpub-crawl.filters')
+const bitcoin = require('bitcoinjs-lib')
 
 module.exports = function () {
   const app = this
@@ -9,7 +10,9 @@ module.exports = function () {
 
   const options = {
     name: 'xpub-crawl',
-    paginate
+    paginate,
+    app,
+    network: bitcoin.networks.testnet
   }
 
   // Initialize our service with any options it requires

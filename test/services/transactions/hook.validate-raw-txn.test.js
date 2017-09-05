@@ -3,8 +3,6 @@ const assert = require('assert')
 const txnUtils = require('../../../test-utils/transactions')
 const testHook = require('../../../src/services/transactions/hook.validate-txn')
 
-txnUtils.mock()
-
 const validateRawTxn = testHook({
   url: 'http://localhost:18332',
   username: 'test',
@@ -12,6 +10,13 @@ const validateRawTxn = testHook({
 })
 
 describe('Transactions Service - validateRawTxn Hook', function () {
+  before(function () {
+    txnUtils.setupMock()
+  })
+  after(function () {
+    txnUtils.resetMock()
+  })
+
   it('uses the core to validate a raw transaction', function (done) {
     const context = {
       app,

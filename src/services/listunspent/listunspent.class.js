@@ -90,16 +90,16 @@ function fetchListunspent (config, addresses = []) {
 function aggregateByAddress (result) {
   return result.reduce((acc, txout) => {
     acc.summary.total += txout.amount
-    if (!acc[txout.address]) {
-      acc[txout.address] = {
+    if (!acc.addresses[txout.address]) {
+      acc.addresses[txout.address] = {
         amount: 0,
         txouts: []
       }
     }
-    acc[txout.address].amount += txout.amount
-    acc[txout.address].txouts.push(txout)
+    acc.addresses[txout.address].amount += txout.amount
+    acc.addresses[txout.address].txouts.push(txout)
     return acc
-  }, {summary: {total: 0}})
+  }, {summary: {total: 0}, addresses: {}})
 }
 
 function addSummary (result) {

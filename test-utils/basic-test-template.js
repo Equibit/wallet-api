@@ -111,10 +111,13 @@ function runTests (feathersClient) {
         })
       })
 
+      describe('Grants Access to the Authenticated User', function () {})
+      describe('Protects Other Users\' Data', function () {})
+
       it.skip('', function (done) {
         const user = this.user
 
-        utils.user.authenticate(app, feathersClient, user)
+        utils.users.authenticate(app, feathersClient, user)
           .then(response => {
             assert(response, 'authenticated successfully')
             done()

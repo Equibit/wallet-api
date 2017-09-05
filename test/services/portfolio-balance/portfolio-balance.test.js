@@ -1,10 +1,129 @@
 const assert = require('assert')
 const app = require('../../../src/app')
+const utils = require('../../../test-utils/index')
 
-describe('\'portfolio-balance\' service', () => {
-  it('registered the service', () => {
-    const service = app.service('portfolio-balance')
+const service = '/portfolio-balance'
+const serviceOnServer = app.service(service)
 
-    assert.ok(service, 'Registered the service')
+describe(`${service} Service`, function () {
+  utils.clients.forEach(client => {
+    runTests(client)
+  })
+
+  describe(`${service} - Server`, function () {
+    // before(function () {})
+    // after(function () {})
+    beforeEach(function () {
+      return serviceOnServer.remove(null, {}) // Remove all records
+    })
+    // afterEach(function () {})
+
+    describe('find', function () {
+      it.skip('', function (done) {})
+    })
+
+    describe('get', function () {
+      it.skip('', function (done) {})
+    })
+
+    describe('create', function () {
+      it.skip('', function (done) {})
+    })
+
+    describe('update', function () {
+      it.skip('', function (done) {})
+    })
+
+    describe('patch', function () {
+      it.skip('', function (done) {})
+    })
+
+    describe('remove', function () {
+      it.skip('', function (done) {})
+    })
   })
 })
+
+function runTests (feathersClient) {
+  const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
+  const serviceOnClient = feathersClient.service(service)
+
+  describe(`${service} - ${transport} Transport`, function () {
+    before(function () {
+      return app.service('/users').remove(null, {}) // Remove all users
+    })
+
+    beforeEach(function (done) {
+      feathersClient.logout()
+        .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
+        .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
+        .then(user => app.service('/users').find({ query: {} }))
+        .then(users => {
+          users = users.data || users
+          this.user = users[0]
+          this.user2 = users[1]
+          done()
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    })
+
+    afterEach(function (done) {
+      feathersClient.logout()
+        .then(() => app.service('/users').remove(null, {})) // Remove all users
+        .then(() => {
+          done()
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    })
+
+    describe(`${service} - Unauthenticated Client`, function () {
+      const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
+
+      methods.forEach(method => {
+        it(`requires auth on ${method}`, function () {
+          utils.assert.requiresAuth(serviceOnClient, method)
+        })
+      })
+
+      describe('find', function () {})
+
+      describe('get', function () {})
+
+      describe('create', function () {})
+
+      describe('update', function () {})
+
+      describe('patch', function () {})
+
+      describe('remove', function () {})
+    })
+
+    describe(`${service} - Authenticated Client`, function () {
+      const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
+
+      methods.forEach(method => {
+        it.skip(`works with auth on ${method}`, function () {
+          utils.assert.requiresAuth(serviceOnClient, method)
+        })
+      })
+
+      it.skip('', function (done) {
+        const user = this.user
+
+        utils.user.authenticate(app, feathersClient, user)
+          .then(response => {
+            assert(response, 'authenticated successfully')
+            done()
+          })
+          .catch(error => {
+            assert(!error, `should have been able to authenticate`)
+            done()
+          })
+      })
+    })
+  })
+}
