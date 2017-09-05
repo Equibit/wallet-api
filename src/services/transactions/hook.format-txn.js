@@ -1,7 +1,15 @@
+function formatTxnData (data) {
+  data.type = data.type.toUpperCase()
+  data.currencyType = data.currencyType.toUpperCase()
+  data.issuanceType = data.issuanceId
+    ? ('')
+    : (data.currencyType === 'BTC' && 'Bitcoin' || data.currencyType === 'EQB' && 'Equibit')
+  return data
+}
+
 module.exports = function (options) {
-  return function validateRawTxn (context) {
-    context.data.type = context.data.type.toUpperCase()
-    context.data.currencyType = context.data.currencyType.toUpperCase()
-    Promise.resolve(context)
+  return function formatTxn (context) {
+    Promise.resolve(formatTxnData(context.data))
   }
 }
+module.exports.formatTxnData = formatTxnData

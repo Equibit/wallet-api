@@ -82,7 +82,7 @@ function fetchListunspent (config, addresses = []) {
       password: config.password
     }
   }).then(a => {
-    console.log('[fetchListunspent] result:', a)
+    console.log('[fetchListunspent] result:', a.data)
     return a
   })
 }

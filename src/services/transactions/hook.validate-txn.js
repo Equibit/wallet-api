@@ -73,9 +73,9 @@ module.exports = function (options) {
       return context
     })
     .catch(err => {
-      console.log('_______ getxtout ERROR: ', err.response.data)
+      console.log('_______ getxtout ERROR: ', ((err.response && err.response.data) || err.response))
       console.log('USING PARAMS: ', formattedParams)
-      return err.response.data
+      return (err.response && err.response.data) || err.response
     })
   }
 }

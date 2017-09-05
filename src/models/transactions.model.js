@@ -10,6 +10,7 @@ module.exports = function (app) {
     // MUST BE SENT FROM BROWSER
     // Validate it by making RPCs using
     address: { type: String, required: true },
+
     // These are required in the request for better efficiency in validating the sender's address
     // but we do not record them
     // addressTxid: { type: String, required: true },
@@ -21,10 +22,16 @@ module.exports = function (app) {
     // Validate that this address made it into the vout addresses
     otherAddress: { type: String },
 
-    type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL' ], required: true },
+    type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
+
     companyName: { type: String },
+    companySlug: { type: String },
+    issuanceId: { type: String },
     issuanceName: { type: String },
+    issuanceType: { type: String, enum: ['Common Shares', 'Bonds', 'Preferred Shares', 'Partnership Units', 'Trust Units', 'Bitcoin', 'Equibit'] },
+    issuanceUnit: { type: String, enum: ['SHARES', 'BTC', 'UNITS'] },
+
     // status: { type: String, enum: [ 'Trading' ] }, // for Buy & Sell
     txIdBtc: { type: String }, // Buy & Sell?
     txIdEqb: { type: String }, // Buy & Sell?
