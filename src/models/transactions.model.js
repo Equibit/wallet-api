@@ -22,14 +22,17 @@ module.exports = function (app) {
     // Validate that this address made it into the vout addresses
     otherAddress: { type: String },
 
-    type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER' ], required: true },
+    type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER', 'AUTH' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
 
     companyName: { type: String },
     companySlug: { type: String },
     issuanceId: { type: String },
     issuanceName: { type: String },
-    issuanceType: { type: String, enum: ['Common Shares', 'Bonds', 'Preferred Shares', 'Partnership Units', 'Trust Units', 'Bitcoin', 'Equibit'] },
+
+    // The values are defined by the Core:
+    issuanceType: { type: String, enum: ['common_shares', 'bonds', 'preferred_shares', 'fund_units', 'trust_units', 'bitcoin', 'equibit'] },
+
     issuanceUnit: { type: String, enum: ['SHARES', 'BTC', 'UNITS'] },
 
     // status: { type: String, enum: [ 'Trading' ] }, // for Buy & Sell

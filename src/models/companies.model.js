@@ -9,7 +9,20 @@ module.exports = function (app) {
   const companies = new mongooseClient.Schema({
     name: {type: String},
     slug: {type: String},
-    issuances: []
+    //issuances: []
+
+    userId: {type: String},
+
+    domicile: {type: String},
+    streetAddress: {type: String},
+    streetAddress2: {type: String},
+    city: {type: String},
+    state: {type: String},
+    postalCode: {type: String},
+
+    contactEmail: {type: String},
+    website: {type: String},
+    phoneNumber: {type: String},
   }, {
     versionKey: false
   })
