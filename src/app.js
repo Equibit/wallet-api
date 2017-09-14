@@ -19,7 +19,7 @@ const appHooks = require('./hooks')
 
 const authentication = require('./authentication')
 
-const seed = require('./seeder/seeder')
+// const seed = require('./seeder/seeder')
 const mongoose = require('./mongoose')
 // const seedWriter = require('./seeder/seed-writer')
 
@@ -63,7 +63,7 @@ app.configure(authentication)
 // Set up our services (see `services/index.js`)
 app.configure(services)
 
-seed(app)
+// seed(app)
 // seedWriter(app)
 
 // Configure middleware (see `middleware/index.js`) - always has to be last

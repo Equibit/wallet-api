@@ -44,7 +44,9 @@ module.exports = app => {
 
           // Set the createReceiverTxn flag so that the createReceiverTxn will create the other txn.
           context => {
-            context.data.createReceiverTxn = true
+            if (['OUT'].indexOf(context.data.type) !== -1) {
+              context.data.createReceiverTxn = true
+            }
           },
 
           // Format the transaction to be saved in the wallet-api db
