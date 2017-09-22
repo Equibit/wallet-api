@@ -27,6 +27,7 @@ module.exports = {
     update: [
       mapUpdateToPatch()
     ],
+    // todo: validate that addressesMeta is an array.
     patch: [ ...restrict ],
     remove: [ ...restrict ]
   },
