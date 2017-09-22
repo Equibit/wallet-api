@@ -12,6 +12,7 @@ module.exports = function (app) {
     //issuances: []
 
     userId: {type: String},
+    index: {type: Number, default: 1},
 
     domicile: {type: String},
     streetAddress: {type: String},

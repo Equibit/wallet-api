@@ -8,8 +8,8 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const issuances = new mongooseClient.Schema({
-    // tmp:
     userId: { type: ObjectId },
+    index: { type: Number },
 
     companyId: { type: ObjectId },
     companyName: { type: String },
