@@ -26,7 +26,7 @@
   "postmark": {
     "key": "POSTMARK_API_KEY"
   },
-  "outboundEmail": "info@equibitgroup.org",
+  "outboundEmail": "info@equibitgroup.com",
   "postmarkTemplateIds": {
     "welcome": 1469183,
     "duplicateSignup": 1472482,
