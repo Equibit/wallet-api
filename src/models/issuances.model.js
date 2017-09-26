@@ -10,6 +10,7 @@ module.exports = function (app) {
   const issuances = new mongooseClient.Schema({
     userId: { type: ObjectId },
     index: { type: Number },
+    companyIndex: { type: Number },
 
     companyId: { type: ObjectId },
     companyName: { type: String },
