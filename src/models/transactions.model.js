@@ -22,7 +22,7 @@ module.exports = function (app) {
     // Validate that this address made it into the vout addresses
     otherAddress: { type: String },
 
-    type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER', 'AUTH' ], required: true },
+    type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER', 'AUTH', 'CANCEL' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
 
     companyName: { type: String },

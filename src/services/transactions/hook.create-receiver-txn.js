@@ -4,13 +4,14 @@ module.exports = function (options) {
   return function createReceiverTxn (context) {
     const { data, service } = context
 
-    if (data.createReceiverTxn) {
-      const typeMap = {
-        OUT: 'IN',
-        IN: 'OUT',
-        BUY: 'SELL',
-        SELL: 'BUY'
-      }
+    const typeMap = {
+      OUT: 'IN',
+      // IN: 'OUT', // we should not create a receiver tx for type IN which cannot be the main tx.
+      BUY: 'SELL',
+      SELL: 'BUY'
+    }
+
+    if (data.createReceiverTxn && typeMap[data.type]) {
 
       const txData = formatTxnData({
         address: data.otherAddress,
