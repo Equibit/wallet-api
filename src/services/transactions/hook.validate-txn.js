@@ -31,7 +31,7 @@ module.exports = function (options) {
     // Make sure the `address`, `addressTxid`, and `addressVout` are all provided
     const addressAttrs = ['address', 'addressTxid', 'addressVout']
     const missingAttr = addressAttrs.reduce((acc, attr) => {
-      return acc || (!context.data.hasOwnProperty(attr)) || acc
+      return acc || (!context.data.hasOwnProperty(attr) && attr) || acc
     }, '')
     if (missingAttr) {
       return Promise.reject(new errors.BadRequest(`\`${missingAttr}\` is required to record a transaction`))
