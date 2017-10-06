@@ -1,3 +1,4 @@
+const { discard } = require('feathers-hooks-common')
 
 module.exports = {
   before: {
@@ -11,7 +12,9 @@ module.exports = {
   },
 
   after: {
-    all: [],
+    all: [
+      discard('__v')
+    ],
     find: [],
     get: [],
     create: [],
