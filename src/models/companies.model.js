@@ -9,7 +9,7 @@ module.exports = function (app) {
   const companies = new mongooseClient.Schema({
     name: {type: String},
     slug: {type: String},
-    //issuances: []
+    // issuances: []
 
     userId: {type: String},
     index: {type: Number, default: 1},
@@ -23,7 +23,7 @@ module.exports = function (app) {
 
     contactEmail: {type: String},
     website: {type: String},
-    phoneNumber: {type: String},
+    phoneNumber: {type: String}
   }, {
     versionKey: false
   })

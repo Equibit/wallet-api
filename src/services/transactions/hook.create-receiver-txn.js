@@ -12,7 +12,6 @@ module.exports = function (options) {
     }
 
     if (data.createReceiverTxn && typeMap[data.type]) {
-
       const txData = formatTxnData({
         address: data.otherAddress,
         otherAddress: data.address,

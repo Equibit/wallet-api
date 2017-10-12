@@ -3,7 +3,7 @@
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
-  const mongooseClient = app.get('mongooseClient');
+  const mongooseClient = app.get('mongooseClient')
   const { ObjectId } = mongooseClient.Schema.Types
   const offers = new mongooseClient.Schema({
     userId: { type: ObjectId, required: true },
@@ -20,7 +20,7 @@ module.exports = function (app) {
 
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
-  });
+  })
 
-  return mongooseClient.model('offers', offers);
-};
+  return mongooseClient.model('offers', offers)
+}
