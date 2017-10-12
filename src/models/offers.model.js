@@ -4,8 +4,8 @@
 // for more of what you can do here.
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
-  const { Schema } = mongooseClient;
-  const offers = new Schema({
+  const { ObjectId } = mongooseClient.Schema.Types
+  const offers = new mongooseClient.Schema({
     userId: { type: ObjectId, required: true },
     type: { type: String, required: true },
     issuanceAddress: { type: String, required: true },

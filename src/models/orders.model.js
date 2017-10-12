@@ -5,7 +5,7 @@
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const { ObjectId } = mongooseClient.Schema.Types
-  const sellOrders = new mongooseClient.Schema({
+  const orders = new mongooseClient.Schema({
     userId: { type: ObjectId, required: true },
     type: { type: String, required: true },
     issuanceAddress: { type: String, required: true },
@@ -25,5 +25,5 @@ module.exports = function (app) {
     updatedAt: { type: Date, default: Date.now }
   })
 
-  return mongooseClient.model('sellOrders', sellOrders)
+  return mongooseClient.model('orders', orders)
 }
