@@ -1,10 +1,9 @@
+const { authenticate } = require('feathers-authentication').hooks
 const { discard } = require('feathers-hooks-common')
-
-// todo: discard userId if its different from current user
 
 module.exports = {
   before: {
-    all: [],
+    all: [ authenticate('jwt') ],
     find: [],
     get: [],
     create: [],

@@ -21,6 +21,8 @@ const portfolioBalance = require('./portfolio-balance/portfolio-balance.service.
 
 const xpubCrawl = require('./xpub-crawl/xpub-crawl.service.js')
 
+const offers = require('./offers/offers.service.js');
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -40,4 +42,5 @@ module.exports = function () {
   app.configure(addressMeta)
   app.configure(portfolioBalance)
   app.configure(xpubCrawl)
+  app.configure(offers);
 }
