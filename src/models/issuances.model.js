@@ -8,16 +8,17 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const issuances = new mongooseClient.Schema({
-    userId: { type: ObjectId },
-    index: { type: Number },
-    companyIndex: { type: Number },
+    userId: { type: ObjectId, required: true },
+    index: { type: Number, required: true },
+    companyIndex: { type: Number, required: true },
+    issuanceAddress: { type: String, required: true},
 
-    companyId: { type: ObjectId },
-    companyName: { type: String },
-    companySlug: { type: String },
-    domicile: { type: String },
-    issuanceName: { type: String },
-    issuanceType: { type: String },
+    companyId: { type: ObjectId, required: true },
+    companyName: { type: String, required: true },
+    companySlug: { type: String, required: true },
+    domicile: { type: String, required: true },
+    issuanceName: { type: String, required: true },
+    issuanceType: { type: String, required: true },
     restriction: { type: String },
     marketCap: { type: Number },
     change: { type: Number },
