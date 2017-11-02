@@ -6,7 +6,7 @@ const service = '/xpub-crawl'
 const serviceOnServer = app.service(service)
 const xpubs = utils.xpub()
 
-describe(`${service} Service`, function () {
+describe.skip(`${service} Service`, function () {
   utils.clients.forEach(client => {
     runTests(client)
   })
@@ -56,7 +56,7 @@ function runTests (feathersClient) {
 
     beforeEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
+        .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
         .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
         .then(user => app.service('/users').find({ query: {} }))
         .then(users => {
@@ -116,7 +116,7 @@ function runTests (feathersClient) {
       })
 
       describe('find', function () {
-        it.only('crawls the gap of 20', function (done) {
+        it('crawls the gap of 20', function (done) {
           const user = this.user
 
           utils.users.authenticate(app, feathersClient, user)

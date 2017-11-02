@@ -17,7 +17,7 @@ function runTests (feathersClient) {
 
     beforeEach(function (done) {
       app.service('login-attempts').remove(null, {})
-        .then(() => app.service('users').create({ email: 'test@equibit.org' }))
+        .then(() => app.service('users').create({ email: 'test@equibitgroup.com' }))
         .then(user => app.service('users').find({ query: {} }))
         .then(users => {
           this.user = users.data[0]

@@ -99,11 +99,12 @@ function runTests (feathersClient) {
               assert(allowedFields.includes(field), `the ${field} field was allowed in the response.`)
             })
             assert(portfolio.name === name, 'portfolio was created')
-            assert(portfolio.index === 1, 'the portfolio has the correct index')
+            assert(portfolio.index === 0, 'the portfolio has the correct index')
             assert(portfolio.userId === user._id.toString(), 'the portfolio was assigned to the user')
             done()
           })
           .catch(error => {
+            console.log('ERROR ', error)
             assert(!error, 'this error should not have occurred')
             done()
           })

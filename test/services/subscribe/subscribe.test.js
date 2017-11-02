@@ -19,7 +19,7 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
 
   beforeEach(function (done) {
     feathersClient.logout()
-      .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
+      .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
       .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
       .then(user => app.service('/users').find({ query: {} }))
       .then(users => {
@@ -187,7 +187,7 @@ describe('Subscribe Service Tests - feathers-rest', function () {
 
   beforeEach(function (done) {
     feathersClient.logout()
-      .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
+      .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
       .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
       .then(user => app.service('/users').find({ query: {} }))
       .then(users => {

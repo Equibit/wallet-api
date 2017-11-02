@@ -12,7 +12,15 @@ module.exports = function () {
   postmarkService.hooks({
     before: {
       create: [
-        disallow('external')
+        disallow('external'),
+        hook => {
+          // Do not send emails if testing:
+          if (process.env.TESTING === 'true') {
+            hook.result = {}
+            return hook
+          }
+          return hook
+        }
       ]
     },
     after: {

@@ -81,5 +81,5 @@ exports.setupMock = function () {
 }
 
 exports.resetMock = function resetTransactionsMock () {
-  mock.restore()
+  mock.reset()
 }

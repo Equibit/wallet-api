@@ -4,9 +4,8 @@ const txnUtils = require('../../../test-utils/transactions')
 const testHook = require('../../../src/services/transactions/hook.validate-txn')
 
 const validateRawTxn = testHook({
-  url: 'http://localhost:18332',
-  username: 'test',
-  password: 'test'
+  btc: { url: 'http://localhost:18332', username: 'test', password: 'test' },
+  eqb: { url: 'http://localhost:18332', username: 'test', password: 'test' }
 })
 
 describe('Transactions Service - validateRawTxn Hook', function () {
@@ -39,6 +38,7 @@ describe('Transactions Service - validateRawTxn Hook', function () {
         done()
       })
       .catch(error => {
+        console.log('ERROR ', error)
         assert(!error, error.message)
         done()
       })

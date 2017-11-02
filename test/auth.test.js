@@ -22,7 +22,7 @@ function runTests (feathersClient) {
 
     beforeEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
+        .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
         .then(user => app.service('/users').find({ query: {} }))
         .then(users => {
           users = users.data || users
@@ -114,10 +114,10 @@ function runTests (feathersClient) {
         Object.keys(payload).forEach(field => {
           assert(allowedPayloadFields.includes(field), `the "${field}" claim was included in the jwt payload`)
         })
-        assert(payload.aud === 'https://equibit.org', 'the jwt audience was correct')
-        assert(payload.iss === 'Equibit', 'the jwt issuer was correct')
-        assert(payload.sub === 'user', 'the jwt subject was correct')
-        assert(payload.userId === user._id, 'the jwt userId was correct')
+        assert.equal(payload.aud, 'https://equibitgroup.com', 'the jwt audience was correct')
+        assert.equal(payload.iss, 'Equibit', 'the jwt issuer was correct')
+        assert.equal(payload.sub, 'user', 'the jwt subject was correct')
+        assert.equal(payload.userId, user._id, 'the jwt userId was correct')
 
         const allowedUserFields = [
           '_id',
@@ -189,10 +189,11 @@ function runTests (feathersClient) {
         Object.keys(payload).forEach(field => {
           assert(allowedPayloadFields.includes(field), `the "${field}" claim was included in the jwt payload`)
         })
-        assert(payload.aud === 'https://equibit.org', 'the jwt audience was correct')
-        assert(payload.iss === 'Equibit', 'the jwt issuer was correct')
-        assert(payload.sub === 'user', 'the jwt subject was correct')
-        assert(payload.userId === user._id, 'the jwt userId was correct')
+
+        assert.equal(payload.aud, 'https://equibitgroup.com', 'the jwt audience was correct')
+        assert.equal(payload.iss, 'Equibit', 'the jwt issuer was correct')
+        assert.equal(payload.sub, 'user', 'the jwt subject was correct')
+        assert.equal(payload.userId, user._id, 'the jwt userId was correct')
 
         const allowedUserFields = [
           '_id',

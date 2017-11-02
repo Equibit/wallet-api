@@ -18,7 +18,7 @@ function runTests (feathersClient) {
 
     beforeEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
+        .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
         .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
         .then(user => app.service('/users').find({ query: {} }))
         .then(users => {

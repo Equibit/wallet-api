@@ -4,9 +4,8 @@ const txnUtils = require('../../../test-utils/transactions')
 const testHook = require('../../../src/services/transactions/hook.decode-raw-txn')
 
 const decodeRawTxn = testHook({
-  url: 'http://localhost:18332',
-  username: 'test',
-  password: 'test'
+  btc: { url: 'http://localhost:18332', username: 'test', password: 'test' },
+  eqb: { url: 'http://localhost:18332', username: 'test', password: 'test' }
 })
 
 describe('Transactions Service - decodeRawTxn Hook', function () {
