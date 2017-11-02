@@ -11,7 +11,7 @@ module.exports = function (app) {
     userId: { type: ObjectId, required: true },
     index: { type: Number, required: true },
     companyIndex: { type: Number, required: true },
-    issuanceAddress: { type: String, required: true},
+    issuanceAddress: { type: String, required: true },
 
     companyId: { type: ObjectId, required: true },
     companyName: { type: String, required: true },

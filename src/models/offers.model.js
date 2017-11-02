@@ -8,7 +8,7 @@ module.exports = function (app) {
   const offers = new mongooseClient.Schema({
     userId: { type: ObjectId, required: true },
     orderId: { type: ObjectId, required: true },
-    type: { type: String, enum: [ 'SELL', 'BUY'], required: true },
+    type: { type: String, enum: [ 'SELL', 'BUY' ], required: true },
     issuanceAddress: { type: String, required: true },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
