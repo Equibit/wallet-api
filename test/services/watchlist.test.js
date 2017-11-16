@@ -52,12 +52,14 @@ function runTests (feathersClient) {
         })
         .then(watchers => {
           watchers.forEach((watcher, index) => {
-            watchers[index] = watcher.toObject()
+            // console.log(`watcher`, watcher)
+            watchers[index] = watcher // .toObject()
           })
           this.watchers = watchers
           done()
         })
         .catch(error => {
+          console.log('Error:::', error)
           assert(!error, 'should have been able to create some fake watchlist data')
           done()
         })
