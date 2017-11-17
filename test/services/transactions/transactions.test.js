@@ -100,7 +100,7 @@ function runTests (feathersClient) {
 
     describe('Client With Auth', function () {
       it.skip('allows find', function () {
-        return app.service('users').create({ email: 'TEST@EQUIBITGROUP.COM' })
+        return app.service('users').create({ email: testEmails[0] })
           .then(user => {
             assert(user.email === 'test@equibitgroup.com', 'the signup email was lowerCased')
           })

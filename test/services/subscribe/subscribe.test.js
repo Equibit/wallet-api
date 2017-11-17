@@ -205,8 +205,8 @@ describe('Subscribe Service Tests - feathers-rest', function () {
 
   beforeEach(function (done) {
     feathersClient.logout()
-      .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-      .then(() => app.service('/users').create({ email: 'test2@equibitgroup.com' }))
+      .then(() => app.service('/users').create({ email: testEmails[0] }))
+      .then(() => app.service('/users').create({ email: testEmails[1] }))
       .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
       .then(users => {
         users = users.data || users
