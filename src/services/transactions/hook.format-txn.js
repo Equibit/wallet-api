@@ -8,8 +8,9 @@ function formatTxnData (data) {
 }
 
 module.exports = function (options) {
-  return function formatTxn (context) {
-    Promise.resolve(formatTxnData(context.data))
+  return function formatTxn (hook) {
+    formatTxnData(hook.data)
+    return hook
   }
 }
 module.exports.formatTxnData = formatTxnData

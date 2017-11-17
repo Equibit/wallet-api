@@ -5,6 +5,8 @@ const assertRequiresAuth = require('../../test-utils/assert/requires-auth')
 const userUtils = require('../../test-utils/users')
 const objectid = require('objectid')
 
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+
 const service = '/watchlist'
 
 describe(`${service} Service`, function () {
@@ -19,28 +21,39 @@ function runTests (feathersClient) {
 
   describe(`${service} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, {}) // Remove all users
+      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } })
+    })
+    after(function () {
+      return Promise.all([
+        app.service('/users').remove(null, { query: { email: { $in: testEmails } } }),
+        app.service('/companies').remove(null, { query: { name: 'test-company' } }),
+        app.service('/watchlist').remove(null, { query: { companyName: 'test-company' } })
+      ])
     })
 
     beforeEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-        .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
-        .then(user => app.service('/users').find({ query: {} }))
+        .then(() => app.service('/users').create({ email: testEmails[0] }))
+        .then(() => app.service('/users').create({ email: testEmails[1] }))
+        .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
         .then(users => {
           users = users.data || users
           this.user = users[0]
           this.user2 = users[1]
 
           // Next, create watch data for random users
-          return app.service('companies').find({ query: {} })
+          return [
+            {_id: objectid(), name: 'test-company'},
+            {_id: objectid(), name: 'test-company'},
+            {_id: objectid(), name: 'test-company'}
+          ]
         })
         .then(response => {
           const companies = response.data || response
           const watchers = []
           this.companies = companies
 
-          for (var index = 0; index < 10; index++) {
+          for (var index = 0; index < companies.length; index++) {
             const company = companies[index]
             watchers.push({
               companyId: company._id,
@@ -68,7 +81,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       feathersClient.logout()
         // Remove all users after tests run.
-        .then(() => app.service('/users').remove(null, {}))
+        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
         // Remove all watch data
         .then(() => app.service('watchlist').remove(null, {}))
         .then(() => { done() })
