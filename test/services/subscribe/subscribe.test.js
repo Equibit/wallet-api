@@ -9,9 +9,14 @@ const assertDisallowed = require('../../../test-utils/assert/disallows')
 const socketClient = clients[0]
 const restClient = clients[1]
 
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+
 describe(`Subscribe Service Tests - feathers-socketio`, function () {
   before(function () {
-    return app.service('/users').remove(null, {}) // Remove all users
+    return app.service('/users').remove(null, { query: { email: { $in: testEmails } } })
+  })
+  after(function () {
+    return app.service('/login-attempts').remove(null, {})
   })
 
   const feathersClient = socketClient
@@ -19,9 +24,9 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
 
   beforeEach(function (done) {
     feathersClient.logout()
-      .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-      .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
-      .then(user => app.service('/users').find({ query: {} }))
+      .then(() => app.service('/users').create({ email: testEmails[0] }))
+      .then(() => app.service('/users').create({ email: testEmails[1] }))
+      .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
       .then(users => {
         users = users.data || users
         this.user = users[0]
@@ -36,7 +41,7 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
   afterEach(function (done) {
     // Remove all users after tests run.
     feathersClient.logout()
-      .then(() => app.service('/users').remove(null, {}))
+      .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
       .then(() => {
         done()
       })
@@ -73,22 +78,31 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
 
   describe('Client With Auth', function () {
     describe('Create', function () {
+      after(function () {
+        return app.service('address-map').remove(null, {})
+      })
+
       beforeEach(function () {
         return app.service('address-map').remove(null, {})
       })
 
       it('updates the socket with a uid property', function (done) {
-        const user = this.user
+        const currentUser = this.user
         const addresses = [ 'address1', 'address2', 'address3' ]
 
-        authenticate(app, feathersClient, user)
+        authenticate(app, feathersClient, currentUser)
           .then(response => {
             return serviceOnClient.create({ addresses })
           })
           .then(response => {
             const socketId = Object.keys(app.io.sockets.sockets).filter(socketId => {
               const user = app.io.sockets.sockets[socketId].feathers.user
-              return user && (user._id.toString() === user._id.toString())
+              if (user && !user._id) {
+                console.log('*** !!! *** ')
+                console.log('*** !!! *** socket user._id is undefined!!! user: ', user)
+                console.log('*** !!! *** ')
+              }
+              return user && user._id && (user._id.toString() === currentUser._id.toString())
             })
             const socket = app.io.sockets.sockets[socketId].feathers
             assert(socket.uid, 'the socket has a uid property')
@@ -96,6 +110,7 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
             done()
           })
           .catch(error => {
+            console.log(error)
             assert(!error, error.message)
             done()
           })
@@ -118,6 +133,7 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
             done()
           })
           .catch(error => {
+            console.log(error)
             assert(!error, error.message)
             done()
           })
@@ -159,6 +175,7 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
             done()
           })
           .catch(error => {
+            console.log(error)
             assert(!error, error.message)
             done()
           })
@@ -173,6 +190,7 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
             done()
           })
           .catch(error => {
+            console.log(error)
             assert(!error, `should have been able to authenticate`)
             done()
           })
@@ -187,9 +205,9 @@ describe('Subscribe Service Tests - feathers-rest', function () {
 
   beforeEach(function (done) {
     feathersClient.logout()
-      .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-      .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
-      .then(user => app.service('/users').find({ query: {} }))
+      .then(() => app.service('/users').create({ email: testEmails[0] }))
+      .then(() => app.service('/users').create({ email: testEmails[1] }))
+      .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
       .then(users => {
         users = users.data || users
         this.user = users[0]
@@ -204,7 +222,7 @@ describe('Subscribe Service Tests - feathers-rest', function () {
   afterEach(function (done) {
     // Remove all users after tests run.
     feathersClient.logout()
-      .then(() => app.service('/users').remove(null, {}))
+      .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
       .then(() => {
         done()
       })

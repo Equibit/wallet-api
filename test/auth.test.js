@@ -5,6 +5,7 @@ const makeSigned = require('feathers-authentication-signed/client')
 const decode = require('jwt-decode')
 require('../test-utils/setup')
 const clients = require('../test-utils/clients')
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
 
 const signed = makeSigned(crypto)
 
@@ -17,13 +18,13 @@ function runTests (feathersClient) {
 
   describe(`Authentication tests - ${transport}`, function () {
     before(function () {
-      return app.service('/users').remove(null, {}) // Remove all users
+      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
     })
 
     beforeEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-        .then(user => app.service('/users').find({ query: {} }))
+        .then(() => app.service('/users').create({ email: testEmails[0] }))
+        .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
         .then(users => {
           users = users.data || users
           this.user = users[0]
@@ -37,7 +38,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       // Remove all users after tests run.
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, {}))
+        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
         .then(() => {
           done()
         })

@@ -8,10 +8,11 @@ const assertDisallowed = require('../../../test-utils/assert/disallows')
 const servicePath = '/address-map'
 const socketClient = clients[0]
 const restClient = clients[1]
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
 
 describe(`${servicePath} Service Tests - feathers-socketio`, function () {
   before(function () {
-    return app.service('/users').remove(null, {}) // Remove all users
+    return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
   })
 
   const feathersClient = socketClient
@@ -20,9 +21,9 @@ describe(`${servicePath} Service Tests - feathers-socketio`, function () {
 
   beforeEach(function (done) {
     feathersClient.logout()
-      .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-      .then(() => app.service('/users').create({ email: 'test2@equibitgroup.com' }))
-      .then(user => app.service('/users').find({ query: {} }))
+      .then(() => app.service('/users').create({ email: testEmails[0] }))
+      .then(() => app.service('/users').create({ email: testEmails[1] }))
+      .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
       .then(users => {
         users = users.data || users
         this.user = users[0]
@@ -37,7 +38,7 @@ describe(`${servicePath} Service Tests - feathers-socketio`, function () {
   afterEach(function (done) {
     // Remove all users after tests run.
     feathersClient.logout()
-      .then(() => app.service('/users').remove(null, {}))
+      .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
       .then(() => {
         done()
       })
@@ -165,9 +166,9 @@ describe('address-map Service Tests - feathers-rest', function () {
 
   beforeEach(function (done) {
     feathersClient.logout()
-      .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-      .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
-      .then(user => app.service('/users').find({ query: {} }))
+      .then(() => app.service('/users').create({ email: testEmails[0] }))
+      .then(() => app.service('/users').create({ email: testEmails[1] }))
+      .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
       .then(users => {
         users = users.data || users
         this.user = users[0]
@@ -182,7 +183,7 @@ describe('address-map Service Tests - feathers-rest', function () {
   afterEach(function (done) {
     // Remove all users after tests run.
     feathersClient.logout()
-      .then(() => app.service('/users').remove(null, {}))
+      .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
       .then(() => {
         done()
       })

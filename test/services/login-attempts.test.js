@@ -2,6 +2,7 @@ const assert = require('assert')
 const app = require('../../src/app')
 const utils = require('../../test-utils/index')
 const assertDisallowed = require('../../test-utils/assert/disallows')
+const testEmails = ['test2@equibitgroup.com']
 
 utils.clients.forEach(client => {
   runTests(client)
@@ -12,30 +13,26 @@ function runTests (feathersClient) {
 
   describe(`login-attempts Service Tests - ${transport}`, function () {
     before(function () {
-      return app.service('/users').remove(null, {}) // Remove all users
+      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
     })
 
-    beforeEach(function (done) {
-      app.service('login-attempts').remove(null, {})
-        .then(() => app.service('users').create({ email: 'test@equibitgroup.com' }))
-        .then(user => app.service('users').find({ query: {} }))
+    beforeEach(function () {
+      return app.service('login-attempts').remove(null, {})
+        .then(() => app.service('users').create({ email: testEmails[0] }))
+        .then(user => app.service('users').find({ query: { email: { $in: testEmails } } }))
         .then(users => {
           this.user = users.data[0]
-          done()
         })
         .catch(error => {
           console.log(error)
         })
     })
 
-    afterEach(function (done) {
+    afterEach(function () {
       // Remove all users and login-attempts after tests run.
-      feathersClient.logout()
+      return feathersClient.logout()
         .then(() => app.service('login-attempts').remove(null, {}))
-        .then(() => app.service('users').remove(null, {}))
-        .then(() => {
-          done()
-        })
+        .then(() => app.service('users').remove(null, { query: { email: { $in: testEmails } } }))
         .catch(error => {
           console.log(error)
         })
@@ -84,6 +81,7 @@ function runTests (feathersClient) {
         })
         .then(user => {
           // debugger
+          console.log(`user.failedLogins.length = ${user.failedLogins.length}`)
           assert(user.failedLogins.length === 1, 'the user had one failed login attempt')
           done()
         })

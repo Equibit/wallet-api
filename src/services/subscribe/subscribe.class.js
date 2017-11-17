@@ -32,7 +32,9 @@ class Service {
     // Find this user's socketObject
     const socketId = Object.keys(app.io.sockets.sockets).reduce((acc, socketId) => {
       let socketFeathers = app.io.sockets.sockets[socketId].feathers
-      if (!acc && socketFeathers.user && socketFeathers.user._id.toString() === user._id.toString()) {
+      if (!acc && socketFeathers.user && socketFeathers.user._id && user._id &&
+        socketFeathers.user._id.toString() === user._id.toString()
+      ) {
         acc = socketId
       }
       return acc

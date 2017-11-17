@@ -2,6 +2,7 @@ const assert = require('assert')
 const app = require('../../src/app')
 const utils = require('../../test-utils/index')
 const assertRequiresAuth = require('../../test-utils/assert/requires-auth')
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
 
 utils.clients.forEach(client => {
   runTests(client)
@@ -13,7 +14,7 @@ function runTests (feathersClient) {
 
   describe(`Orders Service Tests - ${transport}`, function () {
     before(function () {
-      return app.service('/users').remove(null, {}) // Remove all users
+      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
     })
 
     describe('Client Without Auth', function () {
@@ -44,9 +45,9 @@ function runTests (feathersClient) {
 
     describe('Client With Auth', function () {
       it.skip('ooooooooooooo', function () {
-        return serviceOnClient.create({ email: 'ADMIN@EQUIBIT.ORG' })
+        return serviceOnClient.create({ email: testEmails[0].toUpperCase() })
           .then(user => {
-            assert(user.email === 'admin@equibit.org', 'the signup email was lowerCased')
+            assert(user.email === testEmails[0].toLowerCase(), 'the signup email was lowerCased')
           })
       })
     })

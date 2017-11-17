@@ -1,6 +1,7 @@
 const assert = require('assert')
 const app = require('../../../src/app')
 const utils = require('../../../test-utils/index')
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
 
 const service = '/xpub-crawl'
 const serviceOnServer = app.service(service)
@@ -51,14 +52,14 @@ function runTests (feathersClient) {
 
   describe(`${service} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, {}) // Remove all users
+      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
     })
 
     beforeEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-        .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
-        .then(user => app.service('/users').find({ query: {} }))
+        .then(() => app.service('/users').create({ email: testEmails[0] }))
+        .then(() => app.service('/users').create({ email: testEmails[1] }))
+        .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
         .then(users => {
           users = users.data || users
           this.user = users[0]
@@ -72,7 +73,7 @@ function runTests (feathersClient) {
 
     afterEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, {})) // Remove all users
+        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } })) // Remove all users
         .then(() => {
           done()
         })

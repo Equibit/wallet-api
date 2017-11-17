@@ -14,10 +14,11 @@ const dummyTransaction = {
   type: 'out',
   currencyType: 'BTC',
   otherAddress: '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
-  amount: 777,
+  amount: 777123,
   fee: 0.0001,
   hex: `01000000012c6e7e8499a362e611b7cf3c50f55ea67528275cce4540e224cdd9265cf207a4010000006a4730440220299bb9f6493d2ab0dd9aad9123252d5f718618403bb19d77699f21cf732bb9c602201b5adcbcaf619c2c5ca43274b3362778bc70d09091d2447333990ebd4aff8f8a0121033701fc7f242ae2dd63a18753518b6d1425e53496878924b6c0dc08d800af46adffffffff0200a3e111000000001976a914ea3f916f7ad64b1ed044147d4b1df2af10ea9cb688ac98ecfa02000000001976a914b0abfca92c8a1ae023220d4134fe72ff3273a30988ac00000000`
 }
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
 
 describe(`${service} Service`, function () {
   clients.forEach(client => {
@@ -31,15 +32,22 @@ function runTests (feathersClient) {
 
   describe(`${service} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, {}) // Remove all users
+      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } })
+    })
+    after(function () {
+      return Promise.all([
+        app.service('/users').remove(null, { query: { email: { $in: testEmails } } }),
+        app.service('/login-attempts').remove(null, {}),
+        app.service('/transactions').remove(null, { query: { amount: dummyTransaction.amount } })
+      ])
     })
 
     beforeEach(function (done) {
       txnUtils.setupMock()
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibitgroup.com' }))
-        .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
-        .then(user => app.service('/users').find({ query: {} }))
+        .then(() => app.service('/users').create({ email: testEmails[0] }))
+        .then(() => app.service('/users').create({ email: testEmails[1] }))
+        .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
         .then(users => {
           users = users.data || users
           this.user = users[0]
@@ -55,7 +63,7 @@ function runTests (feathersClient) {
       txnUtils.resetMock()
       // Remove all users after tests run.
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, {}))
+        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
         .then(() => {
           done()
         })
@@ -92,9 +100,9 @@ function runTests (feathersClient) {
 
     describe('Client With Auth', function () {
       it.skip('allows find', function () {
-        return app.service('users').create({ email: 'ADMIN@EQUIBIT.ORG' })
+        return app.service('users').create({ email: testEmails[0] })
           .then(user => {
-            assert(user.email === 'admin@equibit.org', 'the signup email was lowerCased')
+            assert(user.email === 'test@equibitgroup.com', 'the signup email was lowerCased')
           })
       })
 
@@ -151,7 +159,7 @@ function runTests (feathersClient) {
 
           const handler = function (transaction) {
             assert(transaction, 'received a transation created notification')
-            console.log(app.io.sockets.sockets)
+            // console.log(app.io.sockets.sockets)
             feathersClient.service('transactions').off('created', handler)
             done()
           }
