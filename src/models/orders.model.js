@@ -8,6 +8,13 @@ module.exports = function (app) {
   const orders = new mongooseClient.Schema({
     userId: { type: ObjectId, required: true },
     type: { type: String, required: true },
+    
+    // BTC address for SELL type of order where a buyer should send funds.
+    sellAddressBtc: { type: String },
+
+    // EQB address for BUY type of order where a seller should send securities.
+    buyAddressEqb: { type: String },
+
     issuanceAddress: { type: String, required: true },
     portfolioId: { type: String, required: true },
     quantity: { type: Number, required: true },

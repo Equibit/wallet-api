@@ -21,6 +21,8 @@ module.exports = function (options) {
         companySlug: data.companySlug,
         issuanceId: data.issuanceId,
         issuanceName: data.issuanceName,
+        issuanceType: data.issuanceType,
+        issuanceUnit: data.issuanceUnit,
         txIdBtc: data.txIdBtc,
         txIdEqb: data.txIdEqb,
         amount: data.amount,
