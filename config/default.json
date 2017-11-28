@@ -32,7 +32,9 @@
     "duplicateSignup": 1472482,
     "forgotPasswordExisting": 1480221,
     "forgotPasswordNonExisting": 1480222,
-    "securityAlertFailedLogins": 1854481
+    "securityAlertFailedLogins": 1854481,
+    "twoFactorAuthentication": 2170363,
+    "newEmailVerification": 2170248
   },
   "bitcoinCore": {
     "url": "http://localhost:18332",

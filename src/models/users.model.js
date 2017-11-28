@@ -25,6 +25,10 @@ module.exports = function (app) {
     isNewUser: { type: Boolean, default: true },
     encryptedKey: { type: String },
     encryptedMnemonic: { type: String },
+    twoFactorCode: { type: String },
+    twoFactorValidatedSession: { type: Boolean, default: false },
+    emailVerificationCode: { type: String },
+    emailVerified: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   }, {

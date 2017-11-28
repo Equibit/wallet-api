@@ -16,8 +16,18 @@ const refreshUser = () => hook => {
   if (email) {
     return userService.find({ query: {email} })
       .then(({ data }) => {
-        hook.params.user = data[0]
-        return hook
+        if (data[0]) {
+          return userService.patch(
+            data[0]._id,
+            { twoFactorValidatedSession: false }
+          ).then(() => {
+            hook.params.user = data[0]
+            return hook
+          })
+        } else {
+          hook.params.user = null
+          return hook
+        }
       })
   } else {
     return Promise.resolve(hook)
@@ -67,6 +77,8 @@ module.exports = function () {
             delete hook.result.user.challenge
             delete hook.result.user.failedLogins
             delete hook.result.user.pastPasswordHashes
+            delete hook.result.user.twoFactorCode
+            delete hook.result.user.emailVerificationCode
             return hook
           }
         ),

@@ -100,7 +100,9 @@ function runTests (feathersClient) {
             'createdAt',
             'updatedAt',
             'salt',
-            'isNewUser'
+            'isNewUser',
+            'emailVerified',
+            'twoFactorValidatedSession'
           ]
           Object.keys(user).forEach(field => {
             assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
