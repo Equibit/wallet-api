@@ -121,6 +121,9 @@ module.exports = function (app) {
           )
         ).else(
           // User changes email address
+          // - Create verification code using same mechanism as temporary passwords
+          // - Set hash of code in user object.
+          // - Email plaintext to user
           // - This could be part of other update operations, so don't eliminate other keys
           iff(
             hook => hook.data && hook.data.email && (hook.data.email !== hook.user.email || !hook.user.emailVerified),
@@ -132,20 +135,23 @@ module.exports = function (app) {
               passwordField: 'emailVerificationCode',
               plainPasswordField: 'emailVerificationCodePlain'
             }),
-            sendEmailVerificationCode({
-              From: outboundEmail,
-              TemplateId: emailTemplates.newEmailVerification,
-              templateCodeField: 'emailVerificationCode',
-              dataCodeField: 'emailVerificationCodePlain'
-            }),
+            iff(
+              hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
+              sendEmailVerificationCode({
+                From: outboundEmail,
+                TemplateId: emailTemplates.newEmailVerification,
+                templateCodeField: 'emailVerificationCode',
+                dataCodeField: 'emailVerificationCodePlain'
+              })
+            ),
             hook => {
               delete hook.data.emailVerificationCodePlain
               return hook
             }
           ).else(
             // User has sent email address verification code.
-            // - Set hash of code in user object.
-            // - Email plaintext to user
+            // - Check hash of code
+            // - set emailVerified to true
             // - Take no other actions.
             iff(
               hook => hook.data && hook.data.emailVerificationCode,
@@ -165,13 +171,16 @@ module.exports = function (app) {
           iff(
             hook => hook.data && hook.data.requestTwoFactorCode,
             createTemporaryPassword({ passwordField: 'twoFactorCode', plainPasswordField: 'twoFactorCodePlain' }),
-            sendEmailVerificationCode({
-              From: outboundEmail,
-              TemplateId: emailTemplates.twoFactorAuthentication,
-              emailAddressFromUserRecord: true,
-              templateCodeField: 'twoFactorCode',
-              dataCodeField: 'twoFactorCodePlain'
-            }),
+            iff(
+              hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
+              sendEmailVerificationCode({
+                From: outboundEmail,
+                TemplateId: emailTemplates.twoFactorAuthentication,
+                emailAddressFromUserRecord: true,
+                templateCodeField: 'twoFactorCode',
+                dataCodeField: 'twoFactorCodePlain'
+              })
+            ),
             hook => { hook.data.twoFactorValidatedSession = false; return hook },
             keep('twoFactorValidatedSession', 'twoFactorCode')
           ).else(
@@ -181,6 +190,17 @@ module.exports = function (app) {
               hook => hook.data && hook.data.twoFactorCode,
               checkCodeHash({ dataToHashField: 'twoFactorCode', hashedDataField: 'twoFactorCode' }),
               hook => {
+                // Currently we store this validated session flag until next login, at which time
+                //  the flag is cleared, so a returning user must revalidate.  However, suggestions
+                //  from the issue for this feature
+                //  https://github.com/Equibit/wallet-api/issues/26#issuecomment-315762926
+                //  prefer to have a per-request 2FA session that doesn't persist. so
+                //  TODO: examine whether it would be preferable to
+                //    (1) do checkCodeHash() but set no flag when doing 2FA (to validate code)
+                //      (this would remove twoFactorValidatedSession entirely)
+                //    (2) receive and verify (via checkCodeHash) the 2FA code when changing email.
+                //    (3) clear twoFactorCode after changing email
+                //    (4) NOT require 2FA for *verifying* email
                 hook.data = {
                   twoFactorValidatedSession: true,
                   twoFactorCode: null
