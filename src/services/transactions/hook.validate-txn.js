@@ -70,19 +70,23 @@ module.exports = function (options) {
     })
     // make a request to gettxout and validate
     .then(response => {
+      // Note: `gettxout` returns null if UTXO has already been spent.
+      if (!response.data.result) {
+        const details = `[${formattedParams[0]}, ${formattedParams[1]}]`
+        return Promise.reject(
+          new errors.BadRequest(`The provided UTXO has already been spent. Result of "gettxout" is null for ${details}.`)
+        )
+      }
       // Make sure `context.data.address` matches one of the gettxout response's scriptPubKey.addresses.
       if (!response.data.result.scriptPubKey.addresses.includes(context.data.address)) {
-        return Promise.reject(new errors.BadRequest('The provided `address` did not match the `gettxout` verification for ' + formattedParams.toString()))
+        return Promise.reject(
+          new errors.BadRequest(`The provided "address" did not match the "gettxout" verification for ${formattedParams.toString()}`)
+        )
       }
 
       // Flag the request as having passed validation and return.
       context.params.passedValidation = true
       return context
-    })
-    .catch(err => {
-      console.log('_______ getxtout ERROR: ', ((err.response && err.response.data) || err.response), err)
-      console.log('USING PARAMS: ', formattedParams)
-      return (err.response && err.response.data) || err.response
     })
   }
 }
