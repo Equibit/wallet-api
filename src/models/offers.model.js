@@ -19,6 +19,18 @@ module.exports = function (app) {
     issuanceName: { type: String },
     issuanceType: { type: String },
 
+    // HTLC:
+    secretEncrypted: { type: String },
+    secretHash: { type: String },
+    timelock: { type: Number },
+    // EQB address to receive securities to for a BUY offer
+    eqbAddress: 'string',
+    // BTC address to receive payment to for a SELL offer
+    btcAddress: 'string',
+    // Refund address that will be used in HTLC transaction
+    refundEqbAddress: 'string',
+    refundBtcAddress: 'string',
+
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   })

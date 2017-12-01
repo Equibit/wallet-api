@@ -22,6 +22,12 @@ module.exports = function (app) {
     // Validate that this address made it into the vout addresses
     otherAddress: { type: String },
 
+    // Refund address for HTLC transaction
+    refundAddress: { type: String },
+
+    // Timelock for HTLC (number of blocks)
+    timelock: { type: Number },
+
     type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER', 'AUTH', 'CANCEL' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
 

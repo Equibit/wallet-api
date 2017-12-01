@@ -22,7 +22,14 @@ module.exports = function (options) {
     // the receipient's address and (likely) the change address of the sender.
     // This is done first because it doesn't require an RPC call & if it fails we can skip the RPC call.
     const doesAddressMatch = decodedTxn.vout.reduce((acc, a) => {
-      return acc || a.scriptPubKey.addresses.includes(context.data.otherAddress)
+      // For a regular P2PKH output we check the address:
+      if (a.scriptPubKey.type === 'pubkeyhash') {
+        return acc || a.scriptPubKey.addresses.includes(context.data.otherAddress)
+      } else if (a.scriptPubKey.type === 'nonstandard' && a.scriptPubKey.asm.search('OP_CHECKLOCKTIMEVERIFY') !== -1) {
+        // todo: for HTLC output check address against its hex representation.
+        return true
+      }
+      return true
     }, false)
     if (!doesAddressMatch) {
       return Promise.reject(new errors.BadRequest('The `otherAddress` did not match any address in the transaction\'s `vout` addresses'))
@@ -63,19 +70,23 @@ module.exports = function (options) {
     })
     // make a request to gettxout and validate
     .then(response => {
+      // Note: `gettxout` returns null if UTXO has already been spent.
+      if (!response.data.result) {
+        const details = `[${formattedParams[0]}, ${formattedParams[1]}]`
+        return Promise.reject(
+          new errors.BadRequest(`The provided UTXO has already been spent. Result of "gettxout" is null for ${details}.`)
+        )
+      }
       // Make sure `context.data.address` matches one of the gettxout response's scriptPubKey.addresses.
       if (!response.data.result.scriptPubKey.addresses.includes(context.data.address)) {
-        return Promise.reject(new errors.BadRequest('The provided `address` did not match the `gettxout` verification for ' + formattedParams.toString()))
+        return Promise.reject(
+          new errors.BadRequest(`The provided "address" did not match the "gettxout" verification for ${formattedParams.toString()}`)
+        )
       }
 
       // Flag the request as having passed validation and return.
       context.params.passedValidation = true
       return context
-    })
-    .catch(err => {
-      console.log('_______ getxtout ERROR: ', ((err.response && err.response.data) || err.response), err)
-      console.log('USING PARAMS: ', formattedParams)
-      return (err.response && err.response.data) || err.response
     })
   }
 }
