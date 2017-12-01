@@ -22,7 +22,14 @@ module.exports = function (options) {
     // the receipient's address and (likely) the change address of the sender.
     // This is done first because it doesn't require an RPC call & if it fails we can skip the RPC call.
     const doesAddressMatch = decodedTxn.vout.reduce((acc, a) => {
-      return acc || a.scriptPubKey.addresses.includes(context.data.otherAddress)
+      // For a regular P2PKH output we check the address:
+      if (a.scriptPubKey.type === 'pubkeyhash') {
+        return acc || a.scriptPubKey.addresses.includes(context.data.otherAddress)
+      } else if (a.scriptPubKey.type === 'nonstandard' && a.scriptPubKey.asm.search('OP_CHECKLOCKTIMEVERIFY') !== -1) {
+        // todo: for HTLC output check address against its hex representation.
+        return true
+      }
+      return true
     }, false)
     if (!doesAddressMatch) {
       return Promise.reject(new errors.BadRequest('The `otherAddress` did not match any address in the transaction\'s `vout` addresses'))

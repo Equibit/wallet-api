@@ -53,8 +53,8 @@ $ /Applications/Bitcoin-Qt.app/Contents/MacOS/Bitcoin-Qt \
   -port=8338 \
   -debug \
   -regtest \
-  -rpcuser=equibit \
-  -rpcpassword=equibit \
+  -rpcuser=user \
+  -rpcpassword=password \
   -rpcport=18332 \
   -rpcallowip=127.0.0.1
 ```
