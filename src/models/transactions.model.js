@@ -27,6 +27,9 @@ module.exports = function (app) {
 
     // Timelock for HTLC (number of blocks)
     timelock: { type: Number },
+    
+    // Hashlock for HTLC
+    hashlock: { type: String },
 
     type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER', 'AUTH', 'CANCEL' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
