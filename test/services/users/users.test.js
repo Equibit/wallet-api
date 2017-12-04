@@ -4,7 +4,6 @@ require('../../../test-utils/setup')
 const { clients } = require('../../../test-utils/index')
 const userUtils = require('../../../test-utils/users')
 const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com', 'newtest@equibitgroup.com']
-const { createHash } = require('feathers-authentication-signed/utils')
 
 clients.forEach(client => {
   runTests(client)
