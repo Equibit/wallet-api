@@ -29,7 +29,7 @@ module.exports = app => {
           // turn a transaction hex into transaction details.
           decodeRawTxn(coreParams),
           /*
-          Since `address` and `otherAddress` must be sent from the
+          Since `fromAddress` and `toAddress` must be sent from the
           client, we must make sure that they both appear in
           the decoded output. If they don't match, we shouldn't allow
           the transaction to go to the core, or the wallet-api db
@@ -44,7 +44,8 @@ module.exports = app => {
 
           // Set the createReceiverTxn flag so that the createReceiverTxn will create the other txn.
           context => {
-            if (['OUT'].indexOf(context.data.type) !== -1) {
+            // todo: SELL type can also be initiated from browser. Figure out how to not get into a loop here.
+            if (['OUT', 'BUY'].indexOf(context.data.type) !== -1) {
               context.data.createReceiverTxn = true
             }
           },

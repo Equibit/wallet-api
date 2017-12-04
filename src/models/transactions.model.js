@@ -16,18 +16,21 @@ module.exports = function (app) {
     // addressTxid: { type: String, required: true },
     // addressVout: { type: Number, required: true },
 
-    // We also create a second transaction with this `otherAddress` set as the `address`
-    // That second transaction record will not need a `otherAddress` field.
+    // We also create a second transaction with this `toAddress` set as the `address`
     // MUST BE SENT FROM BROWSER
-    // Validate that this address made it into the vout addresses
-    otherAddress: { type: String },
+    // Validate that toAddress made it into the vout addresses
+    fromAddress: { type: String },
+    toAddress: { type: String },
+
+    // HTLC flow consists of 4 steps.
+    htlcStep: { type: Number, enum: [1, 2, 3, 4]},
 
     // Refund address for HTLC transaction
     refundAddress: { type: String },
 
     // Timelock for HTLC (number of blocks)
     timelock: { type: Number },
-    
+
     // Hashlock for HTLC
     hashlock: { type: String },
 
@@ -45,8 +48,7 @@ module.exports = function (app) {
     issuanceUnit: { type: String, enum: ['SHARES', 'BTC', 'UNITS'] },
 
     // status: { type: String, enum: [ 'Trading' ] }, // for Buy & Sell
-    txIdBtc: { type: String }, // Buy & Sell?
-    txIdEqb: { type: String }, // Buy & Sell?
+    txId: { type: String }, // Buy & Sell?
     // quantity: { type: Number }, // Integer
 
     // TODO: Validate the amount.

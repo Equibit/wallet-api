@@ -11,10 +11,12 @@ module.exports = function (options) {
       SELL: 'BUY'
     }
 
+    console.log(`hook.create-receiver-txn: (createReceiverTxn=${data.createReceiverTxn})  type=${data.type} address=(${data.address})}`)
     if (data.createReceiverTxn && typeMap[data.type]) {
       const txData = formatTxnData({
-        address: data.otherAddress,
-        otherAddress: data.address,
+        address: data.toAddress,
+        fromAddress: data.fromAddress,
+        toAddress: data.toAddress,
         type: typeMap[data.type],
         currencyType: data.currencyType,
         companyName: data.companyName,
@@ -23,11 +25,14 @@ module.exports = function (options) {
         issuanceName: data.issuanceName,
         issuanceType: data.issuanceType,
         issuanceUnit: data.issuanceUnit,
-        txIdBtc: data.txIdBtc,
-        txIdEqb: data.txIdEqb,
+        txId: data.txId,
         amount: data.amount,
-        fee: data.fee
+        fee: data.fee,
+        htlcStep: data.htlcStep,
+        hashlock: data.hashlock,
+        timelock: data.timelock
       })
+      console.log(`hook.create-receiver-txn: -> ${txData.type} (${txData.address})`, txData)
 
       return service.create(txData).then(response => {
         return context

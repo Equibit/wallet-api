@@ -13,18 +13,18 @@ module.exports = function (options) {
   return function validateRawTxn (context) {
     const decodedTxn = context.params.decodedTxn
 
-    // Make sure that `otherAddress` was provided.
-    if (!context.data.otherAddress) {
-      return Promise.reject(new errors.BadRequest('`otherAddress` is required to record a transaction'))
+    // Make sure that `toAddress` was provided.
+    if (!context.data.toAddress) {
+      return Promise.reject(new errors.BadRequest('`toAddress` is required to record a transaction'))
     }
 
-    // Make sure `otherAddress` matches one of the `vout.scriptPubKey.addresses` which will contain
+    // Make sure `toAddress` matches one of the `vout.scriptPubKey.addresses` which will contain
     // the receipient's address and (likely) the change address of the sender.
     // This is done first because it doesn't require an RPC call & if it fails we can skip the RPC call.
     const doesAddressMatch = decodedTxn.vout.reduce((acc, a) => {
       // For a regular P2PKH output we check the address:
       if (a.scriptPubKey.type === 'pubkeyhash') {
-        return acc || a.scriptPubKey.addresses.includes(context.data.otherAddress)
+        return acc || a.scriptPubKey.addresses.includes(context.data.toAddress)
       } else if (a.scriptPubKey.type === 'nonstandard' && a.scriptPubKey.asm.search('OP_CHECKLOCKTIMEVERIFY') !== -1) {
         // todo: for HTLC output check address against its hex representation.
         return true
@@ -32,7 +32,7 @@ module.exports = function (options) {
       return true
     }, false)
     if (!doesAddressMatch) {
-      return Promise.reject(new errors.BadRequest('The `otherAddress` did not match any address in the transaction\'s `vout` addresses'))
+      return Promise.reject(new errors.BadRequest('The `toAddress` did not match any address in the transaction\'s `vout` addresses'))
     }
 
     // Make sure the `address`, `addressTxid`, and `addressVout` are all provided
