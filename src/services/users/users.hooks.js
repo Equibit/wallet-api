@@ -1,6 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
 const { restrictToOwner } = require('feathers-authentication-hooks')
-const { iff, unless, discard, disallow, isProvider, lowerCase, preventChanges, every } = require('feathers-hooks-common')
+const { iff, unless, discard, disallow, isProvider, lowerCase, preventChanges } = require('feathers-hooks-common')
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
 const { randomBytes, pbkdf2 } = require('crypto')
 
@@ -90,14 +90,16 @@ module.exports = function (app) {
       ],
       patch: [
         findUser(),
-        // Don't allow external queries to set the 2FA validated or email verified state
         iff(
-          every(
-            isProvider('external'),
-            hasAny(['twoFactorValidatedSession', 'emailVerified', 'twoFactorCode', 'emailVerificationCode'])
-          ),
-          restrict2ndFactor(),
-          preventChanges('twoFactorValidatedSession', 'emailVerified')
+          isProvider('external'),
+          // Don't allow external queries to set the 2FA validated or email verified state
+          preventChanges('twoFactorValidatedSession', 'emailVerified'),
+          // Require two-factor for email changes
+          // Restrict two-factor code submission to not allow other changes.
+          iff(
+            hasAny(['email', 'emailVerificationCode', 'twoFactorCode']),
+            restrict2ndFactor()
+          )
         ),
         lowerCase('email'),
         // If a password is provided, hash it and generate a salt.
