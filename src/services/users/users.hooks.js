@@ -113,6 +113,9 @@ module.exports = function (app) {
           hashPassword({ randomBytes, pbkdf2 }),
           removeIsNewUser(),
           removeTempPassword(),
+          // Used the temp password to login, which was sent via email.
+          //  This verifies the email address as well.
+          hook => { hook.data.emailVerified = true },
           // On password change, ignore any changes not related to this flow
           keep(
             'password',
