@@ -23,6 +23,7 @@ function runTests (feathersClient) {
       'iat',
       'iss',
       'sub',
+      'jti',
       'userId'
     ]
 
