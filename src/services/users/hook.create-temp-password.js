@@ -17,7 +17,9 @@ module.exports = function (options) {
       // create a random string which is the user's plain-text tempPassword.
       hook.data[options.plainPasswordField] = tempPassword
       // run tempPassword through the hashPassword hook.
-      hook.data[options.passwordField] = createHash(tempPassword)
+      if (options.passwordField) {
+        hook.data[options.passwordField] = createHash(tempPassword)
+      }
       resolve(hook)
     })
   }

@@ -18,6 +18,8 @@ module.exports = function () {
   app.use('/forgot-password', {
     create (data, params) {
       let userId = params.user._id
+      data = Object.assign({}, data)
+      delete data.email
       return app.service('users').patch(userId, data)
     }
   })

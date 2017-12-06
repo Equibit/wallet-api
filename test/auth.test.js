@@ -17,6 +17,25 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`Authentication tests - ${transport}`, function () {
+    const allowedPayloadFields = [
+      'aud',
+      'exp',
+      'iat',
+      'iss',
+      'sub',
+      'userId'
+    ]
+
+    const allowedUserFields = [
+      '_id',
+      'email',
+      'createdAt',
+      'updatedAt',
+      'isNewUser',
+      'emailVerified',
+      'twoFactorValidatedSession'
+    ]
+
     before(function () {
       return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
     })
@@ -104,14 +123,6 @@ function runTests (feathersClient) {
 
         const payload = decode(accessToken)
 
-        const allowedPayloadFields = [
-          'aud',
-          'exp',
-          'iat',
-          'iss',
-          'sub',
-          'userId'
-        ]
         Object.keys(payload).forEach(field => {
           assert(allowedPayloadFields.includes(field), `the "${field}" claim was included in the jwt payload`)
         })
@@ -120,13 +131,6 @@ function runTests (feathersClient) {
         assert.equal(payload.sub, 'user', 'the jwt subject was correct')
         assert.equal(payload.userId, user._id, 'the jwt userId was correct')
 
-        const allowedUserFields = [
-          '_id',
-          'email',
-          'createdAt',
-          'updatedAt',
-          'isNewUser'
-        ]
         Object.keys(user).forEach(field => {
           assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
         })
@@ -179,14 +183,6 @@ function runTests (feathersClient) {
 
         const payload = decode(accessToken)
 
-        const allowedPayloadFields = [
-          'aud',
-          'exp',
-          'iat',
-          'iss',
-          'sub',
-          'userId'
-        ]
         Object.keys(payload).forEach(field => {
           assert(allowedPayloadFields.includes(field), `the "${field}" claim was included in the jwt payload`)
         })
@@ -196,13 +192,6 @@ function runTests (feathersClient) {
         assert.equal(payload.sub, 'user', 'the jwt subject was correct')
         assert.equal(payload.userId, user._id, 'the jwt userId was correct')
 
-        const allowedUserFields = [
-          '_id',
-          'email',
-          'createdAt',
-          'updatedAt',
-          'isNewUser'
-        ]
         Object.keys(user).forEach(field => {
           assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
         })

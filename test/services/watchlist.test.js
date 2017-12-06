@@ -137,7 +137,7 @@ function runTests (feathersClient) {
             done()
           })
           .catch(error => {
-            assert(!error, 'should not have received this error')
+            assert(!error, 'should not have received this error: ' + error.message)
             done()
           })
       })

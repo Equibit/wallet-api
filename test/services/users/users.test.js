@@ -3,7 +3,7 @@ const app = require('../../../src/app')
 require('../../../test-utils/setup')
 const { clients } = require('../../../test-utils/index')
 const userUtils = require('../../../test-utils/users')
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com', 'newtest@equibitgroup.com']
 
 clients.forEach(client => {
   runTests(client)
@@ -13,6 +13,17 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`Users Service Tests - ${transport}`, function () {
+    const allowedUserFields = [
+      '_id',
+      'email',
+      'createdAt',
+      'updatedAt',
+      'salt',
+      'isNewUser',
+      'emailVerified',
+      'twoFactorValidatedSession'
+    ]
+
     before(function () {
       return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
     })
@@ -94,14 +105,6 @@ function runTests (feathersClient) {
           return feathersClient.service('users').patch(user._id, { password: 'new password' })
         })
         .then(user => {
-          const allowedUserFields = [
-            '_id',
-            'email',
-            'createdAt',
-            'updatedAt',
-            'salt',
-            'isNewUser'
-          ]
           Object.keys(user).forEach(field => {
             assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
           })
@@ -207,6 +210,81 @@ function runTests (feathersClient) {
         })
         .catch(error => {
           assert(!error, 'should not have received an error here')
+          done()
+        })
+    })
+
+    it('requires 2FA to change an email', function (done) {
+      const user = this.user
+      userUtils.authenticate(app, feathersClient, user)
+        .then(res => {
+          feathersClient.service('users')
+            .patch(res.user._id, { email: testEmails[2] })
+            .then(user => {
+              assert(false, 'This wasn\'t supposed to happen')
+              done()
+            }, error => {
+              assert(error.message === 'Must validate session with 2FA', 'two-factor auth was required')
+              done()
+            })
+        })
+    })
+
+    it(`doesn't leak verification codes for 2FA`, function (done) {
+      const user = this.user
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => {
+          return feathersClient.service('users').patch(user._id, { requestTwoFactorCode: true })
+        })
+        .then(user => {
+          Object.keys(user).forEach(field => {
+            assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
+          })
+          done()
+        })
+        .catch(error => {
+          assert(false, error.message)
+          done()
+        })
+    })
+
+    it(`doesn't leak verification codes for email changes`, function (done) {
+      const user = this.user
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => {
+          return app.service('/users').patch(user._id, { twoFactorValidatedSession: true })
+        }).then(res => {
+          return feathersClient.service('users').patch(user._id, { email: testEmails[2] })
+        })
+        .then(user => {
+          Object.keys(user).forEach(field => {
+            assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
+          })
+          done()
+        })
+        .catch(error => {
+          assert(false, error.message)
+          done()
+        })
+    })
+
+    it(`marks email as unverified after change`, function (done) {
+      const user = this.user
+      app.service('/users').patch(user._id, { emailVerified: true })
+        .then(() => {
+          return userUtils.authenticateTemp(app, feathersClient, user)
+        }).then(res => {
+          return app.service('/users').patch(user._id, { twoFactorValidatedSession: true })
+        }).then(res => {
+          return feathersClient.service('users').patch(user._id, { email: testEmails[2] })
+        })
+        .then(user => {
+          assert(user.emailVerified === false, 'email is not verified')
+          done()
+        })
+        .catch(error => {
+          assert(error.className === 'not-authenticated', 'auth was required')
           done()
         })
     })
