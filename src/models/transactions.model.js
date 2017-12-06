@@ -23,7 +23,7 @@ module.exports = function (app) {
     toAddress: { type: String },
 
     // HTLC flow consists of 4 steps.
-    htlcStep: { type: Number, enum: [1, 2, 3, 4]},
+    htlcStep: { type: Number, enum: [1, 2, 3, 4] },
 
     // Refund address for HTLC transaction
     refundAddress: { type: String },
