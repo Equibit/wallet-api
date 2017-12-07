@@ -34,7 +34,9 @@ function runTests (feathersClient) {
       'updatedAt',
       'isNewUser',
       'emailVerified',
-      'twoFactorValidatedSession'
+      'twoFactorValidatedSession',
+      'passwordCreatedAt',
+      'provisionalSalt'
     ]
 
     before(function () {

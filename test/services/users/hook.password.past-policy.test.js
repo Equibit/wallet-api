@@ -23,6 +23,7 @@ describe('Hook : Users : Enforce Past Password Policy', function (done) {
 
     const context = {
       app,
+      user,
       params: { user }
     }
     const enforcePastPasswordPolicy = testHook({ attr: key })
@@ -36,12 +37,13 @@ describe('Hook : Users : Enforce Past Password Policy', function (done) {
 
   it(`creates the attr if it doesn't already exist`, function (done) {
     const user = this.user
-    const key = 'asswordHashes'
+    const key = 'pastPasswordHashes'
     delete user[key]
 
     const context = {
       app,
       data: { password: 'test' },
+      user,
       params: { user }
     }
     const enforcePastPasswordPolicy = testHook({
@@ -65,6 +67,7 @@ describe('Hook : Users : Enforce Past Password Policy', function (done) {
     const context = {
       app,
       data: { password: 'test' },
+      user,
       params: { user }
     }
     const enforcePastPasswordPolicy = testHook({
@@ -96,6 +99,7 @@ describe('Hook : Users : Enforce Past Password Policy', function (done) {
     const context = {
       app,
       data: { password: 'test' },
+      user,
       params: { user }
     }
     const enforcePastPasswordPolicy = testHook({
@@ -120,6 +124,7 @@ describe('Hook : Users : Enforce Past Password Policy', function (done) {
     const context = {
       app,
       data: { password: 'test' },
+      user,
       params: { user }
     }
     const enforcePastPasswordPolicy = testHook({
@@ -143,6 +148,7 @@ describe('Hook : Users : Enforce Past Password Policy', function (done) {
     const context = {
       app,
       data: { password: 'test1' },
+      user,
       params: { user }
     }
     const enforcePastPasswordPolicy = testHook({
@@ -193,6 +199,7 @@ describe('Hook : Users : Enforce Past Password Policy', function (done) {
     const context = {
       app,
       data: { password: password3Plain },
+      user,
       params: { user }
     }
     const enforcePastPasswordPolicy = testHook({

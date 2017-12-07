@@ -21,7 +21,9 @@ function runTests (feathersClient) {
       'salt',
       'isNewUser',
       'emailVerified',
-      'twoFactorValidatedSession'
+      'twoFactorValidatedSession',
+      'passwordCreatedAt',
+      'provisionalSalt'
     ]
 
     before(function () {
@@ -102,7 +104,10 @@ function runTests (feathersClient) {
 
       userUtils.authenticateTemp(app, feathersClient, user)
         .then(res => {
-          return feathersClient.service('users').patch(user._id, { password: 'new password' })
+          return feathersClient.service('users').patch(user._id, { requestPasswordChange: true })
+        })
+        .then(res => {
+          return feathersClient.service('users').patch(user._id, { password: 'new password', salt: res.provisionalSalt })
         })
         .then(user => {
           Object.keys(user).forEach(field => {
@@ -111,7 +116,7 @@ function runTests (feathersClient) {
           done()
         })
         .catch(error => {
-          assert(error.className === 'not-authenticated', 'auth was required')
+          assert(false, error.message + '\n' + error.stack)
           done()
         })
     })
@@ -122,7 +127,8 @@ function runTests (feathersClient) {
       assert(user.password === undefined, 'there was no password for a new user')
 
       userUtils.authenticateTemp(app, feathersClient, user)
-        .then(res => feathersClient.service('users').patch(user._id, { password: 'new password' }))
+        .then(res => feathersClient.service('users').patch(user._id, { requestPasswordChange: true }))
+        .then(res => feathersClient.service('users').patch(user._id, { password: 'new password', salt: res.provisionalSalt }))
         .then(res => app.service('users').get(user._id))
         .then(patchedUser => {
           assert(typeof patchedUser.password === 'string', 'the user now has a password')

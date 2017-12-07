@@ -116,11 +116,16 @@ module.exports = function (app) {
         ),
         iff(
           hook => hook.data && hook.data.password,
-          hook => {
-            if (!hook.data.salt || (!hook.user.tempPassword && hook.data.salt !== hook.user.provisionalSalt)) {
-              throw new Error(`salt was not supplied or did not match the provisional one`)
+          iff(
+            isProvider('external'),
+            hook => {
+              if (!hook.data.salt || (!hook.user.tempPassword && hook.data.salt !== hook.user.provisionalSalt)) {
+                throw new Error(`salt was not supplied or did not match the provisional one`)
+              }
             }
-            hook.data.salt = hook.user.provisionalSalt || hook.data.salt
+          ),
+          hook => {
+            hook.data.salt = hook.user.provisionalSalt || hook.data.salt || hook.user.salt
             hook.data.provisionalSalt = ''
           },
           enforcePastPasswordPolicy({
