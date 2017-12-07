@@ -14,6 +14,7 @@ const removeTempPassword = require('./hook.remove-temp-password')
 const enforcePastPasswordPolicy = require('./hook.password.past-policy')
 const sendWelcomeEmail = require('./hook.email.welcome')
 const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
+const verifyOldPassword = require('./hook.password.verify-old-password')
 
 /* NB: keep() is slated for the next release of feathers-hooks-common.
 This is a stub version that only works on hook.data, to be used until
@@ -104,25 +105,48 @@ module.exports = function (app) {
         lowerCase('email'),
         // If a password is provided, hash it and generate a salt.
         iff(
+          hook => hook.data.requestPasswordChange,
+          verifyOldPassword({ pbkdf2 }),
+          generateSalt({ randomBytes }),
+          hook => {
+            hook.data = {
+              provisionalSalt: hook.data.salt
+            }
+          }
+        ),
+        iff(
           hook => hook.data && hook.data.password,
+          hook => {
+            if (!hook.data.salt || (!hook.user.tempPassword && hook.data.salt !== hook.user.provisionalSalt)) {
+              throw new Error(`salt was not supplied or did not match the provisional one`)
+            }
+            hook.data.salt = hook.user.provisionalSalt || hook.data.salt
+            hook.data.provisionalSalt = ''
+          },
           enforcePastPasswordPolicy({
             oldPasswordsAttr: 'pastPasswordHashes',
             passwordCount: 3
           }),
-          generateSalt({ randomBytes }),
           hashPassword({ randomBytes, pbkdf2 }),
           removeIsNewUser(),
           removeTempPassword(),
           // Used the temp password to login, which was sent via email.
           //  This verifies the email address as well.
-          hook => { hook.data.emailVerified = true },
+          hook => {
+            hook.data.emailVerified = true
+            hook.data.passwordCreatedAt = Date.now()
+          },
           // On password change, ignore any changes not related to this flow
           keep(
             'password',
+            'passwordCreatedAt',
             'salt',
+            'provisionalSalt',
             'pastPasswordHashes',
             'tempPassword',
-            'isNewUser'
+            'isNewUser',
+            'encryptedKey',
+            'encryptedMnemonic'
           )
         ).else(
           // User changes email address

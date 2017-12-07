@@ -16,7 +16,7 @@ module.exports = function (options) {
       return Promise.reject(new errors.BadRequest('No password was provided in the request'))
     }
 
-    const user = hook.params.user
+    const user = hook.user
     const newPasswordHash = crypto.createHash('sha256').update(hook.data.password).digest('hex')
     let pastPasswordHashes = user[options.oldPasswordsAttr]
 
@@ -33,10 +33,8 @@ module.exports = function (options) {
     }
 
     // Only keep up to `passwordCount` previous passwords
-    for (var i = 0; i < pastPasswordHashes.length; i++) {
-      if (pastPasswordHashes.length > options.passwordCount) {
-        pastPasswordHashes.shift()
-      }
+    while (pastPasswordHashes.length > options.passwordCount) {
+      pastPasswordHashes.shift()
     }
 
     // Update the current hook.params.user
