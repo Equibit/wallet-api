@@ -3,6 +3,7 @@ const { restrictToOwner } = require('feathers-authentication-hooks')
 const { iff, unless, discard, disallow, isProvider, lowerCase, preventChanges } = require('feathers-hooks-common')
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
 const { randomBytes, pbkdf2 } = require('crypto')
+const errors = require('feathers-errors')
 
 const sendEmailVerificationCode = require('./hook.email.verification-code')
 const restrict2ndFactor = require('./hook.restrict-2nd-factor')
@@ -120,7 +121,7 @@ module.exports = function (app) {
             isProvider('external'),
             hook => {
               if (!hook.data.salt || (!hook.user.tempPassword && hook.data.salt !== hook.user.provisionalSalt)) {
-                throw new Error(`salt was not supplied or did not match the provisional one`)
+                throw new errors.BadRequest(`salt was not supplied or did not match the provisional one`)
               }
             }
           ),
