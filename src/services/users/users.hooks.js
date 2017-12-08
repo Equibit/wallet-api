@@ -139,7 +139,11 @@ module.exports = function (app) {
           // Used the temp password to login, which was sent via email.
           //  This verifies the email address as well.
           hook => {
-            hook.data.emailVerified = true
+            if (hook.user.tempPassword) {
+              hook.data.emailVerified = true
+            } else {
+              delete hook.data.emailVerified
+            }
             hook.data.passwordCreatedAt = Date.now()
           },
           // On password change, ignore any changes not related to this flow
@@ -152,7 +156,8 @@ module.exports = function (app) {
             'tempPassword',
             'isNewUser',
             'encryptedKey',
-            'encryptedMnemonic'
+            'encryptedMnemonic',
+            'emailVerified'
           )
         ).else(
           // User changes email address
