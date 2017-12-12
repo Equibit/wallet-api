@@ -3,6 +3,7 @@ const { restrictToOwner } = require('feathers-authentication-hooks')
 const { iff, unless, discard, disallow, isProvider, lowerCase, preventChanges } = require('feathers-hooks-common')
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
 const { randomBytes, pbkdf2 } = require('crypto')
+const errors = require('feathers-errors')
 
 const sendEmailVerificationCode = require('./hook.email.verification-code')
 const restrict2ndFactor = require('./hook.restrict-2nd-factor')
@@ -14,6 +15,8 @@ const removeTempPassword = require('./hook.remove-temp-password')
 const enforcePastPasswordPolicy = require('./hook.password.past-policy')
 const sendWelcomeEmail = require('./hook.email.welcome')
 const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
+const verifyOldPassword = require('./hook.password.verify-old-password')
+const rejectEmptyPassword = require('./hook.password.reject-empty-password')
 
 /* NB: keep() is slated for the next release of feathers-hooks-common.
 This is a stub version that only works on hook.data, to be used until
@@ -104,25 +107,72 @@ module.exports = function (app) {
         lowerCase('email'),
         // If a password is provided, hash it and generate a salt.
         iff(
+          hook => hook.data.requestPasswordChange,
+          rejectEmptyPassword({
+            passwordField: 'oldPassword',
+            saltField: 'salt'
+          }),
+          verifyOldPassword({ pbkdf2 }),
+          generateSalt({ randomBytes }),
+          hook => {
+            hook.data = {
+              provisionalSalt: hook.data.salt
+            }
+          }
+        ),
+        iff(
           hook => hook.data && hook.data.password,
+          iff(
+            isProvider('external'),
+            hook => {
+              if (!hook.data.salt || (!hook.user.tempPassword && hook.data.salt !== hook.user.provisionalSalt)) {
+                throw new errors.BadRequest({
+                  message: `salt was not supplied or did not match the provisional one`,
+                  errors: {
+                    salt: hook.data.salt ? 'Salt did not match provisionalSalt' : 'Salt is missing',
+                    provisionalSalt: hook.user.provisionalSalt || 'Provisional salt is not available'
+                  }
+                })
+              }
+            }
+          ),
+          hook => {
+            hook.data.salt = hook.user.provisionalSalt || hook.data.salt || hook.user.salt
+            hook.data.provisionalSalt = ''
+          },
+          rejectEmptyPassword({
+            passwordField: 'password',
+            saltField: 'provisionalSalt'
+          }),
           enforcePastPasswordPolicy({
             oldPasswordsAttr: 'pastPasswordHashes',
             passwordCount: 3
           }),
-          generateSalt({ randomBytes }),
           hashPassword({ randomBytes, pbkdf2 }),
           removeIsNewUser(),
           removeTempPassword(),
           // Used the temp password to login, which was sent via email.
           //  This verifies the email address as well.
-          hook => { hook.data.emailVerified = true },
+          hook => {
+            if (hook.user.tempPassword) {
+              hook.data.emailVerified = true
+            } else {
+              delete hook.data.emailVerified
+            }
+            hook.data.passwordCreatedAt = Date.now()
+          },
           // On password change, ignore any changes not related to this flow
           keep(
             'password',
+            'passwordCreatedAt',
             'salt',
+            'provisionalSalt',
             'pastPasswordHashes',
             'tempPassword',
-            'isNewUser'
+            'isNewUser',
+            'encryptedKey',
+            'encryptedMnemonic',
+            'emailVerified'
           )
         ).else(
           // User changes email address

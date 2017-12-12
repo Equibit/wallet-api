@@ -21,7 +21,9 @@ function runTests (feathersClient) {
       'salt',
       'isNewUser',
       'emailVerified',
-      'twoFactorValidatedSession'
+      'twoFactorValidatedSession',
+      'passwordCreatedAt',
+      'provisionalSalt'
     ]
 
     before(function () {
@@ -102,7 +104,10 @@ function runTests (feathersClient) {
 
       userUtils.authenticateTemp(app, feathersClient, user)
         .then(res => {
-          return feathersClient.service('users').patch(user._id, { password: 'new password' })
+          return feathersClient.service('users').patch(user._id, { requestPasswordChange: true })
+        })
+        .then(res => {
+          return feathersClient.service('users').patch(user._id, { password: 'new password', salt: res.provisionalSalt })
         })
         .then(user => {
           Object.keys(user).forEach(field => {
@@ -111,7 +116,7 @@ function runTests (feathersClient) {
           done()
         })
         .catch(error => {
-          assert(error.className === 'not-authenticated', 'auth was required')
+          assert(false, error.message + '\n' + error.stack)
           done()
         })
     })
@@ -122,7 +127,8 @@ function runTests (feathersClient) {
       assert(user.password === undefined, 'there was no password for a new user')
 
       userUtils.authenticateTemp(app, feathersClient, user)
-        .then(res => feathersClient.service('users').patch(user._id, { password: 'new password' }))
+        .then(res => feathersClient.service('users').patch(user._id, { requestPasswordChange: true }))
+        .then(res => feathersClient.service('users').patch(user._id, { password: 'new password', salt: res.provisionalSalt }))
         .then(res => app.service('users').get(user._id))
         .then(patchedUser => {
           assert(typeof patchedUser.password === 'string', 'the user now has a password')
@@ -149,6 +155,49 @@ function runTests (feathersClient) {
           assert(error.name === 'Forbidden', `the user could not change another user's password`)
           done()
         })
+    })
+
+    it(`requires a provisional salt only when changing from non-temp password`, function (done) {
+      const user = this.user
+      let _provisionalSalt
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => app.service('/users').patch(user._id, { tempPassword: 'temp password', password: '' }))
+        .then(res => feathersClient.service('users').patch(user._id, { password: 'old password', salt: res.salt })
+          .then(res => {
+            assert(true, 'password change allowed, no salt change')
+            return res
+          }, error => {
+            assert(false, 'error on temp password change: ' + error.message)
+          })
+        )
+        .then(
+          res => feathersClient.service('users').patch(user._id, { oldPassword: 'old password', requestPasswordChange: true })
+            .catch(error => assert(false, 'requesting password change failed: ' + error.message))
+        )
+        .then(res => {
+          _provisionalSalt = res.provisionalSalt
+          return feathersClient.service('users').patch(user._id, { password: 'new password' })
+            .then(() => {
+              assert(false, 'password change allowed; this should have failed')
+            }, error => {
+              assert(error.code === 400, `BadRequest error was thrown when trying to change password without salt`)
+            })
+        })
+        .then(res => feathersClient.service('users').patch(user._id, { password: 'new password', salt: 'not the provisional salt' })
+          .then(() => {
+            assert(false, 'password change allowed; this should have failed')
+          },
+          error => {
+            assert(error.code === 400, `BadRequest was thrown when trying to change password with incorrect salt`)
+          })
+        )
+        .then(res => feathersClient.service('users').patch(user._id, { password: 'new password', salt: _provisionalSalt })
+          .then(null, () => {
+            assert(false, `error was thrown when trying to change password with correct salt; this should not have happened`)
+          })
+        )
+        .then(done.bind(null, null), done)
     })
 
     it('performs a patch in place of an update request', function (done) {

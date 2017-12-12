@@ -14,6 +14,7 @@ module.exports = function (app) {
     tempPasswordCreatedAt: { type: Date },
     pastPasswordHashes: [ String ],
     salt: { type: String }, // Salt is shared between both passwords.
+    provisionalSalt: { type: String }, // Salt for *next* password
     challenge: { type: String },
     twoFactor: {
       sms: { type: Boolean }
