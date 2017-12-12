@@ -19,7 +19,10 @@ const refreshUser = () => hook => {
         if (data[0]) {
           return userService.patch(
             data[0]._id,
-            { twoFactorValidatedSession: false }
+            {
+              twoFactorValidatedSession: false,
+              provisionalSalt: null
+            }
           ).then(() => {
             hook.params.user = data[0]
             return hook

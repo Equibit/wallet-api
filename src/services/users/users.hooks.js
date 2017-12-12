@@ -16,6 +16,7 @@ const enforcePastPasswordPolicy = require('./hook.password.past-policy')
 const sendWelcomeEmail = require('./hook.email.welcome')
 const sendDuplicateSignupEmail = require('./hook.email.duplicate-signup')
 const verifyOldPassword = require('./hook.password.verify-old-password')
+const rejectEmptyPassword = require('./hook.password.reject-empty-password')
 
 /* NB: keep() is slated for the next release of feathers-hooks-common.
 This is a stub version that only works on hook.data, to be used until
@@ -107,6 +108,10 @@ module.exports = function (app) {
         // If a password is provided, hash it and generate a salt.
         iff(
           hook => hook.data.requestPasswordChange,
+          rejectEmptyPassword({
+            passwordField: 'oldPassword',
+            saltField: 'salt'
+          }),
           verifyOldPassword({ pbkdf2 }),
           generateSalt({ randomBytes }),
           hook => {
@@ -121,7 +126,13 @@ module.exports = function (app) {
             isProvider('external'),
             hook => {
               if (!hook.data.salt || (!hook.user.tempPassword && hook.data.salt !== hook.user.provisionalSalt)) {
-                throw new errors.BadRequest(`salt was not supplied or did not match the provisional one`)
+                throw new errors.BadRequest({
+                  message: `salt was not supplied or did not match the provisional one`,
+                  errors: {
+                    salt: hook.data.salt ? 'Salt did not match provisionalSalt' : 'Salt is missing',
+                    provisionalSalt: hook.user.provisionalSalt || 'Provisional salt is not available'
+                  }
+                })
               }
             }
           ),
@@ -129,6 +140,10 @@ module.exports = function (app) {
             hook.data.salt = hook.user.provisionalSalt || hook.data.salt || hook.user.salt
             hook.data.provisionalSalt = ''
           },
+          rejectEmptyPassword({
+            passwordField: 'password',
+            saltField: 'provisionalSalt'
+          }),
           enforcePastPasswordPolicy({
             oldPasswordsAttr: 'pastPasswordHashes',
             passwordCount: 3

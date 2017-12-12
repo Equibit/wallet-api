@@ -27,7 +27,12 @@ module.exports = function (options) {
 
     // If the current password was previously used, reject it. Otherwise, save it.
     if (pastPasswordHashes.includes(newPasswordHash)) {
-      throw new errors.BadRequest(`You may not use the same password as one of the last ${options.passwordCount} passwords.`)
+      throw new errors.BadRequest({
+        message: `You may not use the same password as one of the last ${options.passwordCount} passwords.`,
+        errors: {
+          [options.passwordAttr]: `You may not use the same password as one of the last ${options.passwordCount} passwords.`
+        }
+      })
     } else {
       pastPasswordHashes.push(newPasswordHash)
     }
