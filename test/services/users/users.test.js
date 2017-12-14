@@ -23,7 +23,8 @@ function runTests (feathersClient) {
       'emailVerified',
       'twoFactorValidatedSession',
       'passwordCreatedAt',
-      'provisionalSalt'
+      'provisionalSalt',
+      'hasRecordedMnemonic'
     ]
 
     before(function () {
