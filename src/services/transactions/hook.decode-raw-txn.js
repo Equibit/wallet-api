@@ -12,7 +12,7 @@ module.exports = function (options) {
   return function decodeRawTxn (context) {
     const formattedParams = formatRpcParams([context.data.hex])
     const currencyType = context.data.currencyType.toLowerCase()
-    console.log(`hook.decodeRawTxn: currencyType=${currencyType}, data=${JSON.stringify(context.data)}`)
+    // console.log(`hook.decodeRawTxn: currencyType=${currencyType}, data=${JSON.stringify(context.data)}`)
 
     return axios({
       method: 'POST',

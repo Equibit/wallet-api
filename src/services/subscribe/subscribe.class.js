@@ -1,6 +1,5 @@
 const errors = require('feathers-errors')
 const assert = require('assert')
-const objectid = require('objectid')
 
 class Service {
   constructor (options) {
@@ -39,11 +38,8 @@ class Service {
       }
       return acc
     }, null)
-    assert(socketId, 'A socket was found that matches this user')
+    assert(socketId, 'A socket was found that matches this connection')
     const socketFeathers = app.io.sockets.sockets[socketId].feathers
-
-    // Make sure the socket has a unique identifier
-    socketFeathers.uid = socketFeathers.uid || objectid().toString()
 
     // Use the uid to create `/address-map` pairs.
     const addressMapService = app.service('address-map')
