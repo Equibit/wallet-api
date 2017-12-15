@@ -2,7 +2,7 @@
 
 module.exports = {
   // disable all events for this service by returning false
-  all: [(data) => false],
+  all: [data => data],
   create: [],
   update: [],
   patch: [],
