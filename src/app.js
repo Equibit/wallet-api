@@ -22,6 +22,7 @@ const authentication = require('./authentication')
 // const seed = require('./seeder/seeder')
 const mongoose = require('./mongoose')
 // const seedWriter = require('./seeder/seed-writer')
+const objectid = require('objectid')
 
 const app = feathers()
 app.set('applicationRoot', path.join(__dirname))
@@ -53,8 +54,12 @@ app.use(function (req, res, next) {
 })
 app.configure(socketio(function (io) {
   io.on('connection', function (socket) {
-    Object.assign(socket.feathers, {headers: socket.handshake.headers})
-    socket.feathers.ip = socket.conn.remoteAddress
+    Object.assign(socket.feathers, {
+      headers: socket.handshake.headers,
+      ip: socket.conn.remoteAddress,
+      // Make sure the socket has a unique identifier, used for address-mapping
+      uid: socket.feathers.uid || objectid().toString()
+    })
   })
 }, { timeout: app.get('socketTimeout') }))
 
