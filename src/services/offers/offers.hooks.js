@@ -25,11 +25,11 @@ module.exports = function (app) {
       create: [
         findAddressMap({
           key: app.get('addressMapEncryptionKey'),
-          from: 'params.data.btcAddress'
+          from: 'data.btcAddress'
         }),
         findAddressMap({
           key: app.get('addressMapEncryptionKey'),
-          from: 'params.data.eqbAddress'
+          from: 'data.eqbAddress'
         })
       ],
       update: [],
