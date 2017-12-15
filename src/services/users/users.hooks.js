@@ -100,7 +100,7 @@ module.exports = function (app) {
           // Require two-factor for email changes
           // Restrict two-factor code submission to not allow other changes.
           iff(
-            hasAny(['email', 'emailVerificationCode', 'twoFactorCode']),
+            hasAny(['email', 'emailVerificationCode', 'twoFactorCode', 'hasRecordedMnemonic']),
             restrict2ndFactor()
           )
         ),
