@@ -91,6 +91,7 @@ function runTests (feathersClient) {
             quantity: 1,
             price: .00005,
             status: 'OPEN',
+            issuanceId: 'test',
 
             // Issuance info:
             companyName: 'Test',
