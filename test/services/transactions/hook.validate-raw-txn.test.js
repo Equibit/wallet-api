@@ -42,7 +42,7 @@ describe('Transactions Service - validateRawTxn Hook', function () {
         assert(!error, error.message)
         done()
       })
-      .catch(error)
+      .catch(done)
   })
 
   it('requires otherAddress', function (done) {

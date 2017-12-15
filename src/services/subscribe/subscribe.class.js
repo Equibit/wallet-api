@@ -1,6 +1,5 @@
 const errors = require('feathers-errors')
 const assert = require('assert')
-const objectid = require('objectid')
 
 class Service {
   constructor (options) {
