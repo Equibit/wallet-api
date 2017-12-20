@@ -5,7 +5,19 @@ const utils = require('../../../test-utils/index')
 const servicePath = '/companies'
 const serviceOnServer = app.service(servicePath)
 
-describe.only(`${servicePath} Service`, function () {
+describe(`${servicePath} Service`, function () {
+  before(function () {
+    app.service('login-attempts').remove(null, {})
+      .then(response => app.service('companies').remove(null, {}))
+      .then(response => app.service('users').remove(null, {}))
+  })
+
+  after(function () {
+    app.service('login-attempts').remove(null, {})
+      .then(response => app.service('companies').remove(null, {}))
+      .then(response => app.service('users').remove(null, {}))
+  })
+
   utils.clients.forEach(client => {
     runTests(client)
   })
@@ -87,12 +99,15 @@ function runTests (feathersClient) {
               })
           })
       })
+
+      after(function () {
+        return feathersClient.logout()
+      })
       // describe('Grants Access to the Authenticated User', function () {})
       // describe('Protects Other Users\' Data', function () {})
 
       describe('Create', function () {
         it('slugifies the name property', function (done) {
-          const user = this.user
           const newCompany = { name: 'This is a test' }
 
           serviceOnClient.create(newCompany)
@@ -115,7 +130,7 @@ function runTests (feathersClient) {
             .catch(done)
         })
 
-        describe.only('Company Index', function () {
+        describe('Company Index', function () {
           before(function () {
             return serviceOnServer.remove(null, {})
           })
@@ -123,7 +138,6 @@ function runTests (feathersClient) {
           after(function () {
             return serviceOnServer.remove(null, {})
           })
-
 
           it('first company has index of 0', function (done) {
             const newCompany = { name: 'Test' }
@@ -165,7 +179,6 @@ function runTests (feathersClient) {
           })
         })
       })
-
     })
   })
 }

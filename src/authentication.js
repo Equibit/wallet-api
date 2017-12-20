@@ -99,14 +99,31 @@ module.exports = function () {
         refreshUser(),
         // Check if this is the third failed login, today, for this user.
         iff(
-          hook => hook.params.user && hook.data.strategy === 'challenge',
+          context => (context.error && context.error.message === 'invalid login') && context.data.strategy === 'challenge',
+          // Fetch invalid login user
+          context => {
+            const { app } = context
+
+            return app.service('users').find({ email: context.data.email })
+              .then(response => {
+                const users = response.data || response
+                const user = users[0]
+
+                if (user) {
+                  context.params.failedLoginUser = user
+                }
+              })
+          }
+        ),
+        iff(
+          context => context.params.failedLoginUser,
           // Send a notification at most every 6 hours.
           verifyFailedLoginEmail({
             failureCount: 3,
             timeBetweenEmails: 6 * 60 * 60 * 1000
           }),
           iff(
-            hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST' && hook.params.notifyFailedLogins,
+            context => context.app.get('postmark').key !== 'POSTMARK_API_TEST' && context.params.notifyFailedLogins,
             sendFailedLoginEmail({
               From: outboundEmail,
               TemplateId: emailTemplates.securityAlertFailedLogins

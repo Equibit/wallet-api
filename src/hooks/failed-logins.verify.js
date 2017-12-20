@@ -13,7 +13,7 @@ module.exports = function verifyFailedLogins (options) {
 
   return hook => {
     const timeframe = Date.now() - options.timeBetweenEmails
-    const user = hook.params.user
+    const user = hook.params.failedLoginUser
     const currentFailedLogin = {
       date: Date.now(),
       sendEmail: false
