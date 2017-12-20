@@ -1,4 +1,4 @@
-const errors = require('feathers-errors')
+// const errors = require('feathers-errors')
 
 module.exports = function () {
   return function assignIndex (context) {
