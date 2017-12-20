@@ -1,23 +1,34 @@
-// const { authenticate } = require('feathers-authentication').hooks;
+const { authenticate } = require('feathers-authentication').hooks;
+const { associateCurrentUser } = require('feathers-authentication-hooks')
 const { disallow } = require('feathers-hooks-common')
+const slugify = require('feathers-slugify')
+const assignIndex = require('./hook.assign-index')
 
 module.exports = function (app) {
   return {
     before: {
-      all: [
-        // call the authenticate hook before every method except 'create'
-        // iff(
-        //   (hook) => hook.method !== 'create',
-        //   authenticate('jwt')
-        // )
-      ],
+      all: [],
       find: [],
       get: [],
-      create: [],
-      update: [],
-      patch: [],
+      create: [
+        authenticate('jwt'),
+        associateCurrentUser({ idField: '_id', as: 'userId' }),
+        slugify({ slug: 'name' }),
+        assignIndex()
+      ],
+      update: [
+        authenticate('jwt'),
+        associateCurrentUser({ idField: '_id', as: 'userId' }),
+        slugify({ slug: 'name' })
+      ],
+      patch: [
+        authenticate('jwt'),
+        associateCurrentUser({ idField: '_id', as: 'userId' }),
+        slugify({ slug: 'name' })
+      ],
       remove: [
-        disallow('external')
+        disallow('external'),
+        authenticate('jwt')
       ]
     },
 

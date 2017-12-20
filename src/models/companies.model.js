@@ -7,12 +7,12 @@
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const companies = new mongooseClient.Schema({
-    name: {type: String},
-    slug: {type: String},
+    name: {type: String, required: true},
+    slug: {type: String, required: true},
     // issuances: []
 
-    userId: {type: String},
-    index: {type: Number, default: 1},
+    userId: {type: String, required: true},
+    index: {type: Number, default: 0, required: true},
 
     domicile: {type: String},
     streetAddress: {type: String},
