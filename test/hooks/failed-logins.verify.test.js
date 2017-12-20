@@ -5,10 +5,13 @@ const userUtils = require('../../test-utils/users')
 
 describe('Hook: Failed Logins', function (done) {
   beforeEach(function (done) {
-    userUtils.create(app).then(user => {
-      this.user = user
-      done()
-    })
+    app.service('users').remove(null, {})
+      .then(() => {
+        userUtils.create(app).then(user => {
+          this.user = user
+          done()
+        })
+      })
   })
 
   afterEach(function (done) {
@@ -17,18 +20,18 @@ describe('Hook: Failed Logins', function (done) {
 
   it(`sets the notifyFailedLogins flag after 3 attempts, by default`, function (done) {
     const verifyFailedLogins = testHook()
-    const user = this.user
+    const failedLoginUser = this.user
     const context = {
       app,
-      params: { user }
+      params: { failedLoginUser }
     }
 
     // First run
     verifyFailedLogins(context)
       .then(context => {
-        assert(user.failedLogins.length === 1, `there was one failed login`)
+        assert(failedLoginUser.failedLogins.length === 1, `there was one failed login`)
 
-        const failedLogin = user.failedLogins[0]
+        const failedLogin = failedLoginUser.failedLogins[0]
         assert(failedLogin.date, `the failed login included a date`)
         assert(failedLogin.sendEmail === false, `the failed login's sendEmail property was false`)
         assert(context.notifyFailedLogins === undefined, `the flag wasn't set after a single failed login`)
@@ -37,9 +40,9 @@ describe('Hook: Failed Logins', function (done) {
         return verifyFailedLogins(context)
       })
       .then(context => {
-        assert(user.failedLogins.length === 2, `there were two failed logins`)
+        assert(failedLoginUser.failedLogins.length === 2, `there were two failed logins`)
 
-        const failedLogin = user.failedLogins[1]
+        const failedLogin = failedLoginUser.failedLogins[1]
         assert(failedLogin.date, `the failed login included a date`)
         assert(failedLogin.sendEmail === false, `the failed login's sendEmail property was false`)
         assert(context.notifyFailedLogins === undefined, `the flag wasn't set after a second failed login`)
@@ -48,9 +51,9 @@ describe('Hook: Failed Logins', function (done) {
         return verifyFailedLogins(context)
       })
       .then(context => {
-        assert(user.failedLogins.length === 3, `there were three failed logins`)
+        assert(failedLoginUser.failedLogins.length === 3, `there were three failed logins`)
 
-        const failedLogin = user.failedLogins[2]
+        const failedLogin = failedLoginUser.failedLogins[2]
         assert(failedLogin.date, `the failed login included a date`)
         assert(failedLogin.sendEmail === true, `the third failed login had the sendEmail prop set to true`)
         assert(context.params.notifyFailedLogins === true, `the flag was set after the third failed login`)
@@ -59,8 +62,8 @@ describe('Hook: Failed Logins', function (done) {
         return verifyFailedLogins(context)
       })
       .then(context => {
-        assert(user.failedLogins.length === 3, `there were still three failed logins`)
-        assert(user.failedLogins[2].sendEmail === true)
+        assert(failedLoginUser.failedLogins.length === 3, `there were still three failed logins`)
+        assert(failedLoginUser.failedLogins[2].sendEmail === true)
         assert(context.params.notifyFailedLogins === undefined, `the flag was not set after the fourth failed login`)
 
         done()
@@ -72,10 +75,10 @@ describe('Hook: Failed Logins', function (done) {
       failureCount: 3,
       timeBetweenEmails: 100 // shorten the time for testing
     })
-    const user = this.user
+    const failedLoginUser = this.user
     const context = {
       app,
-      params: { user }
+      params: { failedLoginUser }
     }
 
     // First run
@@ -86,15 +89,15 @@ describe('Hook: Failed Logins', function (done) {
       .then(context => {
         return new Promise(resolve => {
           setTimeout(function () {
-            assert(user.failedLogins.length === 3, `there were three failed logins`)
+            assert(failedLoginUser.failedLogins.length === 3, `there were three failed logins`)
             resolve(context)
           }, 105)
         })
       })
       .then(context => verifyFailedLogins(context))
       .then(context => {
-        assert(user.failedLogins.length === 1, `there was one failed login`)
-        assert(user.failedLogins[0].sendEmail === false, `the failed login was not flagged to send the email`)
+        assert(failedLoginUser.failedLogins.length === 1, `there was one failed login`)
+        assert(failedLoginUser.failedLogins[0].sendEmail === false, `the failed login was not flagged to send the email`)
         assert(context.params.notifyFailedLogins === undefined, `the flag was not set`)
         done()
       })
@@ -104,10 +107,10 @@ describe('Hook: Failed Logins', function (done) {
     const verifyFailedLogins = testHook({
       failureCount: 5
     })
-    const user = this.user
+    const failedLoginUser = this.user
     const context = {
       app,
-      params: { user }
+      params: { failedLoginUser }
     }
 
     // First run
@@ -117,8 +120,8 @@ describe('Hook: Failed Logins', function (done) {
       .then(context => verifyFailedLogins(context))
       .then(context => verifyFailedLogins(context))
       .then(context => {
-        assert(user.failedLogins.length === 5, `there were five failed logins`)
-        assert(user.failedLogins[4].sendEmail === true, `the fifth failed login was flagged to send the email`)
+        assert(failedLoginUser.failedLogins.length === 5, `there were five failed logins`)
+        assert(failedLoginUser.failedLogins[4].sendEmail === true, `the fifth failed login was flagged to send the email`)
         assert(context.params.notifyFailedLogins === true, `the flag was set`)
         done()
       })

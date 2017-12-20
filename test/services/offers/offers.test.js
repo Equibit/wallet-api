@@ -86,10 +86,10 @@ function runTests (feathersClient) {
           const offer = {
             userId: objectid(),
             orderId: objectid(),
-            type: "SELL",
-            issuanceAddress: "12345",
+            type: 'SELL',
+            issuanceAddress: '12345',
             quantity: 1,
-            price: .00005,
+            price: 0.00005,
             status: 'OPEN',
             issuanceId: 'test',
 
@@ -121,7 +121,6 @@ function runTests (feathersClient) {
             })
         })
       }
-
     })
   })
 }

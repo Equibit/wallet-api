@@ -33,6 +33,5 @@ module.exports = function (options) {
     } else {
       return Promise.resolve(context)
     }
-
   }
 }

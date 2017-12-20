@@ -28,7 +28,11 @@ function runTests (feathersClient) {
     ]
 
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return app.service('users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+    })
+
+    after(function () {
+      return app.service('users').remove(null, {})
     })
 
     beforeEach(function (done) {
