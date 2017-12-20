@@ -1,6 +1,12 @@
 const errors = require('feathers-errors')
 const assert = require('assert')
 
+/*
+When the user logs in, the UI needs a way to know when transactions occur on addresses.
+The UI will send a list of addresses.  This service creates an address-map record for each
+of the addresses so that the `offers` and `transactions` services can determine which connected
+clients should receive the realtime socket notification.
+*/
 class Service {
   constructor (options) {
     this.options = options || {}
