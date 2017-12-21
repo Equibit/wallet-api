@@ -22,8 +22,9 @@ module.exports = function (app) {
 
     // HTLC:
     secretEncrypted: { type: String },
-    hashlock: { type: String },
-    timelock: { type: Number },
+    hashlock: { type: String, required: true },
+    timelock: { type: Number, required: true },
+    htlcStep: { type: Number },
 
     // For HTLC we need 2 or 3 addresses:
     // - Buy offer:
@@ -33,9 +34,9 @@ module.exports = function (app) {
     // - Sell offer:
     //    1. eqbAddress for a refund (a holding address).
     //    2. btcAddress for receiving payment from a buyer.
-    btcAddress: { type: String },
-    eqbAddressTrading: { type: String },
-    eqbAddressHolding: { type: String },
+    btcAddress: { type: String, required: true },
+    eqbAddressTrading: { type: String },  // Note: trading address is not required for for a SELL offer.
+    eqbAddressHolding: { type: String, required: true },
 
     // EQB address to receive securities to for a BUY offer
     // eqbAddress: 'string',
