@@ -101,7 +101,12 @@ function runTests (feathersClient) {
             // EQB address to receive securities to for a BUY offer
             // eqbAddress: 'string',
             // BTC address to receive payment to for a SELL offer
-            btcAddress: 'test-address'
+            btcAddress: 'test-address',
+
+            // HTLC:
+            eqbAddressHolding: 'some-address',
+            timelock: 144,
+            hashlock: '123'
           }
 
           const checkOffer = function checkOffer (offer) {
