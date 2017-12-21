@@ -11,7 +11,7 @@ module.exports = function (options) {
       SELL: 'BUY'
     }
 
-    console.log(`hook.create-receiver-txn: (createReceiverTxn=${data.createReceiverTxn})  type=${data.type} address=(${data.address})}`)
+    console.log(`hook.create-receiver-txn: (createReceiverTxn=${data.createReceiverTxn})  type=${data.type}, fromAddress=(${data.fromAddress})}, toAddress=(${data.toAddress})}`)
     if (data.createReceiverTxn && typeMap[data.type]) {
       const txData = formatTxnData({
         address: data.toAddress,
@@ -30,7 +30,7 @@ module.exports = function (options) {
         fee: data.fee,
         htlcStep: data.htlcStep,
         hashlock: data.hashlock,
-        timelock: data.timelock
+        timelock: data.timelock,
       })
       console.log(`hook.create-receiver-txn: -> ${txData.type} (${txData.address})`, txData)
 

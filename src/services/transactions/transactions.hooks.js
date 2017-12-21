@@ -44,8 +44,7 @@ module.exports = app => {
 
           // Set the createReceiverTxn flag so that the createReceiverTxn will create the other txn.
           context => {
-            // todo: SELL type can also be initiated from browser. Figure out how to not get into a loop here.
-            if (['OUT', 'BUY'].indexOf(context.data.type) !== -1) {
+            if (['OUT', 'BUY', 'SELL'].indexOf(context.data.type) !== -1) {
               context.data.createReceiverTxn = true
             }
           },
