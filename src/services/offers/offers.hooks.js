@@ -29,7 +29,11 @@ module.exports = function (app) {
         }),
         findAddressMap({
           key: app.get('addressMapEncryptionKey'),
-          from: 'data.eqbAddress'
+          from: 'data.eqbAddressTrading'
+        }),
+        findAddressMap({
+          key: app.get('addressMapEncryptionKey'),
+          from: 'data.eqbAddressHolding'
         })
       ],
       update: [],
