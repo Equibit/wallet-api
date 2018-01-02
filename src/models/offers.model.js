@@ -12,6 +12,7 @@ module.exports = function (app) {
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
     status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED' ] },
+    isAccepted: { type: Boolean, default: false },
 
     // Issuance info:
     issuanceId: { type: String, required: true },
@@ -25,6 +26,7 @@ module.exports = function (app) {
     hashlock: { type: String, required: true },
     timelock: { type: Number, required: true },
     htlcStep: { type: Number },
+    htlcTxId: { type: String },
 
     // For HTLC we need 2 or 3 addresses:
     // - Buy offer:
