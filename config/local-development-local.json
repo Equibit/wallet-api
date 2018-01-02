@@ -2,6 +2,7 @@
   "postmark": {
     "key": "1b3c3908-8965-42fe-b655-173437c9dd38"
   },
+  "mongodb": "mongodb://localhost:27017/wallet_api_dev",
   "bitcoinCore": {
     "url": "http://localhost:18332",
     "username": "equibit",
