@@ -1,6 +1,6 @@
 // Initializes the `watch` service on path `/watch`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/watchlist.model')
+const createModel = require('./watchlist.model')
 const hooks = require('./watchlist.hooks')
 const filters = require('./watchlist.filters')
 

@@ -1,6 +1,6 @@
 // Initializes the `address-meta` service on path `/address-meta`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/address-meta.model')
+const createModel = require('./address-meta.model')
 const hooks = require('./address-meta.hooks')
 const filters = require('./address-meta.filters')
 

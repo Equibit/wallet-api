@@ -1,14 +1,14 @@
 const { authenticate } = require('feathers-authentication').hooks
 const { iff, isProvider, discard } = require('feathers-hooks-common')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const decodeRawTxn = require('./hook.decode-raw-txn')
-const validateDecodedTxn = require('./hook.validate-txn')
-const sendRawTxn = require('./hook.send-raw-txn')
-const formatTxn = require('./hook.format-txn')
-const createReceiverTxn = require('./hook.create-receiver-txn')
-const requireAddresses = require('./hook.require-addresses')
-const findAddressMap = require('./hook.find-address-map')
-const defaultSort = require('./hook.default-sort')
+const decodeRawTxn = require('./hooks/hook.decode-raw-txn')
+const validateDecodedTxn = require('./hooks/hook.validate-txn')
+const sendRawTxn = require('./hooks/hook.send-raw-txn')
+const formatTxn = require('./hooks/hook.format-txn')
+const createReceiverTxn = require('./hooks/hook.create-receiver-txn')
+const requireAddresses = require('./hooks/hook.require-addresses')
+const findAddressMap = require('./hooks/hook.find-address-map')
+const defaultSort = require('./hooks/hook.default-sort')
 
 module.exports = app => {
   const coreParams = {

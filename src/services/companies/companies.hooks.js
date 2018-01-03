@@ -2,7 +2,7 @@ const { authenticate } = require('feathers-authentication').hooks
 const { associateCurrentUser } = require('feathers-authentication-hooks')
 const { disallow } = require('feathers-hooks-common')
 const slugify = require('feathers-slugify')
-const assignIndex = require('./hook.assign-index')
+const assignIndex = require('./hooks/hook.assign-index')
 
 module.exports = function (app) {
   return {

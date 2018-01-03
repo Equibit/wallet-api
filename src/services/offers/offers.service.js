@@ -1,6 +1,6 @@
 // Initializes the `offers` service on path `/offers`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/offers.model')
+const createModel = require('./offers.model')
 const hooks = require('./offers.hooks')
 const filters = require('./offers.filters')
 

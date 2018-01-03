@@ -1,6 +1,6 @@
 // Initializes the `login-attempts` service on path `/login-attempts`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/login-attempts.model')
+const createModel = require('./login-attempts.model')
 const hooks = require('./login-attempts.hooks')
 const filters = require('./login-attempts.filters')
 
