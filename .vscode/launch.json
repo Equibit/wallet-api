@@ -15,7 +15,7 @@
       "--timeout",
       "999999",
       "--colors",
-      "${workspaceRoot}/test/",
+      "${workspaceRoot}/+(src|test|test-utils)/**/*.test.js",
       "--recursive"
     ],
     "env": {

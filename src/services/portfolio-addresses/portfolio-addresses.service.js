@@ -1,6 +1,6 @@
 // Initializes the `portfolio-addresses` service on path `/portfolio-addresses`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/portfolio-addresses.model')
+const createModel = require('./portfolio-addresses.model')
 const hooks = require('./portfolio-addresses.hooks')
 const filters = require('./portfolio-addresses.filters')
 

@@ -1,6 +1,6 @@
 // Initializes the `address-map` service on path `/address-map`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/address-map.model')
+const createModel = require('./address-map.model')
 const hooks = require('./address-map.hooks')
 const filters = require('./address-map.filters')
 

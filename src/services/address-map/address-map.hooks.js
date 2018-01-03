@@ -1,7 +1,7 @@
 const { authenticate } = require('feathers-authentication').hooks
 const { disallow } = require('feathers-hooks-common')
-const encryptIdentifier = require('./hook.encrypt-identifier')
-const mapCreateToUpsert = require('./hook.map-create-to-upsert')
+const encryptIdentifier = require('./hooks/hook.encrypt-identifier')
+const mapCreateToUpsert = require('./hooks/hook.map-create-to-upsert')
 
 module.exports = function (app) {
   return {

@@ -2,7 +2,7 @@
 
 // Initializes the `companies` service on path `/companies`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/companies.model')
+const createModel = require('./companies.model')
 const hooks = require('./companies.hooks')
 const filters = require('./companies.filters')
 

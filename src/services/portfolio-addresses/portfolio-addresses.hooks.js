@@ -3,16 +3,16 @@ const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const { discard, iff, isProvider, preventChanges } = require('feathers-hooks-common')
 
 // decorate params with portfolios the user owns in 'userPortfolios' property for validations
-const addUserPortfoliosToParams = require('./hook.add-user-portfolios-to-params')
+const addUserPortfoliosToParams = require('./hooks/hook.add-user-portfolios-to-params')
 
 // restrict query to portfolioIds owned by params.user
-const restrictQueryToUserPortfolio = require('./hook.restrict-query-to-user-portfolio')
+const restrictQueryToUserPortfolio = require('./hooks/hook.restrict-query-to-user-portfolio')
 
 // make sure create data has portfolioId specified that belongs to current user
-const verifyPortfolioIdOnData = require('./hook.verify-portfolio-id-on-data')
+const verifyPortfolioIdOnData = require('./hooks/hook.verify-portfolio-id-on-data')
 
 // only execute on external calls, verifies specified id belongs to the logged in user
-const verifyIdBelongsToUser = require('./hook.verify-id-belongs-to-user')
+const verifyIdBelongsToUser = require('./hooks/hook.verify-id-belongs-to-user')
 
 module.exports = function (app) {
   return {
