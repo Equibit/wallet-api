@@ -1,11 +1,11 @@
 'use strict'
 
-const normalizeResponse = require('./hook.normalize-response')
+const normalizeResponse = require('./hooks/hook.normalize-response')
 const { iff } = require('feathers-hooks-common')
-const createTemporaryPassword = require('../users/hook.create-temp-password')
-const retrieveSalt = require('./hook.retrieve-salt')
-const sendForgotPasswordEmailForExistingUser = require('./hook.email.forgot-existing')
-const sendForgotPasswordEmailForMissingUser = require('./hook.email.forgot-missing')
+const createTemporaryPassword = require('../users/hooks/hook.create-temp-password')
+const retrieveSalt = require('./hooks/hook.retrieve-salt')
+const sendForgotPasswordEmailForExistingUser = require('./hooks/hook.email.forgot-existing')
+const sendForgotPasswordEmailForMissingUser = require('./hooks/hook.email.forgot-missing')
 const { hashPassword } = require('feathers-authentication-signed').hooks
 const { pbkdf2 } = require('crypto')
 

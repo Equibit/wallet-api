@@ -2,7 +2,7 @@
 
 // Initializes the `issuances` service on path `/issuances`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/issuances.model')
+const createModel = require('./issuances.model')
 const hooks = require('./issuances.hooks')
 const filters = require('./issuances.filters')
 

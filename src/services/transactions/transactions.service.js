@@ -1,6 +1,6 @@
 // Initializes the `transactions` service on path `/transactions`
 const createService = require('feathers-mongoose')
-const createModel = require('../../models/transactions.model')
+const createModel = require('./transactions.model')
 const hooks = require('./transactions.hooks')
 const filters = require('./transactions.filters')
 
