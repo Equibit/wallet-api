@@ -20,6 +20,7 @@ module.exports = function (app) {
     btcAddress: { type: String },
     eqbAddressTrading: { type: String },
     eqbAddressHolding: { type: String },
+    htlcTxId: { type: String },
 
     timelock: { type: Number },
 

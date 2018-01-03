@@ -8,9 +8,13 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const issuances = new mongooseClient.Schema({
+    // Issuer user id (user who created/authorized the issuance):
     userId: { type: ObjectId, required: true },
+    // Indexes for bip44 key generation:
     index: { type: Number, required: true },
     companyIndex: { type: Number, required: true },
+    // TXID of the authorization transaction:
+    issuanceTxId: { type: String, required: true },
     issuanceAddress: { type: String, required: true },
 
     companyId: { type: ObjectId, required: true },
