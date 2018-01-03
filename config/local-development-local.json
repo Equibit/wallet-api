@@ -13,5 +13,9 @@
     "username": "equibit",
     "password": "equibit"
   },
-  "addressMapEncryptionKey": "10789b383c9b6c853f605e303f2a80ef"
+  "addressMapEncryptionKey": "10789b383c9b6c853f605e303f2a80ef",
+  "bitcoinAverage": {
+    "key": "YmU3NzJhYmJmMmI2NDZiMzhlN2EzZDA1MzBhZGQ4NDM",
+    "secret": "ZWRkMTgyZmIyZTAyNGQyYjkwNzE2N2UwYWRjM2JmNTU1YzA0YjgzNTQ2MjM0NTllYTZmMmQwZDQwNGMwZTlmNQ"
+  }
 }

@@ -62,6 +62,7 @@
     "mongoose": "^4.13.7",
     "objectid": "^3.2.1",
     "postmark": "^1.4.1",
+    "query-string": "^5.0.1",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "serve-favicon": "^2.4.3",

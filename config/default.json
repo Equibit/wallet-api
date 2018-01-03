@@ -59,5 +59,9 @@
       "path": "companies",
       "data": "services/companies/companies.seed.json"
     }]
+  },
+  "bitcoinAverage": {
+    "key": "BITCOIN_AVERAGE_KEY",
+    "secret": "BITCOIN_AVERAGE_SECRET"
   }
 }

@@ -24,6 +24,8 @@ const xpubCrawl = require('./xpub-crawl/xpub-crawl.service.js')
 
 const offers = require('./offers/offers.service.js')
 
+const bitcoinAverage = require('./bitcoin-average/bitcoin-average.service.js');
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -45,4 +47,5 @@ module.exports = function () {
   app.configure(portfolioBalance)
   app.configure(xpubCrawl)
   app.configure(offers)
+  app.configure(bitcoinAverage);
 }
