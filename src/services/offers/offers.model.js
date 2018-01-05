@@ -48,6 +48,7 @@ module.exports = function (app) {
     // refundEqbAddress: 'string',
     // refundBtcAddress: 'string',
 
+    description: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   })
