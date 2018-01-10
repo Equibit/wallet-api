@@ -4,6 +4,8 @@ module.exports = function (data, connection, hook) {
   if (addressMap && addressMap.identifier === connection.uid) {
     return data
   } else {
-    return false
+    // todo: temporarily notify everybody.
+    return data
+    // return false
   }
 }

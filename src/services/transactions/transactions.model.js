@@ -53,7 +53,7 @@ module.exports = function (app) {
 
     // TODO: Validate the amount.
     amount: { type: Number, required: true }, // Integer
-    fee: { type: Number, required: true },
+    fee: { type: Number },
 
     description: { type: String },
     createdAt: { type: Date, default: Date.now },
