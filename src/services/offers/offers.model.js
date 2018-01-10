@@ -26,7 +26,10 @@ module.exports = function (app) {
     hashlock: { type: String, required: true },
     timelock: { type: Number, required: true },
     htlcStep: { type: Number },
-    htlcTxId: { type: String },
+    htlcTxId1: { type: String },
+    htlcTxId2: { type: String },
+    htlcTxId3: { type: String },
+    htlcTxId4: { type: String },
 
     // For HTLC we need 2 or 3 addresses:
     // - Buy offer:
