@@ -23,6 +23,7 @@ module.exports = function (app) {
 
     // HTLC:
     secretEncrypted: { type: String },
+    secret: { type: String }, // Plain secret after it was revealed in tx #3.
     hashlock: { type: String, required: true },
     timelock: { type: Number, required: true },
     htlcStep: { type: Number },
