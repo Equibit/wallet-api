@@ -7,7 +7,7 @@ const service = '/xpub-crawl'
 const serviceOnServer = app.service(service)
 const xpubs = utils.xpub()
 
-describe.only(`${service} Service`, function () {
+describe(`${service} Service`, function () {
   utils.clients.forEach(client => {
     runTests(client)
   })
