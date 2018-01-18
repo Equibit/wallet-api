@@ -38,6 +38,17 @@ const decodedTxn = {
   ]
 }
 
+const listunspentFixtureData = require('../src/services/listunspent/fixtures.json')
+const handleListUnspent = function handleListUnspent (request) {
+  const data = JSON.parse(request.data)
+
+  if (data.method !== 'listunspent') {
+    return undefined
+  }
+
+  return [200, listunspentFixtureData]
+}
+
 exports.decodedTxn = decodedTxn
 
 exports.setupMock = function () {
@@ -45,6 +56,8 @@ exports.setupMock = function () {
     const data = JSON.parse(request.data)
 
     switch (data.method) {
+      case 'listunspent':
+        return handleListUnspent(request)
       case 'sendrawtransaction':
         return [200, {
           result: '036fc4cbbb510a5845690bc48dc2883911e653e011e822259cda5551efc50c88',

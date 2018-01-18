@@ -1,5 +1,141 @@
 const bitcoin = require('bitcoinjs-lib')
 
+const createPortfolioAddresses = function createPortfolioAddresses (portfolioId, type, isChange, addessIndexStart, howMany) {
+  const portfolioAddresses = []
+  for (var x = addessIndexStart; x < addessIndexStart + howMany; x++) {
+    portfolioAddresses.push({
+      portfolioId,
+      index: x,
+      type,
+      isChange,
+      isUsed: false // will be checked and updated later
+    })
+  }
+  return portfolioAddresses
+}
+
+// hdnode = xpub of ( m / purpose' / coin_type' / account' )
+// for each portfolioAddress, derive address = hdnode -> ( / change / addressIndex )
+// returns addressesMap[ base58address ] = portfolioAddress
+const deriveAddresses = function deriveAddresses (hdnode, portfolioAddresses) {
+  const addressesMap = {}
+
+  portfolioAddresses.forEach(portfolioAddress => {
+    const change = portfolioAddress.isChange ? 1 : 0
+    const addressIndex = portfolioAddress.index
+    const address = hdnode.derive(change).derive(addressIndex).getAddress()
+    addressesMap[address] = portfolioAddress
+  })
+
+  return addressesMap
+}
+
+const upsertPortfolioAddressesIfNeeded = function upsertPortfolioAddressesIfNeeded (portfolioAddressesService, meta, unspentData) {
+  var promise = null
+
+  // if it is an existing portfolio-addresses item, and wasn't previously used, and is now used, flag it as used
+  if (meta._id && meta.isUsed === false && unspentData.amount) {
+    promise = portfolioAddressesService.patch(meta._id, { isUsed: true })
+  }
+
+  // if it is not an existing portfolio-addresses item, add it
+  if (!meta._id) {
+    const createData = {
+      portfolioId: meta.portfolioId,
+      index: meta.index,
+      type: meta.type.toUpperCase(), // EQB or BTC
+      isChange: meta.isChange ? true : false,
+      isUsed: unspentData.amount ? true : false
+    }
+    promise = portfolioAddressesService.create(createData).then(response => {
+      // add the new id to the meta info
+      meta._id = response._id
+      return response
+    })
+  }
+
+  return promise
+}
+
+const checkUnspentAndMarkUsedAddresses = function checkUnspentAndMarkUsedAddresses (listUnspentService, portfolioAddressesService, type, addressesMap) {
+  var typeLC = type.toLowerCase()
+  var addresses = Object.keys(addressesMap)
+  var query = {
+    [typeLC]: addresses,
+    byaddress: true
+  }
+  return listUnspentService.find({ query })
+    .then(unspent => {
+      unspent = unspent[ type.toUpperCase() ].addresses
+      // unspent = object whos keys are addresses and values are: { amount, txouts[] }
+
+      const promises = []
+      // loop over addressMap's addresses and update/insert to portfolio-addresses as needed
+      addresses.forEach(address => {
+        const meta = addressesMap[address]
+        const unspentData = unspent[address] || {}
+
+        const prom = upsertPortfolioAddressesIfNeeded(portfolioAddressesService, meta, unspentData)
+        if (prom) {
+          promises.push(prom)
+        }
+
+        const isUsedNow = unspentData.amount ? true : false
+
+        // update meta info
+        // add an 'amount' field to addresses meta info
+        meta.amount = (meta.amount || 0) + (unspentData.amount || 0)
+        // and add the base58 address to it
+        meta.address = address
+        // mark this one as used if it was or is now used (cannot become unused)
+        meta.isUsed = meta.isUsed || isUsedNow
+      })
+
+      return Promise.all(promises)
+    })
+}
+
+const checkAllExisting = function checkAllExisting (listUnspentService, portfolioAddressesService, type, hdnode, addresses, index) {
+  if (index < addresses.length) {
+    const useAddresses = addresses.slice(index, index + 20)
+    const addressesMap = deriveAddresses(hdnode, useAddresses)
+    const allUpToDatePromise = checkUnspentAndMarkUsedAddresses(listUnspentService, portfolioAddressesService, type, addressesMap)
+    return allUpToDatePromise.then(() => {
+      return checkAllExisting(listUnspentService, portfolioAddressesService, type, hdnode, addresses, index + 20)
+    })
+  }
+  return Promise.resolve(true)
+}
+
+// how many contiguous items at the end of the addresses array are unused
+const countGap = function countGap (addresses) {
+  var gap = 0
+  for (let i = addresses.length - 1; i >= 0; i--) {
+    if (addresses[i].isUsed) {
+      break
+    }
+    gap++
+  }
+  return gap
+}
+
+const gapOf20 = function gapOf20 (listUnspentService, portfolioAddressesService, portfolioId, type, isChange, hdnode, addresses) {
+  var currentGap = countGap(addresses)
+
+  if (currentGap >= 20) {
+    return Promise.resolve(true)
+  }
+
+  const generateMoreCount = 20 - currentGap
+  const newAddresses = createPortfolioAddresses(portfolioId, type.toUpperCase(), isChange, addresses.length, generateMoreCount)
+  Array.prototype.push.apply(addresses, newAddresses)
+  const addressesMap = deriveAddresses(hdnode, newAddresses)
+  const allUpToDatePromise = checkUnspentAndMarkUsedAddresses(listUnspentService, portfolioAddressesService, type, addressesMap)
+  return allUpToDatePromise.then(() => {
+    return gapOf20(listUnspentService, portfolioAddressesService, portfolioId, type, isChange, hdnode, addresses)
+  })
+}
+
 /**
  * This service is very processor intensive.
  * It should be broken off into its own server as soon as needed.
@@ -9,87 +145,39 @@ class Service {
     this.options = options || {}
   }
 
+  // params.query.portfolioId
+  // params.query.type = 'EQB' or 'BTC'
+  // params.query.xpub = ( m / purpose' / coin_type' / account' )
   find (params) {
     const { query } = params
-    const { xpub, type } = query
+    const { xpub, portfolioId, type } = query
     const { app, network } = this.options
+    const portfolioAddressesService = app.service('portfolio-addresses')
     const listUnspentService = app.service('listunspent')
-    const TYPE = type.toUpperCase()
-
-    // Step 1: generate 20 addresses
     const hdnode = bitcoin.HDNode.fromBase58(xpub, network)
+    const addressesMap = {}
+    const typeUPPER = type.toUpperCase()
 
-    const createArrayFrom = function createArrayFrom (startingIndex, howMany) {
-      const array = []
-      for (var index = startingIndex; index < startingIndex + howMany; index++) {
-        array.push(index)
-      }
-      return array
-    }
+    return portfolioAddressesService.find({ query: { portfolioId, type: typeUPPER } })
+      .then(response => {
+        const portfolioAddresses = response.data || []
+        const changeAddresses = portfolioAddresses.filter(addr => addr.isChange)
+        const externalAddresses = portfolioAddresses.filter(addr => !addr.isChange)
 
-    const mergeResults = function mergeResults (accumulatedResult, newResult) {
-      // Add up summary totals
-      accumulatedResult.summary.total += newResult.summary.total
-      // Merge addresses
-      Object.assign(accumulatedResult.addresses, newResult.addresses)
-    }
-
-    const crawlAddresses = function crawlAddresses (accumulatedResult, startIndex, howMany) {
-      const addresses = createArrayFrom(startIndex, howMany).map((v, index) => {
-        return { index: v, address: hdnode.derive(v).getAddress() }
-      })
-      const { addressesByIndex, indexesByAddress } = addresses.reduce((acc, { address, index }) => {
-        const meta = { address, index, used: false }
-        acc.addressesByIndex[index] = meta
-        acc.indexesByAddress[address] = meta
-        return acc
-      }, { indexesByAddress: {}, addressesByIndex: {} })
-
-      // Step 2: use `listunspent` with the 20 addresses & see which ones have funds, repeat with remaining addresses until we have 20 empty.
-      return listUnspentService.find({ query: { [type]: addresses.map(item => item.address), byaddress: true } })
-        .then(newResult => {
-          // Step 3: format the data, combine into the accumulated results
-          newResult = newResult[TYPE]
-
-          mergeResults(accumulatedResult, newResult)
-          Object.assign(accumulatedResult.addressesByIndex, addressesByIndex)
-          Object.assign(accumulatedResult.indexesByAddress, indexesByAddress)
-
-          Object.keys(accumulatedResult.addresses).forEach(address => {
-            accumulatedResult.addresses[address].address = address
-            accumulatedResult.addresses[address].index = accumulatedResult.indexesByAddress[address].index
-            accumulatedResult.indexesByAddress[address].used = true
+        return Promise.all([
+          checkAllExisting(listUnspentService, portfolioAddressesService, typeUPPER, hdnode, changeAddresses, 0),
+          checkAllExisting(listUnspentService, portfolioAddressesService, typeUPPER, hdnode, externalAddresses, 0)
+        ]).then(() => {
+          return Promise.all([
+            gapOf20(listUnspentService, portfolioAddressesService, portfolioId, typeUPPER, true, hdnode, changeAddresses),
+            gapOf20(listUnspentService, portfolioAddressesService, portfolioId, typeUPPER, false, hdnode, externalAddresses)
+          ]).then(() => {
+            return Promise.resolve({
+              changeAddresses,
+              externalAddresses
+            })
           })
-
-          // Step 4: get the last-used index and make sure we have 20 unused addresses.
-          const highest = Object.keys(accumulatedResult.addressesByIndex).reduce((highest, index) => {
-            index = parseInt(index)
-            highest.used = (accumulatedResult.addressesByIndex[index].used && index > highest.used) ? index : highest.used
-            highest.available = index > highest.available ? index : highest.available
-            return highest
-          }, {used: -1, available: -1})
-          const unusedCount = highest.available - highest.used
-          if (unusedCount < 20) {
-            return crawlAddresses(accumulatedResult, highest.available + 1, 20 - unusedCount)
-          } else {
-            return accumulatedResult
-          }
         })
-    }
-
-    const initialResult = {
-      type: TYPE,
-      summary: {
-        total: 0
-      },
-      addressesByIndex: {},
-      indexesByAddress: {},
-      addresses: {}
-    }
-    return crawlAddresses(initialResult, 0, 20)
-      .then(result => {
-        delete result.indexesByAddress
-        return result
       })
   }
 
