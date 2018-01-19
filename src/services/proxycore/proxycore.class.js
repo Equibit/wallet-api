@@ -1,4 +1,5 @@
 const axios = require('axios')
+const errors = require('feathers-errors')
 const formatParams = require('../../utils/format-rpc-params.js')
 
 class Service {
@@ -29,7 +30,7 @@ class Service {
     .catch(err => {
       console.log('_______ PROXYCORE ERROR: ', (err.response && err.response.data) || err.message)
       console.log('USING PARAMS: ', formattedParams)
-      return (err.response && err.response.data) || {error: {message: err.message}}
+      throw new errors.GeneralError(err.response && err.response.data) || {error: {message: err.message}}
     })
   }
 

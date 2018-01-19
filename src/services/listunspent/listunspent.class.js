@@ -1,4 +1,5 @@
 const axios = require('axios')
+const errors = require('feathers-errors')
 const {
   aggregateByAddress,
   addSummary,
@@ -39,7 +40,7 @@ class Service {
         message: err.message
       }
       console.log('_______ PROXY ERROR: ', errRes)
-      return errRes
+      throw new errors.GeneralError(errRes)
     })
   }
 
