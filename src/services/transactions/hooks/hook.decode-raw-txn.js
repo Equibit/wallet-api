@@ -35,7 +35,7 @@ module.exports = function (options) {
       console.log('_______ decoderawtransaction ERROR: ', err.response.data)
       console.log('USING PARAMS: ', formattedParams)
       console.log('All context.data: ', context.data)
-      return err.response.data
+      throw new Error(JSON.stringify(err.response.data))
     })
   }
 }
