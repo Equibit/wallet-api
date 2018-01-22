@@ -35,7 +35,7 @@ module.exports = function (options) {
     .catch(err => {
       console.log('_______ PROXY ERROR: ', err.response.data)
       console.log('USING PARAMS: ', formattedParams)
-      return err.response.data
+      throw new Error(err.response.data)
     })
   }
 }

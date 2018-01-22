@@ -14,7 +14,7 @@ module.exports = function (options) {
     console.log(`hook.create-receiver-txn: (createReceiverTxn=${data.createReceiverTxn})  type=${data.type}, fromAddress=(${data.fromAddress})}, toAddress=(${data.toAddress})}`)
     if (data.createReceiverTxn && typeMap[data.type]) {
       const txData = formatTxnData({
-        address: data.toAddress,
+        address: data.address === data.toAddress ? data.fromAddress : data.toAddress,
         fromAddress: data.fromAddress,
         toAddress: data.toAddress,
         type: typeMap[data.type],
