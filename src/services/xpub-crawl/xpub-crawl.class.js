@@ -1,4 +1,5 @@
 const bitcoin = require('bitcoinjs-lib')
+const errors = require('feathers-errors')
 
 const createPortfolioAddresses = function createPortfolioAddresses (portfolioId, type, isChange, addessIndexStart, howMany) {
   const portfolioAddresses = []
@@ -30,7 +31,8 @@ const deriveAddresses = function deriveAddresses (hdnode, portfolioAddresses) {
   return addressesMap
 }
 
-const upsertPortfolioAddressesIfNeeded = function upsertPortfolioAddressesIfNeeded (portfolioAddressesService, meta, unspentData) {
+const upsertPortfolioAddressesIfNeeded = function upsertPortfolioAddressesIfNeeded (app, meta, unspentData) {
+  const portfolioAddressesService = app.service('portfolio-addresses')
   var promise = null
 
   // if it is an existing portfolio-addresses item, and wasn't previously used, and is now used, flag it as used
@@ -44,8 +46,8 @@ const upsertPortfolioAddressesIfNeeded = function upsertPortfolioAddressesIfNeed
       portfolioId: meta.portfolioId,
       index: meta.index,
       type: meta.type.toUpperCase(), // EQB or BTC
-      isChange: meta.isChange ? true : false,
-      isUsed: unspentData.amount ? true : false
+      isChange: !!meta.isChange,
+      isUsed: !!unspentData.amount
     }
     promise = portfolioAddressesService.create(createData).then(response => {
       // add the new id to the meta info
@@ -57,10 +59,11 @@ const upsertPortfolioAddressesIfNeeded = function upsertPortfolioAddressesIfNeed
   return promise
 }
 
-const checkUnspentAndMarkUsedAddresses = function checkUnspentAndMarkUsedAddresses (listUnspentService, portfolioAddressesService, type, addressesMap) {
-  var typeLC = type.toLowerCase()
-  var addresses = Object.keys(addressesMap)
-  var query = {
+const checkUnspentAndMarkUsedAddresses = function checkUnspentAndMarkUsedAddresses (app, type, addressesMap) {
+  const listUnspentService = app.service('listunspent')
+  const typeLC = type.toLowerCase()
+  const addresses = Object.keys(addressesMap)
+  const query = {
     [typeLC]: addresses,
     byaddress: true
   }
@@ -75,12 +78,12 @@ const checkUnspentAndMarkUsedAddresses = function checkUnspentAndMarkUsedAddress
         const meta = addressesMap[address]
         const unspentData = unspent[address] || {}
 
-        const prom = upsertPortfolioAddressesIfNeeded(portfolioAddressesService, meta, unspentData)
+        const prom = upsertPortfolioAddressesIfNeeded(app, meta, unspentData)
         if (prom) {
           promises.push(prom)
         }
 
-        const isUsedNow = unspentData.amount ? true : false
+        const isUsedNow = !!unspentData.amount
 
         // update meta info
         // add an 'amount' field to addresses meta info
@@ -95,13 +98,13 @@ const checkUnspentAndMarkUsedAddresses = function checkUnspentAndMarkUsedAddress
     })
 }
 
-const checkAllExisting = function checkAllExisting (listUnspentService, portfolioAddressesService, type, hdnode, addresses, index) {
+const checkAllExisting = function checkAllExisting (app, type, hdnode, addresses, index) {
   if (index < addresses.length) {
     const useAddresses = addresses.slice(index, index + 20)
     const addressesMap = deriveAddresses(hdnode, useAddresses)
-    const allUpToDatePromise = checkUnspentAndMarkUsedAddresses(listUnspentService, portfolioAddressesService, type, addressesMap)
+    const allUpToDatePromise = checkUnspentAndMarkUsedAddresses(app, type, addressesMap)
     return allUpToDatePromise.then(() => {
-      return checkAllExisting(listUnspentService, portfolioAddressesService, type, hdnode, addresses, index + 20)
+      return checkAllExisting(app, type, hdnode, addresses, index + 20)
     })
   }
   return Promise.resolve(true)
@@ -119,7 +122,38 @@ const countGap = function countGap (addresses) {
   return gap
 }
 
-const gapOf20 = function gapOf20 (listUnspentService, portfolioAddressesService, portfolioId, type, isChange, hdnode, addresses) {
+// http://localhost:3030/proxycore?node=eqb&method=importmulti&params[0][0][scriptPubKey][address]=mvuf7FVBox77vNEYxxNUvvKsrm2Mq5BtZZ&params[0][0][watchonly]=true&params[0][0][timestamp]=now
+/*
+  [
+    [
+      {
+        "scriptPubKey": {
+          "address": "mvuf7FVBox77vNEYxxNUvvKsrm2Mq5BtZZ"
+        },
+        "watchonly": true,
+        "timestamp": "now"
+      }
+    ]
+  ]
+*/
+const importAddressesCore = function importAddressesCore (app, type, addressesMap, importFrom) {
+  const proxycoreService = app.service('proxycore')
+  const param = Object.keys(addressesMap).map(address => {
+    return { scriptPubKey: { address }, timestamp: importFrom + 0, watchonly: true }
+  })
+
+  const importPromise = proxycoreService.find({
+    query: {
+      node: type.toLowerCase(),
+      method: 'importmulti',
+      params: [param]
+    }
+  })
+
+  return importPromise
+}
+
+const gapOf20 = function gapOf20 (app, portfolioId, type, isChange, hdnode, addresses, importFrom) {
   var currentGap = countGap(addresses)
 
   if (currentGap >= 20) {
@@ -130,9 +164,15 @@ const gapOf20 = function gapOf20 (listUnspentService, portfolioAddressesService,
   const newAddresses = createPortfolioAddresses(portfolioId, type.toUpperCase(), isChange, addresses.length, generateMoreCount)
   Array.prototype.push.apply(addresses, newAddresses)
   const addressesMap = deriveAddresses(hdnode, newAddresses)
-  const allUpToDatePromise = checkUnspentAndMarkUsedAddresses(listUnspentService, portfolioAddressesService, type, addressesMap)
+
+  const importPromise = importAddressesCore(app, type, addressesMap, importFrom)
+
+  const allUpToDatePromise = importPromise.then(() => {
+    return checkUnspentAndMarkUsedAddresses(app, type, addressesMap)
+  })
+
   return allUpToDatePromise.then(() => {
-    return gapOf20(listUnspentService, portfolioAddressesService, portfolioId, type, isChange, hdnode, addresses)
+    return gapOf20(app, portfolioId, type, isChange, hdnode, addresses, importFrom)
   })
 }
 
@@ -149,14 +189,21 @@ class Service {
   // params.query.type = 'EQB' or 'BTC'
   // params.query.xpub = ( m / purpose' / coin_type' / account' )
   find (params) {
-    const { query } = params
+    const { query, userPortfolios } = params
     const { xpub, portfolioId, type } = query
     const { app, network } = this.options
     const portfolioAddressesService = app.service('portfolio-addresses')
-    const listUnspentService = app.service('listunspent')
     const hdnode = bitcoin.HDNode.fromBase58(xpub, network)
-    const addressesMap = {}
     const typeUPPER = type.toUpperCase()
+
+    const portfolio = (userPortfolios || []).find(portfolio => portfolio._id.toString() === portfolioId.toString())
+    if (!portfolio) {
+      return Promise.reject(new errors.BadRequest('portfolio not found'))
+    }
+
+    // Date to set as the timestamp when importing new addresses
+    // (import crawls blockchain back to the date, enabling listunspent calls to the imported address)
+    const importFrom = portfolio.importFrom || portfolio.createData
 
     return portfolioAddressesService.find({ query: { portfolioId, type: typeUPPER } })
       .then(response => {
@@ -165,12 +212,12 @@ class Service {
         const externalAddresses = portfolioAddresses.filter(addr => !addr.isChange)
 
         return Promise.all([
-          checkAllExisting(listUnspentService, portfolioAddressesService, typeUPPER, hdnode, changeAddresses, 0),
-          checkAllExisting(listUnspentService, portfolioAddressesService, typeUPPER, hdnode, externalAddresses, 0)
+          checkAllExisting(app, typeUPPER, hdnode, changeAddresses, 0),
+          checkAllExisting(app, typeUPPER, hdnode, externalAddresses, 0)
         ]).then(() => {
           return Promise.all([
-            gapOf20(listUnspentService, portfolioAddressesService, portfolioId, typeUPPER, true, hdnode, changeAddresses),
-            gapOf20(listUnspentService, portfolioAddressesService, portfolioId, typeUPPER, false, hdnode, externalAddresses)
+            gapOf20(app, portfolioId, typeUPPER, true, hdnode, changeAddresses, importFrom),
+            gapOf20(app, portfolioId, typeUPPER, false, hdnode, externalAddresses, importFrom)
           ]).then(() => {
             return Promise.resolve({
               changeAddresses,

@@ -58,6 +58,14 @@ exports.setupMock = function () {
     switch (data.method) {
       case 'listunspent':
         return handleListUnspent(request)
+      case 'importmulti':
+        return [200, {
+          result: [
+            { success: true }
+          ],
+          error: null,
+          id: null
+        }]
       case 'sendrawtransaction':
         return [200, {
           result: '036fc4cbbb510a5845690bc48dc2883911e653e011e822259cda5551efc50c88',

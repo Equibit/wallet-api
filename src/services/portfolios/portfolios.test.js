@@ -94,6 +94,7 @@ function runTests (feathersClient) {
               'createdAt',
               'updatedAt',
               'addressesMeta',
+              'importFrom',
               'userId'
             ]
             Object.keys(portfolio).forEach(field => {

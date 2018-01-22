@@ -15,17 +15,11 @@ module.exports = function (app) {
     unrealizedPL: { type: Number },
     unrealizedPLPercent: { type: Number },
     userId: { type: ObjectId, required: true },
+    // when importing addresses ( https://bitcoin.org/en/developer-reference#importmulti ), 'importFrom' this is the timestamp argument
+    importFrom: { type: Date, default: Date.now },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
-    // ,
-    // addressesMeta: [{
-    //   index: { type: Number, required: true },
-    //   type: { type: String, required: true }, // EQB or BTC
-    //   isChange: { type: Boolean, default: false },
-    //   isUsed: { type: Boolean, default: false },
-    //   createdAt: { type: Date, default: Date.now },
-    //   updatedAt: { type: Date, default: Date.now }
-    // }]
+    // addressesMeta is array of 'portfolio-addresses' records
   }, {
     timestamps: true
   })
