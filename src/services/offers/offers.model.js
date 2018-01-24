@@ -35,22 +35,12 @@ module.exports = function (app) {
     // For HTLC we need 2 or 3 addresses:
     // - Buy offer:
     //    1. btcAddress for our own refund.
-    //    2. eqbAddress (trading) for receiving securities from a seller.
-    //    3. eqbAddress (holding) to store the securities in the end.
+    //    2. eqbAddress for receiving securities from a seller.
     // - Sell offer:
-    //    1. eqbAddress for a refund (a holding address).
+    //    1. eqbAddress for a refund.
     //    2. btcAddress for receiving payment from a buyer.
     btcAddress: { type: String, required: true },
-    eqbAddressTrading: { type: String },  // Note: trading address is not required for for a SELL offer.
-    eqbAddressHolding: { type: String, required: true },
-
-    // EQB address to receive securities to for a BUY offer
-    // eqbAddress: 'string',
-    // BTC address to receive payment to for a SELL offer
-    // btcAddress: 'string',
-    // Refund address that will be used in HTLC transaction
-    // refundEqbAddress: 'string',
-    // refundBtcAddress: 'string',
+    eqbAddress: { type: String, required: true },
 
     description: { type: String },
     createdAt: { type: Date, default: Date.now },
