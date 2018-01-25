@@ -138,8 +138,9 @@ const countGap = function countGap (addresses) {
 */
 const importAddressesCore = function importAddressesCore (app, type, addressesMap, importFrom) {
   const proxycoreService = app.service('proxycore')
+  const timestamp = new Date(importFrom).getTime() || 'now'
   const param = Object.keys(addressesMap).map(address => {
-    return { scriptPubKey: { address }, timestamp: importFrom + 0, watchonly: true }
+    return { scriptPubKey: { address }, timestamp, watchonly: true }
   })
 
   const importPromise = proxycoreService.find({
