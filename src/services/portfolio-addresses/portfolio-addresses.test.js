@@ -161,28 +161,12 @@ function runTests (feathersClient) {
     })
 
     describe('Client Unauthenticated', function () {
-      it(`requires auth for find requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'find')
-      })
+      const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
 
-      it(`requires auth for get requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'get')
-      })
-
-      it(`requires auth for create requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'create')
-      })
-
-      it(`requires auth for update requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'update')
-      })
-
-      it(`requires auth for patch requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'patch')
-      })
-
-      it(`requires auth for remove requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'remove')
+      methods.forEach(method => {
+        it(`requires auth on ${method}`, function () {
+          assertRequiresAuth(serviceOnClient, method)
+        })
       })
     })
 

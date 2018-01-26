@@ -21,7 +21,7 @@ module.exports = function () {
   // Get our initialized service so that we can register hooks and filters
   const service = app.service('xpub-crawl')
 
-  service.hooks(hooks)
+  service.hooks(hooks(app))
 
   if (service.filter) {
     service.filter(filters)

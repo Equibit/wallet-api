@@ -3,10 +3,10 @@ const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const { discard, iff, isProvider, preventChanges } = require('feathers-hooks-common')
 
 // decorate params with portfolios the user owns in 'userPortfolios' property for validations
-const addUserPortfoliosToParams = require('./hooks/hook.add-user-portfolios-to-params')
+const addUserPortfoliosToParams = require('../../hooks/hook.add-user-portfolios-to-params')
 
 // restrict query to portfolioIds owned by params.user
-const restrictQueryToUserPortfolio = require('./hooks/hook.restrict-query-to-user-portfolio')
+const restrictQueryToUserPortfolio = require('../../hooks/hook.restrict-query-to-user-portfolio')
 
 // make sure create data has portfolioId specified that belongs to current user
 const verifyPortfolioIdOnData = require('./hooks/hook.verify-portfolio-id-on-data')
