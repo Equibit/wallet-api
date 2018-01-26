@@ -100,12 +100,13 @@ const checkUnspentAndMarkUsedAddresses = function checkUnspentAndMarkUsedAddress
 
 const checkAllExisting = function checkAllExisting (app, type, hdnode, addresses, index) {
   if (index < addresses.length) {
-    const useAddresses = addresses.slice(index, index + 20)
+    const useAddresses = addresses //.slice(index, index + 20)
     const addressesMap = deriveAddresses(hdnode, useAddresses)
     const allUpToDatePromise = checkUnspentAndMarkUsedAddresses(app, type, addressesMap)
-    return allUpToDatePromise.then(() => {
-      return checkAllExisting(app, type, hdnode, addresses, index + 20)
-    })
+    return allUpToDatePromise
+    // .then(() => {
+    //   return checkAllExisting(app, type, hdnode, addresses, index + 20)
+    // })
   }
   return Promise.resolve(true)
 }

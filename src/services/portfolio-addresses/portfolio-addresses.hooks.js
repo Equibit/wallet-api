@@ -87,7 +87,14 @@ module.exports = function (app) {
       all: [
         discard('__v')
       ],
-      find: [],
+      find: [
+        context => {
+          if (Array.isArray(context.result)) {
+            context.result = { data: context.result }
+          }
+          return Promise.resolve(context)
+        }
+      ],
       get: [],
       create: [],
       update: [],
