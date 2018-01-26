@@ -7,7 +7,8 @@ const service = '/xpub-crawl'
 const serviceOnServer = app.service(service)
 const xpubs = utils.xpub()
 
-describe(`${service} Service`, function () {
+// disabled until service is used since they take a few seconds to run
+describe.skip(`${service} Service`, function () {
   utils.clients.forEach(client => {
     runTests(client)
   })

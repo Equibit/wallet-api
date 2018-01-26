@@ -7,12 +7,10 @@ const filters = require('./portfolio-addresses.filters')
 module.exports = function () {
   const app = this
   const Model = createModel(app)
-  const paginate = app.get('paginate')
 
   const options = {
     name: 'portfolio-addresses',
-    Model,
-    paginate
+    Model
   }
 
   // Initialize our service with any options it requires
