@@ -104,7 +104,7 @@ function runTests (feathersClient) {
             btcAddress: 'test-address',
 
             // HTLC:
-            eqbAddressHolding: 'some-address',
+            eqbAddress: 'some-address',
             timelock: 144,
             hashlock: '123'
           }
