@@ -8,6 +8,9 @@ const addUserPortfoliosToParams = require('../../hooks/hook.add-user-portfolios-
 // restrict query to portfolioIds owned by params.user
 const restrictQueryToUserPortfolio = require('../../hooks/hook.restrict-query-to-user-portfolio')
 
+// helps avoid accidnetal data wipes: if id is not present on hook context and _id is not in params query, request fails
+const idRequired = require('../../hooks/hook.id-required')
+
 // make sure create data has portfolioId specified that belongs to current user
 const verifyPortfolioIdOnData = require('./hooks/hook.verify-portfolio-id-on-data')
 
@@ -63,6 +66,7 @@ module.exports = function (app) {
       patch: [
         iff(
           isProvider('external'),
+          idRequired(),
           verifyIdBelongsToUser(app),
           preventChanges(
             'portfolioId',
@@ -78,6 +82,7 @@ module.exports = function (app) {
       remove: [
         iff(
           isProvider('external'),
+          idRequired(),
           verifyIdBelongsToUser(app)
         )
       ]

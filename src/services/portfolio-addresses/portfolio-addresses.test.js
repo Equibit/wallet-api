@@ -208,6 +208,26 @@ function runTests (feathersClient) {
           })
       })
 
+      describe('Cannot patch multiple', function () {
+        it('requires id', function (done) {
+          const user = this.user
+
+          userUtils.authenticateTemp(app, feathersClient, user)
+            .then(() => {
+              serviceOnClient.patch(null, {})
+                .then(() => {
+                  done('should have errored')
+                })
+                .catch(err => {
+                  assert(err, 'errors without id')
+                  assert.equal(err.message, 'id must be specified', 'correct error')
+                  done()
+                })
+            })
+            .catch(done)
+        })
+      })
+
       describe('Can patch isUsed field', function () {
         const patchData = {
           isUsed: true
@@ -279,6 +299,26 @@ function runTests (feathersClient) {
               })
               .catch(done)
           })
+        })
+      })
+
+      describe('Cannot remove multiple', function () {
+        it('requires id', function (done) {
+          const user = this.user
+
+          userUtils.authenticateTemp(app, feathersClient, user)
+            .then(() => {
+              serviceOnClient.remove(null)
+                .then(() => {
+                  done('should have errored')
+                })
+                .catch(err => {
+                  assert(err, 'errors without id')
+                  assert.equal(err.message, 'id must be specified', 'correct error')
+                  done()
+                })
+            })
+            .catch(done)
         })
       })
     })
