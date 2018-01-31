@@ -41,11 +41,10 @@ class Service {
   }
 
   create (data, params) {
-    if (Array.isArray(data)) {
-      return Promise.all(data.map(current => this.create(current)))
-    }
-
-    return Promise.resolve(data)
+    console.log(`create:: `, data, params)
+    return this.find({
+      query: data
+    })
   }
 
   update (id, data, params) {
