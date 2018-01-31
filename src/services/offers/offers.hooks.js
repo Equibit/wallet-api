@@ -1,5 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { discard } = require('feathers-hooks-common')
+const { discard, iff, isProvider } = require('feathers-hooks-common')
+const idRequired = require('../../hooks/hook.id-required')
 const findAddressMap = require('../../hooks/find-address-map')
 
 module.exports = function (app) {
@@ -11,9 +12,24 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [],
-      update: [],
-      patch: [],
-      remove: []
+      update: [
+        iff(
+          isProvider('external'),
+          idRequired()
+        )
+      ],
+      patch: [
+        iff(
+          isProvider('external'),
+          idRequired()
+        )
+      ],
+      remove: [
+        iff(
+          isProvider('external'),
+          idRequired()
+        )
+      ]
     },
 
     after: {

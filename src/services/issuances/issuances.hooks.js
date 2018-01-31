@@ -1,5 +1,6 @@
 // const { authenticate } = require('feathers-authentication').hooks;
-const { disallow } = require('feathers-hooks-common')
+const { disallow, iff, isProvider } = require('feathers-hooks-common')
+const idRequired = require('../../hooks/hook.id-required')
 
 module.exports = function (app) {
   return {
@@ -33,8 +34,18 @@ module.exports = function (app) {
         //   }
         // }
       ],
-      update: [],
-      patch: [],
+      update: [
+        iff(
+          isProvider('external'),
+          idRequired()
+        )
+      ],
+      patch: [
+        iff(
+          isProvider('external'),
+          idRequired()
+        )
+      ],
       remove: [
         disallow('external')
       ]
