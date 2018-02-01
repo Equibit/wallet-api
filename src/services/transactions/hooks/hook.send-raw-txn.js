@@ -35,7 +35,10 @@ module.exports = function (options) {
     .catch(err => {
       console.log('_______ PROXY ERROR: ', err.response.data)
       console.log('USING PARAMS: ', formattedParams)
-      throw new Error(err.response.data)
+      throw new Error(err.response.data.error.message)
+
+      // E.g.:
+      // {code: -26, message: "16: mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)"}
     })
   }
 }
