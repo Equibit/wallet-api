@@ -25,7 +25,10 @@ module.exports = function (app) {
     secretEncrypted: { type: String },
     secret: { type: String }, // Plain secret after it was revealed in tx #3.
     hashlock: { type: String, required: true },
+    // Timelock for HTLC1 (post offer):
     timelock: { type: Number, required: true },
+    // Timelock for HTLC2 (accept offer):
+    timelock2: { type: Number },
     htlcStep: { type: Number },
     htlcTxId1: { type: String },
     htlcTxId2: { type: String },
