@@ -1,5 +1,18 @@
 {
   "host": "HOST",
   "port": "PORT",
-  "mongodb": "MONGO_DB_URI"
+  "mongodb": "MONGO_DB_URI",
+  "bitcoinCore": {
+    "url": "BITCOIN_CORE_URL",
+    "username": "BITCOIN_CORE_USERNAME",
+    "password": "BITCOIN_CORE_PASSWORD",
+    "methodPrefix": ""
+  },
+  "equibitCore": {
+    "url": "EQUIBIT_CORE_URL",
+    "username": "EQUIBIT_CORE_USERNAME",
+    "password": "EQUIBIT_CORE_PASSWORD",
+    "methodPrefix": ""
+  },
+  "addressMapEncryptionKey": "ADDRESS_MAP_ENCRYPTION_KEY"
 }
