@@ -13,12 +13,19 @@ class Service {
     const config = this.options.app.get(node === 'eqb' ? 'equibitCore' : 'bitcoinCore')
     console.log('PROXYCORE: find params.query and config: ', params.query, config)
 
+    // Disable blockchain rescan since it takes several minutes even for TestNet:
+    if (params.query.method === 'importaddress') {
+      formattedParams[1] = ''
+      formattedParams[2] = false
+    }
+
+    console.log('formattedParams', formattedParams)
     return axios({
       method: 'POST',
       url: config.url,
       data: {
         jsonrpc: '1.0',
-        method: (config.methodPrefix || '') + params.query.method,
+        method: params.query.method,
         params: formattedParams
       },
       auth: {
