@@ -30,7 +30,8 @@ class Service {
     .catch(err => {
       console.log('_______ PROXYCORE ERROR: ', (err.response && err.response.data) || err.message)
       console.log('USING PARAMS: ', JSON.stringify(formattedParams, null, 2))
-      throw new errors.GeneralError(err.response && err.response.data) || {error: {message: err.message}}
+      return (err.response && err.response.data) || {error: {message: err.message}}
+      // throw new errors.GeneralError(err.response && err.response.data) || {error: {message: err.message}}
     })
   }
 
