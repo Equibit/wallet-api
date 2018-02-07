@@ -27,7 +27,7 @@ module.exports = function (options) {
         issuanceUnit: data.issuanceUnit,
         txId: data.txId,
         amount: data.amount,
-        fee: data.fee,
+        // Note: no fee should be shown because its paid by another party.
         htlcStep: data.htlcStep,
         hashlock: data.hashlock,
         timelock: data.timelock,
