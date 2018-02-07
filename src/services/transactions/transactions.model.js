@@ -4,6 +4,7 @@
 // for more of what you can do here.
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
+  const { ObjectId } = mongooseClient.Schema.Types
   const transactions = new mongooseClient.Schema({
     // Used to link a transaction to a portfolio in the UI
     // When we create a transaction, we always record the `address`.
@@ -54,6 +55,9 @@ module.exports = function (app) {
     // TODO: Validate the amount.
     amount: { type: Number, required: true }, // Integer
     fee: { type: Number },
+
+    // Use offer ID when tx is part of an HTLC atomic swap
+    offerId: { type: ObjectId },
 
     description: { type: String },
     createdAt: { type: Date, default: Date.now },
