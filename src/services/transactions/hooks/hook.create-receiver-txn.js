@@ -30,7 +30,8 @@ module.exports = function (options) {
         fee: data.fee,
         htlcStep: data.htlcStep,
         hashlock: data.hashlock,
-        timelock: data.timelock
+        timelock: data.timelock,
+        offerId: data.offerId
       })
       console.log(`hook.create-receiver-txn: -> ${txData.type} (${txData.address})`, txData)
 
