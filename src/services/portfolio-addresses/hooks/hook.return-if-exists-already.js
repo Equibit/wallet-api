@@ -8,7 +8,8 @@ module.exports = function (app) {
       query: {
         portfolioId: data.portfolioId,
         type: (data.type || '').toUpperCase(),
-        index: ~~(data.index)
+        index: ~~(data.index),
+        isChange: !!data.isChange
       }
     }).then(response => {
       const result = response.data[0]
