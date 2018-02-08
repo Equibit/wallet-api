@@ -17,6 +17,9 @@ const verifyPortfolioIdOnData = require('./hooks/hook.verify-portfolio-id-on-dat
 // only execute on external calls, verifies specified id belongs to the logged in user
 const verifyIdBelongsToUser = require('./hooks/hook.verify-id-belongs-to-user')
 
+// return existing record if create data is a duplicate
+const returnIfExistsAlready = require('./hooks/hook.return-if-exists-already')
+
 module.exports = function (app) {
   return {
     before: {
@@ -58,7 +61,8 @@ module.exports = function (app) {
         iff(
           isProvider('external'),
           verifyPortfolioIdOnData()
-        )
+        ),
+        returnIfExistsAlready(app)
       ],
       update: [
         mapUpdateToPatch()
