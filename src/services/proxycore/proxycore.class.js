@@ -1,5 +1,5 @@
 const axios = require('axios')
-const errors = require('feathers-errors')
+// const errors = require('feathers-errors')
 const formatParams = require('../../utils/format-rpc-params.js')
 
 class Service {
