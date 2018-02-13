@@ -54,10 +54,11 @@ describe(`${servicePath} Service`, function () {
     describe.skip('Get', function () {})
 
     describe('Create', function () {
+      const index = ~~(Math.random() * 1000)
       it('can create a portfolio address', function (done) {
         const data = {
           portfolioId: '5a3d5de27f4c2a5832bdf420',
-          index: ~~(Math.random() * 1000),
+          index,
           type: 'EQB', // EQB or BTC
           isChange: false,
           isUsed: false
@@ -69,6 +70,27 @@ describe(`${servicePath} Service`, function () {
             assert.equal(response.isChange, false, 'isChange is correct')
             assert.equal(response.isUsed, false, 'isUsed is correct')
             done()
+          })
+          .catch(done)
+      })
+
+      it('returns original record on duplicate create of a portfolio address', function (done) {
+        const data = {
+          portfolioId: '5a3d5de27f4c2a5832bdf420',
+          index,
+          type: 'EQB', // EQB or BTC
+          isChange: false,
+          isUsed: false
+        }
+
+        serviceOnServer.find({ query: data })
+          .then(findResponse => {
+            serviceOnServer.create(data)
+              .then(createResponse => {
+                assert.equal(createResponse._id.toString(), findResponse.data[0]._id.toString(), '_id is correct')
+                done()
+              })
+              .catch(done)
           })
           .catch(done)
       })
