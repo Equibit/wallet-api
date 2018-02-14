@@ -108,7 +108,7 @@ function runTests (feathersClient) {
 
       describe('Create', function () {
         it('slugifies the name property', function (done) {
-          const newCompany = { name: 'This is a test' }
+          const newCompany = { name: 'This is a test', registrationNumber: '123', domicile: 'Canada' }
 
           serviceOnClient.create(newCompany)
             .then(company => {
@@ -120,7 +120,7 @@ function runTests (feathersClient) {
 
         it('assigns the current userId', function (done) {
           const user = this.user
-          const newCompany = { name: 'Test' }
+          const newCompany = { name: 'Test', registrationNumber: '123', domicile: 'Canada' }
 
           serviceOnClient.create(newCompany)
             .then(company => {
@@ -140,7 +140,7 @@ function runTests (feathersClient) {
           })
 
           it('first company has index of 0', function (done) {
-            const newCompany = { name: 'Test' }
+            const newCompany = { name: 'Test', registrationNumber: '123', domicile: 'Canada' }
 
             serviceOnClient.create(newCompany)
               .then(company => {
@@ -151,7 +151,7 @@ function runTests (feathersClient) {
           })
 
           it('second company has incremented index', function (done) {
-            const newCompany = { name: 'Test2' }
+            const newCompany = { name: 'Test2', registrationNumber: '123', domicile: 'Canada' }
 
             serviceOnClient.create(newCompany)
               .then(company => {
@@ -164,10 +164,12 @@ function runTests (feathersClient) {
           it('only increments for the current user', function (done) {
             serviceOnServer.create({
               name: 'Test5',
-              userId: 'some-user-id'
+              userId: 'some-user-id',
+              registrationNumber: '123',
+              domicile: 'Canada'
             })
               .then(otherCompany => {
-                const newCompany = { name: 'Test2' }
+                const newCompany = { name: 'Test2', registrationNumber: '123', domicile: 'Canada' }
 
                 serviceOnClient.create(newCompany)
                   .then(company => {
