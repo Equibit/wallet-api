@@ -71,7 +71,25 @@ module.exports = app => {
         findAddressMap({ key: app.get('addressMapEncryptionKey') })
       ],
       update: [],
-      patch: [],
+      patch: [
+        // Patch any related issuance if type is CANCEL to decrease the 'sharesIssued' number
+        context => {
+          const transaction = context.result || {}
+          const { type, issuanceId, amount } = transaction
+          const issuancesService = app.service('issuances')
+
+          // if cancelling an issuance (blanking the eqb), then the sharesIssued should be decreased by amount
+          if (type === 'CANCEL' && issuanceId && amount) {
+            // $inc increases the value that's on the record atomicly (so don't need to worry about other changes at the same time)
+            // patching { sharesIssued: issuance.sharesIssued - amount } is dangerous if issuance changed between a fetch and the patch
+            // https://docs.mongodb.com/manual/reference/operator/update/inc/ (inc by negative is a decrease)
+            return issuancesService.patch(issuanceId, { $inc: { sharesIssued: -amount } })
+              .then(patchResponse => Promise.resolve(context))
+          }
+
+          return Promise.resolve(context)
+        }
+      ],
       remove: []
     },
 

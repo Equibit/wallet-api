@@ -15,7 +15,7 @@ module.exports = function (app) {
     isAccepted: { type: Boolean, default: false },
 
     // Issuance info:
-    issuanceId: { type: String, required: true },
+    issuanceId: { type: ObjectId, required: true },
     issuanceAddress: { type: String, required: true },
     companyName: { type: String },
     issuanceName: { type: String },

@@ -2,6 +2,18 @@ const { authenticate } = require('feathers-authentication').hooks
 const { discard, iff, isProvider } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
 const findAddressMap = require('../../hooks/find-address-map')
+const statusOnCreateIsOPEN = require('./hooks/hook.status-on-create-is-open')
+const statusEnforcementOnChange = require('./hooks/hook.status-enforcement-on-change')
+const patchSharesIssuedAfterClosed = require('./hooks/hook.patch-shares-issued-after-closed')
+
+/* Rules for Offer.status enforced by hooks:
+  OPEN, htlcStep=1 (default)
+  TRADING, isAccepted=true, htlcStep=2 to 3
+  CLOSED, htlcStep=4
+  and allow front to set status to CANCELLED if htlcStep !== 4
+
+  No changes allowed if is already CLOSED or CANCELLED
+*/
 
 module.exports = function (app) {
   return {
@@ -11,17 +23,24 @@ module.exports = function (app) {
       ],
       find: [],
       get: [],
-      create: [],
+      create: [
+        iff(
+          isProvider('external'),
+          statusOnCreateIsOPEN()
+        )
+      ],
       update: [
         iff(
           isProvider('external'),
-          idRequired()
+          idRequired(),
+          statusEnforcementOnChange(app)
         )
       ],
       patch: [
         iff(
           isProvider('external'),
-          idRequired()
+          idRequired(),
+          statusEnforcementOnChange(app)
         )
       ],
       remove: [
@@ -48,8 +67,12 @@ module.exports = function (app) {
           from: 'data.eqbAddress'
         })
       ],
-      update: [],
-      patch: [],
+      update: [
+        patchSharesIssuedAfterClosed(app)
+      ],
+      patch: [
+        patchSharesIssuedAfterClosed(app)
+      ],
       remove: []
     },
 

@@ -40,7 +40,7 @@ module.exports = function (app) {
 
     companyName: { type: String },
     companySlug: { type: String },
-    issuanceId: { type: String },
+    issuanceId: { type: ObjectId },
     issuanceName: { type: String },
 
     // The values are defined by the Core:

@@ -72,29 +72,13 @@ function runTests (feathersClient) {
         })
     })
 
-    describe('Client Without Auth', function () {
-      it(`requires auth for find requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'find')
-      })
+    describe('Client Unauthenticated', function () {
+      const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
 
-      it(`requires auth for get requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'get')
-      })
-
-      it(`requires auth for create requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'create')
-      })
-
-      it(`requires auth for update requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'update')
-      })
-
-      it(`requires auth for patch requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'patch')
-      })
-
-      it(`requires auth for remove requests from the client`, function () {
-        assertRequiresAuth(serviceOnClient, 'remove')
+      methods.forEach(method => {
+        it(`requires auth on ${method}`, function () {
+          assertRequiresAuth(serviceOnClient, method)
+        })
       })
     })
 
@@ -221,6 +205,53 @@ function runTests (feathersClient) {
       it.skip('requires companyName and issuanceName if type === EQB', function (done) {})
 
       it.skip('only allows the creator to update the description', function (done) {})
+
+      it('updates related issuance.sharesIssued for cancel type transactions', function (done) {
+        const issuanceServiceOnServer = app.service('issuances')
+        const initialSharesIssued = 222
+        const transactionAmount = 22
+
+        const issuanceCreateData = {
+          userId: this.user._id.toString(),
+          index: 0,
+          companyIndex: 0,
+          issuanceTxId: '000000000000000000000000',
+          issuanceAddress: '000000000000000000000000',
+          companyId: '000000000000000000000000',
+          companyName: '000000000000000000000000',
+          companySlug: '000000000000000000000000',
+          domicile: '000000000000000000000000',
+          issuanceName: '000000000000000000000000',
+          issuanceType: '000000000000000000000000',
+          sharesIssued: initialSharesIssued
+        }
+        authenticate(app, feathersClient, this.user)
+          .then(loggedInResponse => {
+            issuanceServiceOnServer.create(issuanceCreateData).then(issuance => {
+              const issuanceId = issuance._id.toString()
+              assert(issuanceId, 'issuance created')
+              assert.equal(issuance.sharesIssued, initialSharesIssued, 'issuance created correctly')
+
+              const createData = Object.assign({}, dummyTransaction)
+              createData.issuanceId = issuanceId
+              createData.type = 'CANCEL'
+              createData.amount = transactionAmount
+
+              serviceOnClient.create(createData)
+                .then(transaction => {
+                  assert.equal(transaction.type, 'CANCEL')
+                  return issuanceServiceOnServer.find({ query: { _id: issuanceId } })
+                })
+                .then(findResponse => {
+                  const issuanceUpdated = findResponse.data[0]
+                  assert.equal(issuanceUpdated.sharesIssued - transactionAmount, 200, 'sharesIssued was updated correctly')
+                  done()
+                })
+                .catch(done)
+            })
+          })
+          .catch(done)
+      })
     })
   })
 }
