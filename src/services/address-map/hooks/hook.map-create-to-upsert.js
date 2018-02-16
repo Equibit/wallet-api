@@ -16,7 +16,7 @@ module.exports = function (upsertQuery) {
 
     return service.patch(null, data, params)
       .then(result => {
-        console.log(data, params)
+        // console.log(data, params)
         context.result = result[0]
         return context
       })

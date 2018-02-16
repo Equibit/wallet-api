@@ -34,7 +34,7 @@ module.exports = function (app) {
     status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED' ] },
 
     // Issuance info:
-    issuanceId: { type: String, required: true },
+    issuanceId: { type: ObjectId, required: true },
     issuanceAddress: { type: String, required: true },
     issuanceName: { type: String },
     issuanceType: { type: String },

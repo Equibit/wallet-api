@@ -24,7 +24,7 @@ class Service {
   create (data, params) {
     const app = this.app
     const { user } = params
-    console.log('[/subscribe]', data.addresses)
+    // console.log('[/subscribe]', data.addresses)
 
     if (Array.isArray(data)) {
       data = { addresses: data }

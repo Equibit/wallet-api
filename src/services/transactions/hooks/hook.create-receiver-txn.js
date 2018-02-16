@@ -11,7 +11,7 @@ module.exports = function (options) {
       SELL: 'BUY'
     }
 
-    console.log(`hook.create-receiver-txn: (createReceiverTxn=${data.createReceiverTxn})  type=${data.type}, fromAddress=(${data.fromAddress})}, toAddress=(${data.toAddress})}`)
+    // console.log(`hook.create-receiver-txn: (createReceiverTxn=${data.createReceiverTxn})  type=${data.type}, fromAddress=(${data.fromAddress})}, toAddress=(${data.toAddress})}`)
     if (data.createReceiverTxn && typeMap[data.type]) {
       const txData = formatTxnData({
         address: data.address === data.toAddress ? data.fromAddress : data.toAddress,
@@ -33,7 +33,7 @@ module.exports = function (options) {
         timelock: data.timelock,
         offerId: data.offerId
       })
-      console.log(`hook.create-receiver-txn: -> ${txData.type} (${txData.address})`, txData)
+      // console.log(`hook.create-receiver-txn: -> ${txData.type} (${txData.address})`, txData)
 
       return service.create(txData).then(response => {
         return context
