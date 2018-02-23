@@ -2,7 +2,7 @@ const { authenticate } = require('feathers-authentication').hooks
 const { discard, iff, isProvider, stashBefore } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
 const getEventAddress = require('../../hooks/get-event-address')
-// const createNotification = require('../../hooks/create-notification')
+const createNotification = require('../../hooks/create-notification')
 const statusOnCreateIsOPEN = require('./hooks/hook.status-on-create-is-open')
 const statusEnforcementOnChange = require('./hooks/hook.status-enforcement-on-change')
 const patchSharesIssuedAfterClosed = require('./hooks/hook.patch-shares-issued-after-closed')
@@ -48,33 +48,33 @@ module.exports = function (app) {
           // Notify the offer creator
           hook.notificationAddress = hook.result.eqbAddress
         }
-      }// ,
-      // createNotification({
-      //   type: 'offer',
-      //   addressPath: 'notificationAddress',
-      //   fields: {
-      //     offerId: 'result._id',
-      //     orderId: 'result.orderId',
-      //     type: 'result.type',
-      //     status: 'result.status',
-      //     action: hook => {
-      //       const offerStatus = hook.result.status === 'OPEN' || hook.result.status === 'TRADING'
-      //         ? (hook.result.htlcStep < 3 ? 'PROGRESS' : 'DONE')
-      //         : hook.result.status
-      //       return {
-      //         'PROGRESS': 'dealFlowMessageTitleOfferAccepted',
-      //         'DONE': 'dealFlowMessageTitleDealClosed',
-      //         'CANCELLED': 'dealFlowMessageTitleOfferCancelled',
-      //         'REJECTED': 'dealFlowMessageTitleOfferRejected'
-      //       }[offerStatus]
-      //     },
-      //     htlcStep: 'result.htlcStep',
-      //     quantity: 'result.quantity',
-      //     currencyType: hook => hook.result.currencyType === 'EQB' ? 'shares' : hook.result.currencyType,
-      //     companyName: 'result.companyName',
-      //     issuanceName: 'result.issuanceName'
-      //   }
-      // })
+      },
+      createNotification({
+        type: 'offer',
+        addressPath: 'notificationAddress',
+        fields: {
+          offerId: 'result._id',
+          orderId: 'result.orderId',
+          type: 'result.type',
+          status: 'result.status',
+          action: hook => {
+            const offerStatus = hook.result.status === 'OPEN' || hook.result.status === 'TRADING'
+              ? (hook.result.htlcStep < 3 ? 'PROGRESS' : 'DONE')
+              : hook.result.status
+            return {
+              'PROGRESS': 'dealFlowMessageTitleOfferAccepted',
+              'DONE': 'dealFlowMessageTitleDealClosed',
+              'CANCELLED': 'dealFlowMessageTitleOfferCancelled',
+              'REJECTED': 'dealFlowMessageTitleOfferRejected'
+            }[offerStatus]
+          },
+          htlcStep: 'result.htlcStep',
+          quantity: 'result.quantity',
+          currencyType: hook => hook.result.currencyType === 'EQB' ? 'shares' : hook.result.currencyType,
+          companyName: 'result.companyName',
+          issuanceName: 'result.issuanceName'
+        }
+      })
     )
   ]
 
@@ -135,29 +135,29 @@ module.exports = function (app) {
             hook.order = result
             return hook
           })
-        }// ,
-        // createNotification({
-        //   type: 'offer',
-        //   addressPath: hook => {
-        //     if (hook.result.type === 'BUY') {
-        //       return hook.order.btcAddress
-        //     } else {
-        //       return hook.order.eqbAddress
-        //     }
-        //   },
-        //   fields: {
-        //     offerId: 'result._id',
-        //     orderId: 'result.orderId',
-        //     type: 'result.type',
-        //     action: () => 'dealFlowMessageTitleOfferReceived',
-        //     status: 'result.status',
-        //     htlcStep: 'result.htlcStep',
-        //     quantity: 'result.quantity',
-        //     currencyType: 'result.currencyType',
-        //     companyName: 'result.companyName',
-        //     issuanceName: 'result.issuanceName'
-        //   }
-        // })
+        },
+        createNotification({
+          type: 'offer',
+          addressPath: hook => {
+            if (hook.result.type === 'BUY') {
+              return hook.order.btcAddress
+            } else {
+              return hook.order.eqbAddress
+            }
+          },
+          fields: {
+            offerId: 'result._id',
+            orderId: 'result.orderId',
+            type: 'result.type',
+            action: () => 'dealFlowMessageTitleOfferReceived',
+            status: 'result.status',
+            htlcStep: 'result.htlcStep',
+            quantity: 'result.quantity',
+            currencyType: 'result.currencyType',
+            companyName: 'result.companyName',
+            issuanceName: 'result.issuanceName'
+          }
+        })
       ],
       update: postUpdateHooks,
       patch: postUpdateHooks,
