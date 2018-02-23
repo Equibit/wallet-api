@@ -74,7 +74,6 @@ module.exports = function (app) {
           quantity: hook => (hook.result.htlcStep === 2 || hook.result.htlcrStep === 3) ^ hook.result.type === 'BUY'
                       ? hook.result.quantity
                       : `${hook.params.order.price * hook.result.quantity} µBTC`,
-          currencyType: hook => hook.result.currencyType === 'EQB' ? 'shares' : hook.result.currencyType,
           companyName: 'result.companyName',
           issuanceName: 'result.issuanceName'
         }
@@ -156,11 +155,10 @@ module.exports = function (app) {
             action: () => 'dealFlowMessageTitleOfferReceived',
             status: 'result.status',
             htlcStep: 'result.htlcStep',
-            quantity: hook => (hook.result.htlcStep === 2 || hook.result.htlcrStep === 3) ^ hook.result.type === 'BUY'
+            quantity: hook => hook.result.type === 'SELL'
                         ? hook.result.quantity
                         : `${hook.params.order.price * hook.result.quantity} µBTC`,
             price: 'result.price',
-            currencyType: 'result.currencyType',
             companyName: 'result.companyName',
             issuanceName: 'result.issuanceName'
           }
