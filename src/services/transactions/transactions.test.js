@@ -39,7 +39,7 @@ function runTests (feathersClient) {
         userUtils.removeAll(app),
         app.service('/login-attempts').remove(null, {}),
         app.service('/transactions').remove(null, { query: { toAddress: dummyTransaction.toAddress } }),
-        // app.service('/notifications').remove(null, { query: { address: dummyTransaction.address } })
+        app.service('/notifications').remove(null, { query: { address: dummyTransaction.address } })
       ])
     })
 

@@ -20,7 +20,7 @@ const portfolioBalance = require('./portfolio-balance/portfolio-balance.service.
 const xpubCrawl = require('./xpub-crawl/xpub-crawl.service.js')
 const offers = require('./offers/offers.service.js')
 const bitcoinAverage = require('./bitcoin-average/bitcoin-average.service.js')
-// const notifications = require('./notifications/notifications.service.js')
+const notifications = require('./notifications/notifications.service.js')
 
 module.exports = function () {
   const app = this
@@ -44,5 +44,5 @@ module.exports = function () {
   app.configure(xpubCrawl)
   app.configure(offers)
   app.configure(bitcoinAverage)
-  // app.configure(notifications)
+  app.configure(notifications)
 }
