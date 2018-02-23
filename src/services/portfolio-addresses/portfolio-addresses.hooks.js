@@ -73,6 +73,7 @@ module.exports = function (app) {
           idRequired(),
           verifyIdBelongsToUser(app),
           preventChanges(
+            true,
             'portfolioId',
             'index',
             'type',

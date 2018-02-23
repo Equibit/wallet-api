@@ -15,17 +15,12 @@ const watchlist = require('./watchlist/watchlist.service.js')
 const listunspent = require('./listunspent/listunspent.service.js')
 const transactions = require('./transactions/transactions.service.js')
 const subscribe = require('./subscribe/subscribe.service.js')
-const addressMap = require('./address-map/address-map.service.js')
-
 const addressMeta = require('./address-meta/address-meta.service.js')
-
 const portfolioBalance = require('./portfolio-balance/portfolio-balance.service.js')
-
 const xpubCrawl = require('./xpub-crawl/xpub-crawl.service.js')
-
 const offers = require('./offers/offers.service.js')
-
 const bitcoinAverage = require('./bitcoin-average/bitcoin-average.service.js')
+// const notifications = require('./notifications/notifications.service.js')
 
 module.exports = function () {
   const app = this
@@ -44,10 +39,10 @@ module.exports = function () {
   app.configure(listunspent)
   app.configure(transactions)
   app.configure(subscribe)
-  app.configure(addressMap)
   app.configure(addressMeta)
   app.configure(portfolioBalance)
   app.configure(xpubCrawl)
   app.configure(offers)
   app.configure(bitcoinAverage)
+  // app.configure(notifications)
 }

@@ -27,7 +27,6 @@ module.exports = function verifyFailedLogins (options) {
     if (lastEmailed && lastEmailed.date < timeframe) {
       failedLogins = []
     }
-
     // Don't accumulate more failedLogins until the timeframe resets
     if (failedLogins.length <= options.failureCount - 1) {
       if (failedLogins.length === options.failureCount - 1) {

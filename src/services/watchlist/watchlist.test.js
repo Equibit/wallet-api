@@ -5,7 +5,7 @@ const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
 const userUtils = require('../../../test-utils/users')
 const objectid = require('objectid')
 
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+const testEmails = userUtils.testEmails
 
 const service = '/watchlist'
 
@@ -21,11 +21,11 @@ function runTests (feathersClient) {
 
   describe(`${service} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } })
+      return userUtils.removeAll(app)
     })
     after(function () {
       return Promise.all([
-        app.service('/users').remove(null, { query: { email: { $in: testEmails } } }),
+        userUtils.removeAll(app),
         app.service('/companies').remove(null, { query: { name: 'test-company' } }),
         app.service('/watchlist').remove(null, { query: { companyName: 'test-company' } })
       ])
@@ -81,7 +81,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       feathersClient.logout()
         // Remove all users after tests run.
-        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
+        .then(() => userUtils.removeAll(app))
         // Remove all watch data
         .then(() => app.service('watchlist').remove(null, {}))
         .then(() => { done() })

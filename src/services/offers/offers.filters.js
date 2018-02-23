@@ -1,7 +1,7 @@
 module.exports = function (data, connection, hook) {
   const { addressMap } = hook.params
 
-  if (addressMap && addressMap.identifier === connection.uid) {
+  if (addressMap && connection.addresses && connection.addresses[addressMap.address]) {
     return data
   } else {
     // todo: temporarily notify everybody.

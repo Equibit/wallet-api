@@ -1,6 +1,7 @@
 const assert = require('assert')
 const app = require('../../app')
 const utils = require('../../../test-utils/index')
+const userUtils = utils.users
 const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
 
 utils.clients.forEach(client => {
@@ -12,7 +13,7 @@ function runTests (feathersClient) {
 
   describe(`forgot-password Service Tests - ${transport}`, function () {
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     beforeEach(function (done) {
@@ -30,7 +31,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       // Remove all users and forgot-password after tests run.
       feathersClient.logout()
-        .then(() => app.service('users').remove(null, { query: { email: { $in: testEmails } } }))
+        .then(() => userUtils.removeAll(app))
         .then(() => {
           done()
         })

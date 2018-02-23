@@ -2,7 +2,8 @@ const assert = require('assert')
 const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+const userUtils = utils.users
+const testEmails = userUtils.testEmails
 
 utils.clients.forEach(client => {
   runTests(client)
@@ -14,7 +15,7 @@ function runTests (feathersClient) {
 
   describe(`Orders Service Tests - ${transport}`, function () {
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     describe('Client Without Auth', function () {

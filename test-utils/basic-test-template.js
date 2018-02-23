@@ -1,6 +1,7 @@
 const assert = require('assert')
 const app = require('../../../src/app')
 const utils = require('../../../test-utils/index')
+const userUtils = utils.users
 
 const servicePath = '/______'
 const serviceOnServer = app.service(servicePath)
@@ -50,13 +51,13 @@ function runTests (feathersClient) {
 
   describe(`${servicePath} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, {}) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     beforeEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').create({ email: 'test@equibit.org' }))
-        .then(() => app.service('/users').create({ email: 'test2@equibit.org' }))
+        .then(() => app.service('/users').create({ email: userUtils.testEmails[0] }))
+        .then(() => app.service('/users').create({ email: userUtils.testEmails[1] }))
         .then(user => app.service('/users').find({ query: {} }))
         .then(users => {
           users = users.data || users
@@ -71,7 +72,7 @@ function runTests (feathersClient) {
 
     afterEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, {})) // Remove all users
+        .then(() => userUtils.removeAll(app))
         .then(() => {
           done()
         })
