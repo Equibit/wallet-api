@@ -30,26 +30,25 @@ module.exports = function (app) {
       hook => hook.result.htlcStep !== hook.params.before.htlcStep ||
                 hook.result.status !== hook.params.before.status,
       hook => {
-        if (hook.result.htlcStep === 3) {
-          // update made by the offer holder.
-          // Notify the order creator.
-          return app.service('/orders').get({
-            _id: hook.result.orderId
-          }).then(result => {
-            hook.params.order = result
-
+        // update made by the offer holder.
+        // Notify the order creator.
+        return app.service('/orders').get({
+          _id: hook.result.orderId
+        }).then(result => {
+          hook.params.order = result
+          if (hook.result.htlcStep === 3) {
             if (hook.result.type === 'BUY') {
               hook.notificationAddress = result.btcAddress
             } else {
               hook.notificationAddress = result.eqbAddress
             }
-            return hook
-          })
-        } else {
-          // these updates (steps 2 or 4) were made by the order holder.
-          // Notify the offer creator
-          hook.notificationAddress = hook.result.eqbAddress
-        }
+          } else {
+            // these updates (steps 2 or 4) were made by the order holder.
+            // Notify the offer creator
+            hook.notificationAddress = hook.result.eqbAddress
+          }
+          return hook
+        })
       },
       createNotification({
         type: 'offer',
