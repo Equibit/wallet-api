@@ -63,16 +63,16 @@ module.exports = function (app) {
               ? (hook.result.htlcStep < 3 ? 'PROGRESS' : 'DONE')
               : hook.result.status
             return {
-              'PROGRESS': 'dealFlowMessageTitleOfferAccepted',
-              'DONE': 'dealFlowMessageTitleDealClosed',
+              'PROGRESS': 'dealFlowMessageTitleOfferAccepted', // after htlc step 2
+              'DONE': hook.result.type === 'BUY' ? 'dealFlowMessageTitleCollectPayment' : 'dealFlowMessageTitleCollectSecurities',  // after htlc step 3
+              'CLOSED': 'dealFlowMessageTitleDealClosed', // after htlc step 4
               'CANCELLED': 'dealFlowMessageTitleOfferCancelled',
-              'REJECTED': 'dealFlowMessageTitleOfferRejected'
+              'REJECTED': 'dealFlowMessageTitleOfferRejected' // not currently used but previously supported
             }[offerStatus]
           },
           htlcStep: 'result.htlcStep',
-          quantity: hook => (hook.result.htlcStep === 2 || hook.result.htlcrStep === 3) ^ hook.result.type === 'BUY'
-                      ? hook.result.quantity
-                      : `${hook.params.order.price * hook.result.quantity} µBTC`,
+          quantity: 'result.quantity',
+          unit: 'Shares',
           companyName: 'result.companyName',
           issuanceName: 'result.issuanceName'
         }
@@ -154,9 +154,8 @@ module.exports = function (app) {
             action: () => 'dealFlowMessageTitleOfferReceived',
             status: 'result.status',
             htlcStep: 'result.htlcStep',
-            quantity: hook => hook.result.type === 'SELL'
-                        ? hook.result.quantity
-                        : `${hook.params.order.price * hook.result.quantity} µBTC`,
+            quantity: 'result.quantity',
+            unit: 'Shares',
             price: 'result.price',
             companyName: 'result.companyName',
             issuanceName: 'result.issuanceName'
