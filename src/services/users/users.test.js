@@ -3,7 +3,7 @@ const app = require('../../app')
 require('../../../test-utils/setup')
 const { clients } = require('../../../test-utils/index')
 const userUtils = require('../../../test-utils/users')
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com', 'newtest@equibitgroup.com']
+const { testEmails } = userUtils
 
 clients.forEach(client => {
   runTests(client)
@@ -28,11 +28,11 @@ function runTests (feathersClient) {
     ]
 
     before(function () {
-      return app.service('users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     after(function () {
-      return app.service('users').remove(null, {})
+      return userUtils.removeAll(app)
     })
 
     beforeEach(function (done) {
@@ -54,7 +54,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       // Remove all users after tests run.
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
+        .then(() => userUtils.removeAll(app))
         .then(() => {
           done()
         })
@@ -65,7 +65,7 @@ function runTests (feathersClient) {
 
     it('returns a generic response when creating a user', function () {
       const userService = feathersClient.service('/users')
-      const email = 'some-user@equibit.org'
+      const email = testEmails[0]
 
       return userService.create({ email })
         .then(body => {
@@ -87,9 +87,9 @@ function runTests (feathersClient) {
     })
 
     it('lowerCases email addresses', function () {
-      return app.service('users').create({ email: 'ADMIN@EQUIBIT.ORG' })
+      return app.service('users').create({ email: testEmails[0].toUpperCase() })
         .then(user => {
-          assert(user.email === 'admin@equibit.org', 'the signup email was lowerCased')
+          assert(user.email === testEmails[0].toLowerCase(), 'the signup email was lowerCased')
         })
     })
 

@@ -103,8 +103,7 @@ module.exports = function () {
           // Fetch invalid login user
           context => {
             const { app } = context
-
-            return app.service('users').find({ email: context.data.email })
+            return app.service('users').find({ query: { email: context.data.email } })
               .then(response => {
                 const users = response.data || response
                 const user = users[0]

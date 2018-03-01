@@ -1,8 +1,8 @@
-// Initializes the `address-map` service on path `/address-map`
+// Initializes the `notifications` service on path `/notifications`
 const createService = require('feathers-mongoose')
-const createModel = require('./address-map.model')
-const hooks = require('./address-map.hooks')
-const filters = require('./address-map.filters')
+const createModel = require('./notifications.model')
+const hooks = require('./notifications.hooks')
+const filters = require('./notifications.filters')
 
 module.exports = function () {
   const app = this
@@ -10,16 +10,16 @@ module.exports = function () {
   const paginate = app.get('paginate')
 
   const options = {
-    name: 'address-map',
+    name: 'notifications',
     Model,
     paginate
   }
 
   // Initialize our service with any options it requires
-  app.use('/address-map', createService(options))
+  app.use('/notifications', createService(options))
 
   // Get our initialized service so that we can register hooks and filters
-  const service = app.service('address-map')
+  const service = app.service('notifications')
 
   service.hooks(hooks(app))
 

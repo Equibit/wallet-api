@@ -7,9 +7,13 @@ const sendRawTxn = require('./hooks/hook.send-raw-txn')
 const formatTxn = require('./hooks/hook.format-txn')
 const createReceiverTxn = require('./hooks/hook.create-receiver-txn')
 const requireAddresses = require('./hooks/hook.require-addresses')
-const findAddressMap = require('./hooks/hook.find-address-map')
+const getEventAddress = require('../../hooks/get-event-address')
 const defaultSort = require('./hooks/hook.default-sort')
+<<<<<<< HEAD
 const conditionalRequirements = require('./hooks/hook.conditional-requirements')
+=======
+const createNotification = require('../../hooks/create-notification')
+>>>>>>> development
 
 module.exports = app => {
   const coreParams = {
@@ -86,7 +90,22 @@ module.exports = app => {
         // Creates a separate txn for the receiver's address
         createReceiverTxn(),
         // adds the matching /address-map record to the hook params for use in filters
-        findAddressMap({ key: app.get('addressMapEncryptionKey') })
+        getEventAddress(),
+        iff(
+          hook => hook.data.type === 'OUT',
+          createNotification({
+            type: 'transaction',
+            addressPath: 'receiverTxn.toAddress',
+            fields: {
+              type: 'receiverTxn.type',
+              address: 'receiverTxn.address',
+              amount: 'receiverTxn.amount',
+              issuanceType: 'receiverTxn.issuanceType',
+              currencyType: 'receiverTxn.currencyType',
+              transactionId: 'receiverTxn.txId'
+            }
+          })
+        )
       ],
       update: [],
       patch: [],

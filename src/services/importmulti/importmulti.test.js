@@ -4,7 +4,6 @@ require('../../../test-utils/setup')
 const { clients, transactions } = require('../../../test-utils/index')
 const userUtils = require('../../../test-utils/users')
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
 
 const servicePath = 'importmulti'
 const serviceOnServer = app.service(servicePath)
@@ -34,7 +33,7 @@ function runTests (feathersClient) {
 
   describe(`${servicePath} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     beforeEach(function (done) {

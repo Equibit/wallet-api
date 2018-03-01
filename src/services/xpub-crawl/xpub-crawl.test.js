@@ -1,7 +1,8 @@
 const assert = require('assert')
 const app = require('../../app')
 const utils = require('../../../test-utils/index')
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+const userUtils = utils.users
+const testEmails = userUtils.testEmails
 
 const service = '/xpub-crawl'
 const serviceOnServer = app.service(service)
@@ -53,7 +54,7 @@ function runTests (feathersClient) {
 
   describe(`${service} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     beforeEach(function (done) {
@@ -74,7 +75,7 @@ function runTests (feathersClient) {
 
     afterEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } })) // Remove all users
+        .then(() => userUtils.removeAll(app))
         .then(() => {
           done()
         })

@@ -1,6 +1,7 @@
 const assert = require('assert')
 const app = require('../../app')
 const utils = require('../../../test-utils/index')
+const userUtils = utils.users
 
 const servicePath = '/companies'
 const serviceOnServer = app.service(servicePath)
@@ -9,13 +10,13 @@ describe(`${servicePath} Service`, function () {
   before(function () {
     app.service('login-attempts').remove(null, {})
       .then(response => app.service('companies').remove(null, {}))
-      .then(response => app.service('users').remove(null, {}))
+      .then(response => userUtils.removeAll(app))
   })
 
   after(function () {
     app.service('login-attempts').remove(null, {})
       .then(response => app.service('companies').remove(null, {}))
-      .then(response => app.service('users').remove(null, {}))
+      .then(response => userUtils.removeAll(app))
   })
 
   utils.clients.forEach(client => {
@@ -60,7 +61,7 @@ function runTests (feathersClient) {
   describe(`${servicePath} - ${transport} Transport`, function () {
     before(function () {
       // Remove all users
-      return app.service('/users').remove(null, {})
+      return userUtils.removeAll(app)
     })
 
     describe(`${servicePath} - Unauthenticated Client`, function () {

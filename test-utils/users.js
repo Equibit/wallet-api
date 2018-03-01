@@ -4,8 +4,8 @@ const crypto = require('crypto')
 const signed = makeSigned(crypto)
 
 exports.create = function createUser (app) {
-  return app.service('/users').create({ email: 'test@equibit.org' })
-    .then(user => app.service('/users').find({ query: {} }))
+  return app.service('/users').create({ email: exports.testEmails[0] })
+    .then(user => app.service('/users').find({ query: { email: exports.testEmails[0] } }))
     .then(users => {
       users = users.data || users
       return users[0]
@@ -13,7 +13,7 @@ exports.create = function createUser (app) {
 }
 
 exports.removeAll = function remove (app) {
-  return app.service('/users').remove(null, {})
+  return app.service('/users').remove(null, { query: { email: { $in: exports.testEmails } } })
 }
 
 // Reminder: call feathersClient.logout after your test is over.
@@ -77,3 +77,5 @@ exports.authenticate = function authenticateUser (app, feathersClient, user) {
       return feathersClient.authenticate(signedData)
     })
 }
+
+exports.testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com', 'newtest@equibitgroup.com']

@@ -2,7 +2,8 @@ const assert = require('assert')
 const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const assertDisallowed = require('../../../test-utils/assert/disallows')
-const testEmails = ['test2@equibitgroup.com']
+const userUtils = utils.users
+const testEmails = userUtils.testEmails
 
 utils.clients.forEach(client => {
   runTests(client)
@@ -12,14 +13,11 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
 
   describe(`login-attempts Service Tests - ${transport}`, function () {
-    before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
-    })
-
     beforeEach(function () {
       return app.service('login-attempts').remove(null, {})
-        .then(() => app.service('users').create({ email: testEmails[0] }))
-        .then(user => app.service('users').find({ query: { email: { $in: testEmails } } }))
+        .then(() => userUtils.removeAll(app))
+        .then(() => app.service('users').create({ email: testEmails[1] }))
+        .then(user => app.service('users').find({ query: { email: testEmails[1] } }))
         .then(users => {
           this.user = users.data[0]
         })
@@ -32,7 +30,7 @@ function runTests (feathersClient) {
       // Remove all users and login-attempts after tests run.
       return feathersClient.logout()
         .then(() => app.service('login-attempts').remove(null, {}))
-        .then(() => app.service('users').remove(null, { query: { email: { $in: testEmails } } }))
+        .then(() => userUtils.removeAll(app))
         .catch(error => {
           console.log(error)
         })
@@ -81,7 +79,6 @@ function runTests (feathersClient) {
         })
         .then(user => {
           // debugger
-          console.log(`user.failedLogins.length = ${user.failedLogins.length}`)
           assert(user.failedLogins.length === 1, 'the user had one failed login attempt')
           done()
         })

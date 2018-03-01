@@ -2,9 +2,23 @@
 # yarn lockfile v1
 
 
+"@feathers-plus/batch-loader@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@feathers-plus/batch-loader/-/batch-loader-0.3.0.tgz#9e97d174fcf3d4aff8b4db1655757aabdf50b9ec"
+
+"@feathersjs/commons@^1.2.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-1.4.0.tgz#1407c79b690c755afd1087a70471feba6ab03fb0"
+
 "@feathersjs/commons@^1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-1.3.0.tgz#3105d5e3c5d6e3fa9249ef62bde0d5d89b62b0d7"
+
+"@feathersjs/errors@^3.0.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@feathersjs/errors/-/errors-3.3.0.tgz#c5fcc163f49d6b139f10d118eec36e8f90818aff"
+  dependencies:
+    debug "^3.1.0"
 
 "@feathersjs/errors@^3.2.0":
   version "3.2.0"
@@ -1469,16 +1483,6 @@ feathers-hooks-common@^2.0.3:
     feathers-errors "^2.4.0"
     traverse "0.6.6"
 
-feathers-hooks-common@^3.5.5:
-  version "3.5.5"
-  resolved "https://registry.yarnpkg.com/feathers-hooks-common/-/feathers-hooks-common-3.5.5.tgz#40f0f61c3411d3c4a413bace0f31237a1a32d041"
-  dependencies:
-    ajv "^5.2.0"
-    debug "^2.2.0"
-    feathers-errors "^2.4.0"
-    feathers-hooks "^2.0.1"
-    traverse "^0.6.6"
-
 feathers-hooks-common@^3.7.3:
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/feathers-hooks-common/-/feathers-hooks-common-3.10.0.tgz#2ae7dc54091ffa4609df8479c0bfa29dcd31d1a7"
@@ -1487,6 +1491,18 @@ feathers-hooks-common@^3.7.3:
     debug "^3.0.0"
     feathers-errors "^2.4.0"
     feathers-hooks "^2.0.1"
+    traverse "^0.6.6"
+
+feathers-hooks-common@^4.7.0:
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/feathers-hooks-common/-/feathers-hooks-common-4.7.0.tgz#320ceb4b86799569da947855cde35785cdfdbe57"
+  dependencies:
+    "@feathers-plus/batch-loader" "0.3.0"
+    "@feathersjs/commons" "^1.2.0"
+    "@feathersjs/errors" "^3.0.0"
+    ajv "^5.2.0"
+    debug "^3.0.0"
+    process "0.11.10"
     traverse "^0.6.6"
 
 feathers-hooks@^1.8.1:
@@ -3082,6 +3098,10 @@ preserve@^0.2.0:
 process-nextick-args@~1.0.6:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-1.0.7.tgz#150e20b756590ad3f91093f25a4f2ad8bff30ba3"
+
+process@0.11.10:
+  version "0.11.10"
+  resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
 
 progress@^1.1.8:
   version "1.1.8"

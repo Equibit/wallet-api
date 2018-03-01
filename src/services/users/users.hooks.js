@@ -17,6 +17,7 @@ const sendWelcomeEmail = require('./hooks/hook.email.welcome')
 const sendDuplicateSignupEmail = require('./hooks/hook.email.duplicate-signup')
 const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
+const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 
 /* NB: keep() is slated for the next release of feathers-hooks-common.
 This is a stub version that only works on hook.data, to be used until
@@ -82,21 +83,13 @@ module.exports = function (app) {
           hashPassword({ pbkdf2, passwordField: 'tempPassword', timeStampField: 'tempPasswordCreatedAt' })
         )
       ],
-      update: [
-        context => {
-          return context.service.patch(context.id, context.data, context.params)
-            .then(result => {
-              context.result = result
-              return context
-            })
-        }
-      ],
+      update: [mapUpdateToPatch()],
       patch: [
         findUser(),
         iff(
           isProvider('external'),
           // Don't allow external queries to set the 2FA validated or email verified state
-          preventChanges('twoFactorValidatedSession', 'emailVerified'),
+          preventChanges(true, 'twoFactorValidatedSession', 'emailVerified'),
           // Require two-factor for email changes
           // Restrict two-factor code submission to not allow other changes.
           iff(

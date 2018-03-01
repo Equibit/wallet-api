@@ -4,7 +4,8 @@ const utils = require('../../../test-utils/index')
 
 const service = '/portfolio-balance'
 const serviceOnServer = app.service(service)
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+const userUtils = utils.users
+const testEmails = userUtils.testEmails
 
 describe(`${service} Service`, function () {
   utils.clients.forEach(client => {
@@ -51,14 +52,14 @@ function runTests (feathersClient) {
 
   describe(`${service} - ${transport} Transport`, function () {
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     beforeEach(function (done) {
       feathersClient.logout()
         .then(() => app.service('/users').create({ email: testEmails[0] }))
         .then(() => app.service('/users').create({ email: testEmails[1] }))
-        .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
+        .then(user => app.service('users').find({ query: { email: { $in: testEmails } } }))
         .then(users => {
           users = users.data || users
           this.user = users[0]
@@ -72,7 +73,7 @@ function runTests (feathersClient) {
 
     afterEach(function (done) {
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } })) // Remove all users
+        .then(() => userUtils.removeAll(app))
         .then(() => {
           done()
         })

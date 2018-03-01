@@ -23,7 +23,7 @@ class Service {
 
   create (data, params) {
     const app = this.app
-    const { user } = params
+    // const { user } = params
     // console.log('[/subscribe]', data.addresses)
 
     if (Array.isArray(data)) {
@@ -37,9 +37,7 @@ class Service {
     // Find this user's socketObject
     const socketId = Object.keys(app.io.sockets.sockets).reduce((acc, socketId) => {
       let socketFeathers = app.io.sockets.sockets[socketId].feathers
-      if (!acc && socketFeathers.user && socketFeathers.user._id && user._id &&
-        socketFeathers.user._id.toString() === user._id.toString()
-      ) {
+      if (!acc && socketFeathers.uid === params.uid) {
         acc = socketId
       }
       return acc
@@ -47,17 +45,12 @@ class Service {
     assert(socketId, 'A socket was found that matches this connection')
     const socketFeathers = app.io.sockets.sockets[socketId].feathers
 
-    // Use the uid to create `/address-map` pairs.
-    const addressMapService = app.service('address-map')
-    const mappingCreates = data.addresses.map(address => {
-      return addressMapService.create({
-        identifier: socketFeathers.uid,
-        address
-      })
+    socketFeathers.addresses = socketFeathers.addresses || {}
+    data.addresses.forEach(address => {
+      socketFeathers.addresses[address] = true
     })
-    return Promise.all(mappingCreates).then(mappings => {
-      return Promise.resolve(data)
-    })
+
+    return Promise.resolve(data)
   }
 
   update () {
