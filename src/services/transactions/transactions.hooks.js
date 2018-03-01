@@ -9,11 +9,8 @@ const createReceiverTxn = require('./hooks/hook.create-receiver-txn')
 const requireAddresses = require('./hooks/hook.require-addresses')
 const getEventAddress = require('../../hooks/get-event-address')
 const defaultSort = require('./hooks/hook.default-sort')
-<<<<<<< HEAD
 const conditionalRequirements = require('./hooks/hook.conditional-requirements')
-=======
 const createNotification = require('../../hooks/create-notification')
->>>>>>> development
 
 module.exports = app => {
   const coreParams = {
