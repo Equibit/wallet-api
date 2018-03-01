@@ -244,7 +244,7 @@ function runTests (feathersClient) {
                 })
                 .then(findResponse => {
                   const issuanceUpdated = findResponse.data[0]
-                  assert.equal(issuanceUpdated.sharesIssued - transactionAmount, 200, 'sharesIssued was updated correctly')
+                  assert.equal(issuanceUpdated.sharesIssued, initialSharesIssued - transactionAmount, 'sharesIssued was updated correctly')
                   done()
                 })
                 .catch(done)

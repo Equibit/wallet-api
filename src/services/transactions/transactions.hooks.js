@@ -9,6 +9,7 @@ const createReceiverTxn = require('./hooks/hook.create-receiver-txn')
 const requireAddresses = require('./hooks/hook.require-addresses')
 const findAddressMap = require('./hooks/hook.find-address-map')
 const defaultSort = require('./hooks/hook.default-sort')
+const conditionalRequirements = require('./hooks/hook.conditional-requirements')
 
 module.exports = app => {
   const coreParams = {
@@ -24,6 +25,7 @@ module.exports = app => {
       ],
       get: [],
       create: [
+        conditionalRequirements(),
         iff(
           isProvider('external'),
           // turn a transaction hex into transaction details.
@@ -65,19 +67,11 @@ module.exports = app => {
       find: [],
       get: [],
       create: [
-        // Creates a separate txn for the receiver's address
-        createReceiverTxn(),
-        // adds the matching /address-map record to the hook params for use in filters
-        findAddressMap({ key: app.get('addressMapEncryptionKey') })
-      ],
-      update: [],
-      patch: [
         // Patch any related issuance if type is CANCEL to decrease the 'sharesIssued' number
         context => {
           const transaction = context.result || {}
           const { type, issuanceId, amount } = transaction
           const issuancesService = app.service('issuances')
-
           // if cancelling an issuance (blanking the eqb), then the sharesIssued should be decreased by amount
           if (type === 'CANCEL' && issuanceId && amount) {
             // $inc increases the value that's on the record atomicly (so don't need to worry about other changes at the same time)
@@ -88,8 +82,14 @@ module.exports = app => {
           }
 
           return Promise.resolve(context)
-        }
+        },
+        // Creates a separate txn for the receiver's address
+        createReceiverTxn(),
+        // adds the matching /address-map record to the hook params for use in filters
+        findAddressMap({ key: app.get('addressMapEncryptionKey') })
       ],
+      update: [],
+      patch: [],
       remove: []
     },
 
