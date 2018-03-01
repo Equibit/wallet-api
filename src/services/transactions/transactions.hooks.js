@@ -9,6 +9,7 @@ const createReceiverTxn = require('./hooks/hook.create-receiver-txn')
 const requireAddresses = require('./hooks/hook.require-addresses')
 const getEventAddress = require('../../hooks/get-event-address')
 const defaultSort = require('./hooks/hook.default-sort')
+const conditionalRequirements = require('./hooks/hook.conditional-requirements')
 const createNotification = require('../../hooks/create-notification')
 
 module.exports = app => {
@@ -25,6 +26,7 @@ module.exports = app => {
       ],
       get: [],
       create: [
+        conditionalRequirements(),
         iff(
           isProvider('external'),
           // turn a transaction hex into transaction details.
@@ -66,6 +68,22 @@ module.exports = app => {
       find: [],
       get: [],
       create: [
+        // Patch any related issuance if type is CANCEL to decrease the 'sharesIssued' number
+        context => {
+          const transaction = context.result || {}
+          const { type, issuanceId, amount } = transaction
+          const issuancesService = app.service('issuances')
+          // if cancelling an issuance (blanking the eqb), then the sharesIssued should be decreased by amount
+          if (type === 'CANCEL' && issuanceId && amount) {
+            // $inc increases the value that's on the record atomicly (so don't need to worry about other changes at the same time)
+            // patching { sharesIssued: issuance.sharesIssued - amount } is dangerous if issuance changed between a fetch and the patch
+            // https://docs.mongodb.com/manual/reference/operator/update/inc/ (inc by negative is a decrease)
+            return issuancesService.patch(issuanceId, { $inc: { sharesIssued: -amount } })
+              .then(patchResponse => Promise.resolve(context))
+          }
+
+          return Promise.resolve(context)
+        },
         // Creates a separate txn for the receiver's address
         createReceiverTxn(),
         // adds the matching /address-map record to the hook params for use in filters
@@ -87,25 +105,7 @@ module.exports = app => {
         )
       ],
       update: [],
-      patch: [
-        // Patch any related issuance if type is CANCEL to decrease the 'sharesIssued' number
-        context => {
-          const transaction = context.result || {}
-          const { type, issuanceId, amount } = transaction
-          const issuancesService = app.service('issuances')
-
-          // if cancelling an issuance (blanking the eqb), then the sharesIssued should be decreased by amount
-          if (type === 'CANCEL' && issuanceId && amount) {
-            // $inc increases the value that's on the record atomicly (so don't need to worry about other changes at the same time)
-            // patching { sharesIssued: issuance.sharesIssued - amount } is dangerous if issuance changed between a fetch and the patch
-            // https://docs.mongodb.com/manual/reference/operator/update/inc/ (inc by negative is a decrease)
-            return issuancesService.patch(issuanceId, { $inc: { sharesIssued: -amount } })
-              .then(patchResponse => Promise.resolve(context))
-          }
-
-          return Promise.resolve(context)
-        }
-      ],
+      patch: [],
       remove: []
     },
 

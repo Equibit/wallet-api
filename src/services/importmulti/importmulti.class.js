@@ -17,12 +17,13 @@ class Service {
 
   // params.data = { addresses: [array of base58 addresses to import], type: "EQB"|"BTC" }
   create (data, params) {
-    const { addresses, type } = data
+    const { addresses, type, importFrom } = data
     const { app } = this.options
     const { userPortfolios } = params
-    const importFrom = userPortfolios && userPortfolios[0] && userPortfolios[0].importFrom
+    const portfolio = (userPortfolios && userPortfolios[0]) || {}
+    const useImportFrom = importFrom || portfolio.importFrom || portfolio.createdAt
 
-    return importAddressesCore(app, type, addresses, importFrom).catch(err => {
+    return importAddressesCore(app, type, addresses, useImportFrom).catch(err => {
       const errRes = (err.response && err.response.data) || {
         message: err.message
       }

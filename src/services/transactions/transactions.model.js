@@ -58,6 +58,8 @@ module.exports = function (app) {
 
     // Use offer ID when tx is part of an HTLC atomic swap
     offerId: { type: ObjectId },
+    // offer.price at time of purchase
+    costPerShare: { type: Number },
 
     description: { type: String },
     createdAt: { type: Date, default: Date.now },
