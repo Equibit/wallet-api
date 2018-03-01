@@ -50,7 +50,7 @@
     "feathers-errors": "^2.8.2",
     "feathers-fs": "^0.0.3",
     "feathers-hooks": "^2.0.2",
-    "feathers-hooks-common": "^3.5.5",
+    "feathers-hooks-common": "^4.7.0",
     "feathers-mongoose": "^6.0.0",
     "feathers-postmark": "^0.0.7",
     "feathers-rest": "^1.8.0",

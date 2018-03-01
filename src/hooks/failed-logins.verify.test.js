@@ -5,7 +5,7 @@ const userUtils = require('../../test-utils/users')
 
 describe('Hook: Failed Logins', function (done) {
   beforeEach(function (done) {
-    app.service('users').remove(null, {})
+    userUtils.removeAll(app)
       .then(() => {
         userUtils.create(app).then(user => {
           this.user = user

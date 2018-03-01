@@ -36,6 +36,7 @@ module.exports = function (options) {
       // console.log(`hook.create-receiver-txn: -> ${txData.type} (${txData.address})`, txData)
 
       return service.create(txData).then(response => {
+        context.receiverTxn = response
         return context
       })
     } else {

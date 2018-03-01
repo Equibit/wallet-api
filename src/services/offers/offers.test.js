@@ -3,8 +3,6 @@ const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const userUtils = utils.users
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
-const objectid = require('objectid')
 
 utils.clients.forEach(client => {
   runTests(client)
@@ -16,7 +14,7 @@ function runTests (feathersClient) {
 
   describe(`Offers Service Tests - ${transport}`, function () {
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     describe('Client Unauthenticated', function () {
@@ -31,7 +29,7 @@ function runTests (feathersClient) {
 
     describe('Real-time notfications with Auth', function () {
       before(function () {
-        return app.service('users').remove(null, {})
+        return userUtils.removeAll(app)
           .then(() => utils.users.create(app))
           .then(user => {
             return utils.users.authenticate(app, feathersClient, user)
@@ -47,30 +45,44 @@ function runTests (feathersClient) {
                     }
                     return acc
                   }, null)
-                  const identifier = app.io.sockets.sockets[socketId].feathers.uid
-
-                  // Create an address-map record with that socketId
-                  // so a realtime event gets sent out
-                  return app.service('address-map').create({
-                    identifier,
-                    address: 'test-address'
-                  })
+                  app.io.sockets.sockets[socketId].feathers.addresses = ['test-address']
                 }
               })
+          })
+          .then(() => {
+            const createOrderSkel = {
+              'userId': '000000000000000000000000',
+              issuanceId: '000000000000000000000000',
+              'issuanceAddress': '000000000000000000000000',
+              'type': 'SELL',
+              'portfolioId': '000000000000000000000000',
+              'quantity': 60,
+              'price': 10,
+              'status': 'OPEN',
+              'isFillOrKill': false,
+              'goodFor': 7,
+              'companyName': 'Foo',
+              'issuanceName': 'Bar',
+              'issuanceType': 'bonds'
+            }
+            return app.service('orders').create(createOrderSkel).then(order => {
+              this.order = order
+            })
           })
       })
 
       after(function () {
         return feathersClient.logout()
-          .then(() => app.service('users').remove(null, {}))
-          .then(() => app.service('address-map').remove(null, {}))
+          .then(() => userUtils.removeAll(app))
+          .then(() => app.service('orders').remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => app.service('offers').remove(null, { query: { userId: '000000000000000000000000' } }))
       })
 
       if (transport === 'feathers-socketio') {
         it('Sends a real-time update', function (done) {
           const offer = {
-            userId: objectid(),
-            orderId: objectid(),
+            userId: '000000000000000000000000',
+            orderId: this.order._id.toString(),
             type: 'SELL',
             issuanceAddress: '12345',
             quantity: 1,
@@ -96,16 +108,12 @@ function runTests (feathersClient) {
 
           const checkOffer = function checkOffer (offer) {
             assert(offer, 'should receive offer in the event')
-            console.log('on event', offer)
             done()
           }
 
           serviceOnClient.once('created', checkOffer)
 
           serviceOnClient.create(offer)
-            .then(() => {
-              console.log('after create')
-            })
             .catch(error => {
               done(error)
             })
@@ -114,25 +122,11 @@ function runTests (feathersClient) {
     })
 
     describe('With Auth', function () {
-      beforeEach(function (done) {
-        userUtils.create(app).then(user => {
-          this.user = user
-          done()
-        })
-      })
-
-      afterEach(function (done) {
-        feathersClient.logout()
-          .then(() => app.service('issuances').remove(null, {}))
-          .then(() => app.service('offers').remove(null, {}))
-          .then(() => userUtils.removeAll(app))
-          .then(() => done())
-      })
-
       const createDataSkel = {
         userId: '000000000000000000000000',
-        orderId: '000000000000000000000000',
         type: 'SELL',
+        status: 'OPEN',
+        htlcStep: 1,
         quantity: 10,
         price: 333,
         issuanceId: '000000000000000000000000',
@@ -143,71 +137,110 @@ function runTests (feathersClient) {
         eqbAddress: '000000000000000000000000'
       }
 
+      beforeEach(function (done) {
+        userUtils.create(app).then(user => {
+          this.user = user
+
+          const createOrderSkel = {
+            'userId': '000000000000000000000000',
+            issuanceId: '000000000000000000000000',
+            'issuanceAddress': '000000000000000000000000',
+            'type': 'SELL',
+            'portfolioId': '000000000000000000000000',
+            'quantity': 60,
+            'price': 10,
+            'status': 'OPEN',
+            'isFillOrKill': false,
+            'goodFor': 7,
+            'companyName': 'Foo',
+            'issuanceName': 'Bar',
+            'issuanceType': 'bonds'
+          }
+          return app.service('orders').create(createOrderSkel)
+        }).then(order => {
+          this.order = order
+          done()
+        })
+      })
+
+      afterEach(function (done) {
+        feathersClient.logout()
+          .then(() => app.service('offers').remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => app.service('orders').remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => userUtils.removeAll(app))
+          .then(() => done())
+      })
+
       it('sets offer.status automatically - normal flow and some edge cases', function (done) {
-        const createData = Object.assign({}, createDataSkel)
-        createData.userId = this.user._id.toString()
+        const createData = Object.assign({}, createDataSkel, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString()
+        })
         userUtils.authenticateTemp(app, feathersClient, this.user)
-          .then(loggedInResponse => {
-            serviceOnClient.create(createData)
-              .then(offer => {
-                assert.equal(offer.status, 'OPEN')
-                return serviceOnClient.patch(offer._id.toString(), { htlcStep: 1 })
-              })
-              .then(offer => {
-                assert.equal(offer.status, 'OPEN')
-                return serviceOnClient.patch(offer._id.toString(), { status: 'TRADING' })
-              })
-              .then(offer => {
-                assert.equal(offer.status, 'OPEN', 'status cannot be changed to TRADING manually')
-                return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
-              })
-              .then(offer => {
-                assert.equal(offer.status, 'TRADING')
-                return serviceOnClient.patch(offer._id.toString(), { htlcStep: 3, status: 'CLOSED' })
-              })
-              .then(offer => {
-                assert.equal(offer.status, 'TRADING', 'status cannot be changed to CLOSED manually')
-                return serviceOnClient.patch(offer._id.toString(), { status: 'OPEN' })
-              })
-              .then(offer => {
-                assert.equal(offer.status, 'TRADING', 'status cannot be changed to OPEN manually')
-                return serviceOnClient.patch(offer._id.toString(), { htlcStep: 4 })
-              })
-              .then(offer => {
-                assert.equal(offer.status, 'CLOSED')
-                return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED' })
-              })
-              .catch(err => {
-                assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Cannot be cancelled after closed')
-                done()
-              })
-          })
+        .then(loggedInResponse => {
+          return serviceOnClient.create(createData)
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'OPEN')
+          return serviceOnClient.patch(offer._id.toString(), { htlcStep: 1 })
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'OPEN')
+          return serviceOnClient.patch(offer._id.toString(), { status: 'TRADING' })
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'OPEN', 'status cannot be changed to TRADING manually')
+          return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'TRADING')
+          return serviceOnClient.patch(offer._id.toString(), { htlcStep: 3, status: 'CLOSED' })
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'TRADING', 'status cannot be changed to CLOSED manually')
+          return serviceOnClient.patch(offer._id.toString(), { status: 'OPEN' })
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'TRADING', 'status cannot be changed to OPEN manually')
+          return serviceOnClient.patch(offer._id.toString(), { htlcStep: 4 })
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'CLOSED')
+          return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED' })
+        })
+        .catch(err => {
+          assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Cannot be cancelled after closed')
+          done()
+        })
       })
 
       it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after', function (done) {
-        const createData = Object.assign({}, createDataSkel)
-        createData.userId = this.user._id.toString()
+        const createData = Object.assign({}, createDataSkel, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString()
+        })
         userUtils.authenticateTemp(app, feathersClient, this.user)
-          .then(loggedInResponse => {
-            serviceOnClient.create(createData)
-              .then(offer => {
-                assert.equal(offer.status, 'OPEN')
-                return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED' })
-              })
-              .then(offer => {
-                assert.equal(offer.status, 'CANCELLED', 'offer was cancelled')
-                return serviceOnClient.patch(offer._id.toString(), {})
-              })
-              .catch(err => {
-                assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Offer cannot be modified once CANCELLED')
-                done()
-              })
-          })
+        .then(loggedInResponse => {
+          return serviceOnClient.create(createData)
+        }).then(offer => {
+          assert.equal(offer.status, 'OPEN')
+          return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED' })
+        })
+        .then(offer => {
+          assert.equal(offer.status, 'CANCELLED', 'offer was cancelled')
+          return serviceOnClient.patch(offer._id.toString(), {})
+        })
+        .catch(err => {
+          assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Offer cannot be modified once CANCELLED')
+          done()
+        })
       })
 
       it('offer.status can be set to CANCELLED while TRADING', function (done) {
-        const createData = Object.assign({}, createDataSkel)
-        createData.userId = this.user._id.toString()
+        const createData = Object.assign({}, createDataSkel, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString()
+        })
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
             serviceOnClient.create(createData)
@@ -250,8 +283,10 @@ function runTests (feathersClient) {
         const issuanceServiceOnServer = app.service('issuances')
         const initialSharesIssued = 22
         const offerQuantity = 200
-        const offerCreateData = Object.assign({}, createDataSkel)
-        offerCreateData.userId = this.user._id.toString()
+        const offerCreateData = Object.assign({}, createDataSkel, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString()
+        })
         issuanceCreateData.userId = this.user._id.toString()
         issuanceCreateData.sharesIssued = initialSharesIssued
 
@@ -294,8 +329,10 @@ function runTests (feathersClient) {
         const issuanceServiceOnServer = app.service('issuances')
         const initialSharesIssued = 11
         const offerQuantity = 100
-        const offerCreateData = Object.assign({}, createDataSkel)
-        offerCreateData.userId = this.user._id.toString()
+        const offerCreateData = Object.assign({}, createDataSkel, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString()
+        })
         issuanceCreateData.userId = '000000000000000000000000'
         issuanceCreateData.sharesIssued = initialSharesIssued
 

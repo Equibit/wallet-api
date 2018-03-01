@@ -5,7 +5,8 @@ const makeSigned = require('feathers-authentication-signed/client')
 const decode = require('jwt-decode')
 require('../test-utils/setup')
 const clients = require('../test-utils/clients')
-const testEmails = ['test@equibitgroup.com', 'test2@equibitgroup.com']
+const userUtils = require('../test-utils/users')
+const testEmails = userUtils.testEmails
 
 const signed = makeSigned(crypto)
 
@@ -41,7 +42,7 @@ function runTests (feathersClient) {
     ]
 
     before(function () {
-      return app.service('/users').remove(null, { query: { email: { $in: testEmails } } }) // Remove all users
+      return userUtils.removeAll(app)
     })
 
     beforeEach(function (done) {
@@ -61,7 +62,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       // Remove all users after tests run.
       feathersClient.logout()
-        .then(() => app.service('/users').remove(null, { query: { email: { $in: testEmails } } }))
+        .then(() => userUtils.removeAll(app))
         .then(() => {
           done()
         })
