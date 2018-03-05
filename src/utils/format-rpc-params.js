@@ -1,15 +1,14 @@
 const formatParam = function formatParam (param) {
   const paramIsArray = Array.isArray(param)
+  const paramIsTrue = param === 'true' || param === true
+  const paramIsFalse = param === 'false' || param === false
+  const paramIsBool = paramIsTrue || paramIsFalse
   const paramAsNum = Number(param)
   const paramIsNaN = isNaN(paramAsNum)
   const paramIsObject = typeof param === 'object'
   var formatted = null
 
-  if (paramIsNaN) {
-    const paramIsTrue = param === 'true'
-    const paramIsFalse = param === 'false'
-    const paramIsBool = paramIsTrue || paramIsFalse
-
+  if (paramIsNaN || paramIsBool) {
     if (paramIsBool) {
       formatted = paramIsTrue // boolean true or false
     } else if (paramIsArray) {
