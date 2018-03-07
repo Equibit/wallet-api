@@ -32,7 +32,6 @@ class Service {
       addressesBtc.length && importPromises.push(importmultiService.create({ addresses: addressesBtc, type: 'BTC' }))
       addressesEqb.length && importPromises.push(importmultiService.create({ addresses: addressesEqb, type: 'EQB' }))
     }
-    console.log(importPromises.length, addressesBtc.length, addressesEqb.length)
 
     return Promise.all(importPromises).then(() => Promise.all([
       fetchListunspent(configBtc, addressesBtc),
