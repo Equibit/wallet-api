@@ -4,3 +4,5 @@ node_js: 8.6.0
 cache: yarn
 env:
   - NODE_ENV=ci
+services:
+  - mongodb
