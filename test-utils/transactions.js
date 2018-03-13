@@ -58,6 +58,14 @@ exports.setupMock = function () {
     switch (data.method) {
       case 'listunspent':
         return handleListUnspent(request)
+      case 'importaddress':
+        return [200, {
+          result: {
+            result: null,
+            error: null,
+            id: null
+          }
+        }]
       case 'importmulti':
         return [200, {
           result: [

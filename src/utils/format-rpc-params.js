@@ -8,10 +8,10 @@ const formatParam = function formatParam (param) {
   const paramIsObject = typeof param === 'object'
   var formatted = null
 
-  if (paramIsNaN || paramIsBool) {
-    if (paramIsBool) {
-      formatted = paramIsTrue // boolean true or false
-    } else if (paramIsArray) {
+  if (paramIsBool) {
+    formatted = paramIsTrue // boolean true or false
+  } else if (paramIsNaN) {
+    if (paramIsArray) {
       formatted = formatParams(param)
     } else if (paramIsObject) {
       Object.keys(param).map(objKey => {
