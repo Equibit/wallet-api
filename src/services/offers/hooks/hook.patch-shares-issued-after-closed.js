@@ -3,7 +3,7 @@
 // patching { sharesIssued: issuance.sharesIssued + quantity } is dangerous if issuance changed between fetch and patch
 // https://docs.mongodb.com/manual/reference/operator/update/inc/
 
-const offerFlowClosed_updateSharesIssued = function (offer, issuancesService, ordersService) {
+const offerFlowClosedUpdateSharesIssued = function (offer, issuancesService, ordersService) {
   const isBuyOffer = offer.type === 'BUY'
   const offerQuantity = offer.quantity || 0
 
@@ -47,7 +47,7 @@ module.exports = function (app) {
 
     // if offer is now closed and this was the patch/update that closed it
     if (offer.status === 'CLOSED' && data.htlcStep >= 4) {
-      return offerFlowClosed_updateSharesIssued(offer, app.service('issuances'), app.service('orders'))
+      return offerFlowClosedUpdateSharesIssued(offer, app.service('issuances'), app.service('orders'))
         .then(x => Promise.resolve(context))
     }
 
