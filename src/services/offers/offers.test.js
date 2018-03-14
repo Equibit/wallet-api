@@ -325,7 +325,53 @@ function runTests (feathersClient) {
           })
       })
 
-      it('does not patch the related issuance when CLOSED if offer user is not the issuer', function (done) {
+      it('patches the related issuance when CLOSED if order user is the issuer', function (done) {
+        const issuanceServiceOnServer = app.service('issuances')
+        const initialSharesIssued = 11
+        const offerQuantity = 10
+        const offerCreateData = Object.assign({}, createDataSkel, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString()
+        })
+        issuanceCreateData.userId = '000000000000000000000000'
+        issuanceCreateData.sharesIssued = initialSharesIssued
+
+        userUtils.authenticateTemp(app, feathersClient, this.user)
+          .then(loggedInResponse => {
+            issuanceServiceOnServer.create(issuanceCreateData).then(issuance => {
+              const issuanceId = issuance._id.toString()
+              assert(issuanceId, 'issuance created')
+              assert.equal(issuance.sharesIssued, initialSharesIssued, 'issuance created correctly')
+
+              offerCreateData.issuanceId = issuanceId
+              offerCreateData.quantity = offerQuantity
+
+              serviceOnClient.create(offerCreateData)
+                .then(offer => {
+                  return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
+                })
+                .then(offer => {
+                  return serviceOnClient.patch(offer._id.toString(), { htlcStep: 3 })
+                })
+                .then(offer => {
+                  return serviceOnClient.patch(offer._id.toString(), { htlcStep: 4 })
+                })
+                .then(offer => {
+                  assert.equal(offer.status, 'CLOSED')
+                  return issuanceServiceOnServer.find({ query: { _id: issuanceId } })
+                })
+                .then(findResponse => {
+                  const issuanceUpdated = findResponse.data[0]
+                  assert.equal(issuanceUpdated.sharesIssued, initialSharesIssued - offerQuantity, 'shares returning to investor reduces sharesIssued')
+                  done()
+                })
+                .catch(done)
+            })
+            .catch(done)
+          })
+      })
+
+      it('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
         const issuanceServiceOnServer = app.service('issuances')
         const initialSharesIssued = 11
         const offerQuantity = 100
@@ -333,7 +379,7 @@ function runTests (feathersClient) {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString()
         })
-        issuanceCreateData.userId = '000000000000000000000000'
+        issuanceCreateData.userId = '000000000000000000000001'
         issuanceCreateData.sharesIssued = initialSharesIssued
 
         userUtils.authenticateTemp(app, feathersClient, this.user)
