@@ -12,7 +12,7 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const serviceOnClient = feathersClient.service('offers')
 
-  describe.only(`Offers Service Tests - ${transport}`, function () {
+  describe(`Offers Service Tests - ${transport}`, function () {
     before(function () {
       return userUtils.removeAll(app)
     })
