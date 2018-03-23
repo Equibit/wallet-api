@@ -38,15 +38,21 @@ class Service {
   }
 
   refreshFromService (url) {
-    const publicComponent = parseInt(Date.now() / 1000).toString(10) + '.' + this.options.key
-    const secretComponent = crypto.createHmac('sha256', this.options.secret).update(publicComponent).digest('hex')
+    const headers = {}
+    // Skip auth headers if not API/Secret is set. For our `ticker` request anonymous is OK. Issue #73.
+    if (
+      this.options.key && this.options.key !== 'BITCOIN_AVERAGE_KEY' &&
+      this.options.secret && this.options.secret !== 'BITCOIN_AVERAGE_SECRET'
+    ) {
+      const publicComponent = parseInt(Date.now() / 1000).toString(10) + '.' + this.options.key
+      const secretComponent = crypto.createHmac('sha256', this.options.secret).update(publicComponent).digest('hex')
+      headers['X-signature'] = publicComponent + '.' + secretComponent
+    }
 
     return axios({
       url,
       type: 'get',
-      headers: {
-        'X-signature': publicComponent + '.' + secretComponent
-      }
+      headers
     })
     .then(res => res.data)
     .catch(err => {
