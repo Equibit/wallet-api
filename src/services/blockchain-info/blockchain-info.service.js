@@ -14,6 +14,7 @@ function checkBlockchain (app, service) {
   console.log('*** [checkBlockchain] ...')
   const proxycoreService = app.service('proxycore')
   const blockchainTypes = ['EQB', 'BTC']
+  let blockchainsCached = {EQB: null, BTC: null}
 
   // Look for existing records and create if they do not exist:
   return service.find({type: {'$in': blockchainTypes}}).then(result => {
@@ -33,25 +34,36 @@ function checkBlockchain (app, service) {
       return function () {
         console.log(`\n\n*** Scheduler [checkBlockchain] running ...`)
         return blockchains.map(blockchain => {
+
+          // Cache result to detect changes after we query info:
+          blockchainsCached[blockchain.coinType] = blockchain
+
           return proxycoreService.find({
             query: {
               node: blockchain.coinType.toLowerCase(),
               method: 'getblockchaininfo'
             }
           }).then(({result}) => {
-            const data = {
+            const newData = {
               mode: result.chain,
               status: true,
               currentBlockHeight: result.blocks,
               bestblockhash: result.bestblockhash,
               difficulty: result.difficulty
             }
-            return service.patch(blockchain._id, data).then(result => {
+            const current = blockchainsCached[blockchain.coinType]
+            const hasChanged = Object.keys(newData).reduce((acc, key) => (acc || current[key] !== newData[key]), false)
+            console.log(`- *** compare: hasChanged = ${hasChanged}`)
+            if (!hasChanged) {
+              return result
+            }
+            return service.patch(blockchain._id, newData).then(result => {
               console.log(`- patched ${blockchain.coinType} result = `, result)
+              return result
             })
           }).catch(err => {
             console.log(`*** ERROR [checkBlockchain] coinType=${blockchain.coinType}`, err)
-            service.patch(blockchain._id, {
+            return service.patch(blockchain._id, {
               status: 0
             })
           })
@@ -86,5 +98,5 @@ module.exports = function () {
   }
 
   // Setup blockchain query handler and schedule to be run every 10 minutes:
-  checkBlockchain(app, service).then(handler => setInterval(handler, 5000))
+  checkBlockchain(app, service).then(handler => setInterval(handler, 3000))
 }
