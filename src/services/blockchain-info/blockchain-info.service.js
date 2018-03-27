@@ -54,7 +54,8 @@ function checkBlockchain (app, service) {
               status: true,
               currentBlockHeight: result.blocks,
               bestblockhash: result.bestblockhash,
-              difficulty: result.difficulty
+              difficulty: result.difficulty,
+              errorMessage: ''
             }
             const current = blockchainsCached[blockchain.coinType]
             const hasChanged = Object.keys(newData).reduce((acc, key) => (acc || (current[key] !== newData[key] && key)), null)
@@ -64,7 +65,6 @@ function checkBlockchain (app, service) {
             } else {
               console.log(`- hasChanged (old=${current[hasChanged]}, new=${newData[hasChanged]}): current, new::`, current, newData)
             }
-            newData.errorMessage = ''
             return service.patch(blockchain._id, newData).then(result => {
               console.log(`- patched ${blockchain.coinType} result = `, result)
               return result
