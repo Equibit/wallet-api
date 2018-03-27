@@ -214,7 +214,7 @@ function runTests (feathersClient) {
         })
       })
 
-      it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after', function (done) {
+      it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
         const createData = Object.assign({}, createDataSkel, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString()
@@ -222,13 +222,27 @@ function runTests (feathersClient) {
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
           return serviceOnClient.create(createData)
-        }).then(offer => {
+        })
+        .then(offer => {
           assert.equal(offer.status, 'OPEN')
-          return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED' })
+          return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
+        })
+        .then(offer => {
+          return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED', htlcStep: 3 })
         })
         .then(offer => {
           assert.equal(offer.status, 'CANCELLED', 'offer was cancelled')
-          return serviceOnClient.patch(offer._id.toString(), {})
+          return serviceOnClient.patch(offer._id.toString(), {
+            htlcStep: 4,
+            htlcTxId4: 'foo'
+          })
+        })
+        .then(offer => {
+          assert.equal(offer.htlcStep, 4, 'offer htlcStep was updated')
+          assert.equal(offer.htlcTxId4, 'foo', 'offer htlcTxId4 was updated')
+          return serviceOnClient.patch(offer._id.toString(), {
+            status: 'CLOSED'
+          })
         })
         .catch(err => {
           assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Offer cannot be modified once CANCELLED')

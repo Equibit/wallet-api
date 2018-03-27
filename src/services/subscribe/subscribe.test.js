@@ -66,6 +66,8 @@ describe(`Subscribe Service Tests - feathers-socketio`, function () {
             } else {
               const candidateSocket = app.io.sockets.sockets[socketId]
               return candidateSocket.feathers &&
+                candidateSocket.feathers.user &&
+                candidateSocket.feathers.user._id &&
                 candidateSocket.feathers.user._id.toString() === currentUser._id.toString()
                 ? candidateSocket : null
             }
