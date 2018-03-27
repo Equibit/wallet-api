@@ -16,17 +16,27 @@ class Service {
   // Given a list of addresses return txouts and a summary OR amounts by address and a summary.
   find (params) {
     // console.log('listunspent.find params.query: ', params.query)
-    const addressesBtc = params.query.btc || []
-    const addressesEqb = params.query.eqb || []
-    const byAddress = !!params.query.byaddress
+    const app = this.options.app
+    const query = params.query
+    const addressesBtc = query.btc || []
+    const addressesEqb = query.eqb || []
+    const byAddress = !!query.byaddress
+    const doImport = !!query.doImport
 
-    const configBtc = this.options.app.get('bitcoinCore')
-    const configEqb = this.options.app.get('equibitCore')
+    const configBtc = app.get('bitcoinCore')
+    const configEqb = app.get('equibitCore')
+    const importmultiService = app.service('importmulti')
+    const importPromises = []
 
-    return Promise.all([
+    if (doImport) {
+      addressesBtc.length && importPromises.push(importmultiService.create({ addresses: addressesBtc, type: 'BTC' }))
+      addressesEqb.length && importPromises.push(importmultiService.create({ addresses: addressesEqb, type: 'EQB' }))
+    }
+
+    return Promise.all(importPromises).then(() => Promise.all([
       fetchListunspent(configBtc, addressesBtc),
       fetchListunspent(configEqb, addressesEqb)
-    ])
+    ]))
     .then(results => results.map(r => r.data.result))
     .then(results => results.map(resultToSatoshi))
     .then(results => {
