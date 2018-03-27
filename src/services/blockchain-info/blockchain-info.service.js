@@ -43,7 +43,12 @@ function checkBlockchain (app, service) {
               node: blockchain.coinType.toLowerCase(),
               method: 'getblockchaininfo'
             }
-          }).then(({result}) => {
+          }).then((response) => {
+            console.log(`- getblockchaininfo ${blockchain.coinType}: response = `, response)
+            if (response.error) {
+              throw new Error(response.error.message)
+            }
+            const result = response.result
             const newData = {
               mode: result.chain,
               status: true,
@@ -52,11 +57,14 @@ function checkBlockchain (app, service) {
               difficulty: result.difficulty
             }
             const current = blockchainsCached[blockchain.coinType]
-            const hasChanged = Object.keys(newData).reduce((acc, key) => (acc || current[key] !== newData[key]), false)
+            const hasChanged = Object.keys(newData).reduce((acc, key) => (acc || (current[key] !== newData[key] && key)), null)
             console.log(`- *** compare: hasChanged = ${hasChanged}`)
             if (!hasChanged) {
               return result
+            } else {
+              console.log(`- hasChanged (old=${current[hasChanged]}, new=${newData[hasChanged]}): current, new::`, current, newData)
             }
+            newData.errorMessage = ''
             return service.patch(blockchain._id, newData).then(result => {
               console.log(`- patched ${blockchain.coinType} result = `, result)
               return result
@@ -64,7 +72,8 @@ function checkBlockchain (app, service) {
           }).catch(err => {
             console.log(`*** ERROR [checkBlockchain] coinType=${blockchain.coinType}`, err)
             return service.patch(blockchain._id, {
-              status: 0
+              status: 0,
+              errorMessage: err.message
             })
           })
         })
@@ -98,5 +107,5 @@ module.exports = function () {
   }
 
   // Setup blockchain query handler and schedule to be run every 10 minutes:
-  checkBlockchain(app, service).then(handler => setInterval(handler, 3000))
+  checkBlockchain(app, service).then(handler => setInterval(handler, 7000))
 }
