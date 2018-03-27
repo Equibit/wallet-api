@@ -33,6 +33,7 @@ RESPONSE:
 ```
 
 Doubts:
+- **Should this service care about transactions being mined? Since we load tx info on demand.**
 - Should `txids` be stored in a separate collection or just being skipped from the response?
 ```
 {

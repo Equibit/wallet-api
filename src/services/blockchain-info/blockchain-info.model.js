@@ -6,10 +6,12 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const { Schema } = mongooseClient
   const blockchainInfo = new Schema({
-    type: { type: String, enum: [ 'BTC', 'EQB' ], required: true },
-    mode: { type: String, enum: [ 'regtest', 'test', 'main' ], required: true },
+    coinType: { type: String, enum: [ 'BTC', 'EQB' ], unique: true, required: true },
+    mode: { type: String, enum: [ 'regtest', 'test', 'main', 'unknown' ], required: true },
     status: { type: Boolean },
-    currentBlockHeight: { type: Number }
+    currentBlockHeight: { type: Number },
+    bestblockhash: { type: String },
+    difficulty: { type: Number }
   }, {
     timestamps: true
   })
