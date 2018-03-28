@@ -15,28 +15,26 @@ function checkBlockchains (app, service) {
   const blockchainTypes = ['EQB', 'BTC']
 
   return function () {
-    console.log('\n\n*** Scheduled [checkBlockchains] ...')
+    // console.log('\n\n*** Scheduled [checkBlockchains] ...')
     return Promise.all(blockchainTypes.map(checkBlockchain(service, proxycoreService)))
-    // return Promise.all([getFromDB(service, blockchainTypes), getFromBlockchain(proxycoreService, blockchainTypes)])
-    //   .then(compareInfo)
-    //   .then(updateDB)
   }
 }
 function checkBlockchain (service, proxycoreService) {
   return function (coinType) {
-    console.log(`- checkBlockchain ${coinType}`)
+    // console.log(`- checkBlockchain ${coinType}`)
     return Promise.all([
         getFromDB(service, coinType),
         getFromBlockchain(proxycoreService, coinType)
       ])
       .then(compareInfo(coinType))
       .then(updateDB(service, coinType))
+      .catch(handleError(service, coinType))
   }
 }
 function getFromDB (service, coinType) {
-  console.log(`- getFromDB ${coinType}`)
+  // console.log(`- getFromDB ${coinType}`)
   return service.find({ query: { coinType } }).then(result => {
-    console.log(`- [getFromDB ${coinType}] result.total = ${result.total}`)
+    // console.log(`- [getFromDB ${coinType}] result.total = ${result.total}`)
     const blockchainInfo = (result.total && result.data && result.data[0]) || null
     return blockchainInfo ? Promise.resolve(blockchainInfo) : service.create({
       coinType,
@@ -46,7 +44,7 @@ function getFromDB (service, coinType) {
   })
 }
 function getFromBlockchain (proxycoreService, coinType) {
-  console.log(`- getFromBlockchain ${coinType}`)
+  // console.log(`- getFromBlockchain ${coinType}`)
   return proxycoreService.find({
     query: {
       node: coinType.toLowerCase(),
@@ -56,7 +54,7 @@ function getFromBlockchain (proxycoreService, coinType) {
 }
 function normalizeBlockchainInfo (coinType) {
   return function (response) {
-    console.log(`- normalizeBlockchainInfo ${coinType}`)
+    // console.log(`- normalizeBlockchainInfo ${coinType}`)
     if (response.error) {
       throw new Error(response.error.message)
     }
@@ -77,7 +75,7 @@ function compareInfo (coinType){
     const id = current._id
     const hasChanged = Object.keys(newData).reduce((acc, key) => (acc || (current[key] !== newData[key] && key)), null)
     if (hasChanged) {
-      console.log(`- ${coinType} hasChanged ${hasChanged} (old=${current[hasChanged]}, new=${newData[hasChanged]}): current, new::`, current, newData)
+      console.log(`*** Blockchain Info: ${coinType} hasChanged ${hasChanged} (old=${current[hasChanged]}, new=${newData[hasChanged]})`)
     }
     return hasChanged ? { newData, id } : { id }
   }
@@ -86,94 +84,26 @@ function updateDB (service, coinType) {
   return function ({ newData, id }) {
     return newData
       ? service.patch(id, newData).then(result => {
-        console.log(`- patched ${coinType} result = `, result)
+        // console.log(`- patched ${coinType} result = `, result)
         return result
       }) : Promise.resolve(true)
   }
 }
-
-function checkBlockchain0 (app, service) {
-  console.log('*** [checkBlockchain] ...')
-  const proxycoreService = app.service('proxycore')
-  const blockchainTypes = ['EQB', 'BTC']
-
-  let blockchainsCached = {EQB: null, BTC: null}
-
-  // Query DB for existing records and create if they do not exist:
-  return service.find({type: {'$in': blockchainTypes}}).then(result => {
-    console.log(`- [checkBlockchain] result.total = ${result.total}`)
-    const promises = blockchainTypes.map(coinType => {
-      const blockchain = result.data.reduce((res, item) => (res || (item.coinType === coinType && item)), null)
-      return blockchain ? Promise.resolve(blockchain) : service.create({
-        coinType,
-        status: false,
-        mode: 'unknown'
-      })
-    })
-    return Promise.all(promises)
-  })
-
-  .then(blockchains => {
-    console.log('checkBlockchain SETUP resolved: blockchains = ', blockchains)
-
-    return function () {
-      console.log(`\n\n*** Scheduler [checkBlockchain] running ...`)
-
-      return blockchains.map(blockchain => {
-
-        // Cache result to detect changes after we query info:
-        blockchainsCached[blockchain.coinType] = blockchain
-
-        return proxycoreService.find({
-          query: {
-            node: blockchain.coinType.toLowerCase(),
-            method: 'getblockchaininfo'
-          }
-        })
-
-        .then((blockchainInfo) => {
-
-          console.log(`- getblockchaininfo ${blockchain.coinType}: blockchainInfo = `, blockchainInfo)
-          if (blockchainInfo.error) {
-            throw new Error(blockchainInfo.error.message)
-          }
-          const result = blockchainInfo.result
-          const newData = {
-            mode: result.chain,
-            status: true,
-            currentBlockHeight: result.blocks,
-            bestblockhash: result.bestblockhash,
-            difficulty: result.difficulty,
-            errorMessage: ''
-          }
-          const current = blockchainsCached[blockchain.coinType]
-          const hasChanged = Object.keys(newData).reduce((acc, key) => (acc || (current[key] !== newData[key] && key)), null)
-          console.log(`- *** compare: hasChanged = ${hasChanged}`)
-          if (!hasChanged) {
-            return result
-          } else {
-            console.log(`- hasChanged (old=${current[hasChanged]}, new=${newData[hasChanged]}): current, new::`, current, newData)
-          }
-          return service.patch(blockchain._id, newData).then(result => {
-            console.log(`- patched ${blockchain.coinType} result = `, result)
-            return result
-          })
-        }).catch(err => {
-          console.log(`*** ERROR [checkBlockchain] coinType=${blockchain.coinType}`, err)
-          return service.patch(blockchain._id, {
-            status: 0,
-            errorMessage: err.message
-          })
-        })
-      })
-    }
-  })
+function handleError (service, coinType) {
+  return function (err) {
+    console.log(`*** ERROR [handleError] coinType=${coinType}, error: ${err.message}`)
+    return service.patch(null, {
+      status: 0,
+      errorMessage: err.message
+    }, { query: { coinType } })
+  }
 }
 
 module.exports = function () {
   const app = this
   const Model = createModel(app)
   const paginate = app.get('paginate')
+  const interval = app.get('blockchainInfoInterval')
 
   const options = {
     name: 'blockchain-info',
@@ -198,6 +128,6 @@ module.exports = function () {
   queryBlockchain()
   setInterval(
     queryBlockchain,
-    7000
+    interval
   )
 }

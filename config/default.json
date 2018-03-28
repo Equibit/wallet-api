@@ -63,5 +63,6 @@
   "bitcoinAverage": {
     "key": "BITCOIN_AVERAGE_KEY",
     "secret": "BITCOIN_AVERAGE_SECRET"
-  }
+  },
+  "blockchainInfoInterval": 600000
 }
