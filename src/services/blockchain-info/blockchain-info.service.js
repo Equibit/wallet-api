@@ -123,11 +123,22 @@ module.exports = function () {
     service.filter(filters)
   }
 
-  // Run blockchain query and schedule for every ~10 minutes:
-  const queryBlockchain = checkBlockchains(app, service)
-  queryBlockchain()
-  setInterval(
-    queryBlockchain,
-    interval
-  )
+  if (process.env.NODE_ENV !== 'ci' && process.env.TESTING !== 'true') {
+    // Run blockchain query and schedule for every ~10 minutes:
+    const queryBlockchain = checkBlockchains(app, service)
+    queryBlockchain()
+    setInterval(
+      queryBlockchain,
+      interval
+    )
+  }
 }
+
+module.exports.checkBlockchains = checkBlockchains
+module.exports.checkBlockchain = checkBlockchain
+module.exports.getFromDB = getFromDB
+module.exports.getFromBlockchain = getFromBlockchain
+module.exports.normalizeBlockchainInfo = normalizeBlockchainInfo
+module.exports.compareInfo = compareInfo
+module.exports.updateDB = updateDB
+module.exports.handleError = handleError
