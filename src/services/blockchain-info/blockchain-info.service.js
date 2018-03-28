@@ -34,7 +34,6 @@ function checkBlockchain (app, service) {
       return function () {
         console.log(`\n\n*** Scheduler [checkBlockchain] running ...`)
         return blockchains.map(blockchain => {
-
           // Cache result to detect changes after we query info:
           blockchainsCached[blockchain.coinType] = blockchain
 
@@ -80,7 +79,6 @@ function checkBlockchain (app, service) {
       }
     })
   })
-
 }
 
 module.exports = function () {
