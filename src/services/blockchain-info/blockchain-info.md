@@ -9,7 +9,6 @@ Information should be stored in DB.
 The following data should be recorded per blockchain:
 - Connection status, blockchain mode.
 - Current block height.
-- Latest block transactions with its block height `{<block-height>: [<TXID>]}`.
 
 Example:
 ```
