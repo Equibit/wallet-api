@@ -1,0 +1,33 @@
+{
+  "total": 2,
+  "limit": 20,
+  "skip": 0,
+  "data": [
+    {
+      "_id": "5aba92a302fb78d9a969bd92",
+      "coinType": "EQB",
+      "status": true,
+      "mode": "regtest",
+      "createdAt": "2018-03-27T18:51:15.690Z",
+      "updatedAt": "2018-03-28T18:19:05.502Z",
+      "__v": 0,
+      "difficulty": 4.656542373906925e-10,
+      "bestblockhash": "2c31d13e10517f1731cc9c0e883ddf91e3594efc13b834303ea1ae1e6d47f1c0",
+      "currentBlockHeight": 1272,
+      "errorMessage": ""
+    },
+    {
+      "_id": "5aba92a302fb78d9a969bd93",
+      "coinType": "BTC",
+      "status": true,
+      "mode": "regtest",
+      "createdAt": "2018-03-27T18:51:15.691Z",
+      "updatedAt": "2018-03-28T19:09:23.899Z",
+      "__v": 0,
+      "difficulty": 4.656542373906925e-10,
+      "bestblockhash": "24ebfa22e3165a2968a109a5ab7771312aea1caff0b66fe3d569315bab86fea8",
+      "currentBlockHeight": 1244,
+      "errorMessage": ""
+    }
+  ]
+}
