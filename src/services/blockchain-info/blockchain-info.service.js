@@ -23,9 +23,9 @@ function checkBlockchain (service, proxycoreService) {
   return function (coinType) {
     // console.log(`- checkBlockchain ${coinType}`)
     return Promise.all([
-        getFromDB(service, coinType),
-        getFromBlockchain(proxycoreService, coinType)
-      ])
+      getFromDB(service, coinType),
+      getFromBlockchain(proxycoreService, coinType)
+    ])
       .then(compareInfo(coinType))
       .then(updateDB(service, coinType))
       .catch(handleError(service, coinType))
@@ -70,7 +70,7 @@ function normalizeBlockchainInfo (coinType) {
     return newData
   }
 }
-function compareInfo (coinType){
+function compareInfo (coinType) {
   return function ([current, newData]) {
     const id = current._id
     const hasChanged = Object.keys(newData).reduce((acc, key) => (acc || (current[key] !== newData[key] && key)), null)
