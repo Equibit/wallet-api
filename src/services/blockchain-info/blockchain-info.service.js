@@ -65,6 +65,7 @@ function normalizeBlockchainInfo (coinType) {
       currentBlockHeight: blockchainInfo.blocks,
       bestblockhash: blockchainInfo.bestblockhash,
       difficulty: blockchainInfo.difficulty,
+      mediantime: blockchainInfo.mediantime,
       errorMessage: ''
     }
     return newData
