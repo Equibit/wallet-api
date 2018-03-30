@@ -18,6 +18,7 @@ describe('\'blockchain-info\' service', () => {
     currentBlockHeight: 1271,
     bestblockhash: '1962811fcbe887ad37049cc33bf635e3e3ba6a955aacd5edd436ba708c552445',
     difficulty: 4.656542373906925e-10,
+    'mediantime': 1521682385,
     errorMessage: ''
   }
   const service = {
@@ -99,6 +100,7 @@ describe('\'blockchain-info\' service', () => {
               'difficulty': 4.656542373906925e-10,
               'bestblockhash': '1962811fcbe887ad37049cc33bf635e3e3ba6a955aacd5edd436ba708c552445',
               'currentBlockHeight': 1271,
+              'mediantime': 1521682385,
               'errorMessage': ''
             }
           ]
