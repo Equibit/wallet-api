@@ -36,18 +36,38 @@ module.exports = function (app) {
           _id: hook.result.orderId
         }).then(result => {
           hook.params.order = result
-          if (hook.result.htlcStep === 3) {
-            if (hook.result.type === 'BUY') {
-              hook.notificationAddress = result.btcAddress
-            } else {
-              hook.notificationAddress = result.eqbAddress
-            }
+          if (hook.result.status === 'CANCELLED') {
+            // assume htlcStep === either 3 or 4
+            return app.service('/transactions').find({
+              query: {
+                txId: hook.result.htlcStep === 3 ? hook.result.htlcTxId3 : hook.result.htlcTxId4,
+                address: { $in: [hook.result.eqbAddress, hook.result.btcAddress] }
+              }
+            }).then(txes => {
+              const tx = txes.data[0]
+              if (tx) {
+                if (tx.toAddress === hook.result.eqbAddress || tx.toAddress === hook.result.btcAddress) {
+                  hook.notificationAddress = hook.params.order.eqbAddress
+                } else {
+                  hook.notificationAddress = hook.result.eqbAddress
+                }
+              }
+              return hook
+            })
           } else {
-            // these updates (steps 2 or 4) were made by the order holder.
-            // Notify the offer creator
-            hook.notificationAddress = hook.result.eqbAddress
+            if (hook.result.htlcStep === 3) {
+              if (hook.result.type === 'BUY') {
+                hook.notificationAddress = result.btcAddress
+              } else {
+                hook.notificationAddress = result.eqbAddress
+              }
+            } else {
+              // these updates (steps 2 or 4) were made by the order holder.
+              // Notify the offer creator
+              hook.notificationAddress = hook.result.eqbAddress
+            }
+            return hook
           }
-          return hook
         })
       },
       createNotification({
