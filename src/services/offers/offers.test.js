@@ -3,6 +3,7 @@ const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const userUtils = utils.users
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
+const offerUtils = require('../../../test-utils/offers')
 
 utils.clients.forEach(client => {
   runTests(client)
@@ -50,24 +51,10 @@ function runTests (feathersClient) {
               })
           })
           .then(() => {
-            const createOrderSkel = {
-              'userId': '000000000000000000000000',
-              issuanceId: '000000000000000000000000',
-              'issuanceAddress': '000000000000000000000000',
-              'type': 'SELL',
-              'portfolioId': '000000000000000000000000',
-              'quantity': 60,
-              'price': 10,
-              'status': 'OPEN',
-              'isFillOrKill': false,
-              'goodFor': 7,
-              'companyName': 'Foo',
-              'issuanceName': 'Bar',
-              'issuanceType': 'bonds'
-            }
-            return app.service('orders').create(createOrderSkel).then(order => {
-              this.order = order
-            })
+            return offerUtils.createOrder(app)
+          })
+          .then(order => {
+            this.order = order
           })
       })
 
@@ -141,22 +128,7 @@ function runTests (feathersClient) {
         userUtils.create(app).then(user => {
           this.user = user
 
-          const createOrderSkel = {
-            'userId': '000000000000000000000000',
-            issuanceId: '000000000000000000000000',
-            'issuanceAddress': '000000000000000000000000',
-            'type': 'SELL',
-            'portfolioId': '000000000000000000000000',
-            'quantity': 60,
-            'price': 10,
-            'status': 'OPEN',
-            'isFillOrKill': false,
-            'goodFor': 7,
-            'companyName': 'Foo',
-            'issuanceName': 'Bar',
-            'issuanceType': 'bonds'
-          }
-          return app.service('orders').create(createOrderSkel)
+          return offerUtils.createOrder(app)
         }).then(order => {
           this.order = order
           done()
