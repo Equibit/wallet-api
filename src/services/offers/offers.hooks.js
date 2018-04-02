@@ -100,7 +100,12 @@ module.exports = function (app) {
     ),
     // SAFETY ZONE notification.  Notify the order creator of the safety zone.
     iff(
-      hook => hook.result.timelock2ExpiredAt !== hook.params.before.timelock2ExpiredAt,
+      hook => {
+        return hook.result.timelock2ExpiredAt &&
+                !hook.params.before.timelock2ExpiredAt &&
+                hook.result.status !== 'CLOSED' &&
+                (hook.result.status !== 'CANCELLED' || !hook.result.htlcTxId4)
+      },
       hook => {
         return app.service('/orders').get({
           _id: hook.result.orderId
@@ -117,17 +122,17 @@ module.exports = function (app) {
           orderId: 'result.orderId',
           type: 'result.type',
           status: hook => {
-            if (hook.result.timelock2ExpiredAt && hook.result.timelockExpiredAt) {
+            if (hook.result.timelock2ExpiredAt && !hook.result.timelockExpiredAt) {
               return 'SAFETY_ZONE'
             } else {
               return 'EXPIRED'
             }
           },
           action: hook => {
-            if (hook.result.timelock2ExpiredAt && hook.result.timelockExpiredAt) {
-              return 'dealFlowMessageTitleOfferExpired'
-            } else {
+            if (hook.result.timelock2ExpiredAt && !hook.result.timelockExpiredAt) {
               return 'dealFlowMessageTitleOfferSafetyZone'
+            } else {
+              return 'dealFlowMessageTitleOfferExpired'
             }
           },
           htlcStep: 'result.htlcStep',
@@ -140,7 +145,12 @@ module.exports = function (app) {
     ),
     // Full offer expiration.  Notify the offer creator
     iff(
-      hook => hook.result.timelockExpiredAt !== hook.params.before.timelockExpiredAt,
+      hook => {
+        return hook.result.timelockExpiredAt &&
+                !hook.params.before.timelockExpiredAt &&
+                !hook.result.htlcTxId4 &&
+                hook.result.status !== 'CLOSED'
+      },
       createNotification({
         type: 'offer',
         addressPath: 'result.eqbAddress',

@@ -43,8 +43,12 @@ module.exports = function (app) {
       create: [],
       update: [],
       patch: [
-        confirmedTransactionHooks(),
-        expireOffers()
+        iff(
+          // there is no params.before if there was an error recorded (patch uses a query instead of an ID)
+          hook => hook.params.before,
+          confirmedTransactionHooks(),
+          expireOffers()
+        )
       ],
       remove: []
     },
