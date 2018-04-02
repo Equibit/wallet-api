@@ -1,6 +1,7 @@
 const { iff, isProvider, stashBefore } = require('feathers-hooks-common')
 const errors = require('feathers-errors')
 const confirmedTransactionHooks = require('./hooks/hook.confirmed-transactions')
+const expireOffers = require('./hooks/hook.expire-offers')
 
 module.exports = function (app) {
   return {
@@ -42,7 +43,8 @@ module.exports = function (app) {
       create: [],
       update: [],
       patch: [
-        confirmedTransactionHooks()
+        confirmedTransactionHooks(),
+        expireOffers()
       ],
       remove: []
     },

@@ -22,7 +22,10 @@ module.exports = app => {
     before: {
       all: [ authenticate('jwt') ],
       find: [
-        requireAddresses(),
+        iff(
+          isProvider('external'),
+          requireAddresses()
+        ),
         defaultSort()
       ],
       get: [],
