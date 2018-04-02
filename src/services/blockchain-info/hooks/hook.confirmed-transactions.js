@@ -38,7 +38,7 @@ module.exports = function () {
   return hook => {
     const blockHeight = hook.result.currentBlockHeight
     if (blockHeight > hook.params.before.currentBlockHeight) {
-      processNextBlock(hook, hook.result.bestblockhash)
+      return processNextBlock(hook, hook.result.bestblockhash)
     }
   }
 }

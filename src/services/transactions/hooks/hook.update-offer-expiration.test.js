@@ -2,10 +2,9 @@ const assert = require('assert')
 const updateOfferExpiration = require('./hook.update-offer-expiration')
 
 describe('Transactions Service - updateOfferExpiration Hook', function () {
-
   let findCalled
   let offerPatchData
-  function setupOfferService(data) {
+  function setupOfferService (data) {
     findCalled = false
     offerPatchData = null
     return function () {
