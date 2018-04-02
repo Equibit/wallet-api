@@ -15,7 +15,7 @@ module.exports = function (options) {
     const htlcStep = tx.htlcStep
     const htlcField = `htlcTxId${htlcStep}`
     const timelockField = htlcStep === 1 ? 'timelock' : 'timelock2'
-    const timelockExpiryField = `timelock${htlcStep}ExpiresBlockheight`
+    const timelockExpiryField = htlcStep === 1 ? 'timelockExpiresBlockheight' : 'timelock2ExpiresBlockheight'
 
     const offerService = hook.app.service('/offers')
 

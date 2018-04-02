@@ -37,7 +37,7 @@ describe('Transactions Service - updateOfferExpiration Hook', function () {
     }
     updateOfferExpiration()(hook).then(() => {
       assert.ok(findCalled)
-      assert.equal(offerPatchData.timelock1ExpiresBlockheight, 244)
+      assert.equal(offerPatchData.timelockExpiresBlockheight, 244)
       done()
     })
   })
