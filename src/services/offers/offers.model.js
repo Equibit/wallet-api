@@ -27,8 +27,11 @@ module.exports = function (app) {
     hashlock: { type: String, required: true },
     // Timelock for HTLC1 (post offer):
     timelock: { type: Number, required: true },
+    timelock1ExpiresBlockheight: {type: Number},
     // Timelock for HTLC2 (accept offer):
     timelock2: { type: Number },
+    timelock2ExpiresBlockheight: {type: Number},
+
     htlcStep: { type: Number },
     htlcTxId1: { type: String },
     htlcTxId2: { type: String },

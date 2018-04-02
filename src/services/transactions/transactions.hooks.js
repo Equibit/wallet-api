@@ -11,6 +11,7 @@ const getEventAddress = require('../../hooks/get-event-address')
 const defaultSort = require('./hooks/hook.default-sort')
 const conditionalRequirements = require('./hooks/hook.conditional-requirements')
 const createNotification = require('../../hooks/create-notification')
+const updateOfferExpiration = require('./hooks/hook.update-offer-expiration')
 
 module.exports = app => {
   const coreParams = {
@@ -105,7 +106,13 @@ module.exports = app => {
         )
       ],
       update: [],
-      patch: [],
+      patch: [
+        // Update offer if transaction is either htlc1 or htlc2 of the offer:
+        iff(
+          hook => hook.result.confirmationBlockHeight && (hook.result.htlcStep === 1 || hook.result.htlcStep === 2),
+          updateOfferExpiration()
+        )
+      ],
       remove: []
     },
 
