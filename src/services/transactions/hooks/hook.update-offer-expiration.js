@@ -17,7 +17,7 @@ module.exports = function (options) {
     const timelockField = htlcStep === 1 ? 'timelock' : 'timelock2'
     const timelockExpiryField = htlcStep === 1 ? 'timelockExpiresBlockheight' : 'timelock2ExpiresBlockheight'
 
-    const offerService = hook.app.service('/offers')
+    const offerService = hook.app.service('offers')
 
     return offerService.find({query: {[htlcField]: txId}}).then(results => {
       results = results.data || results
