@@ -40,8 +40,7 @@ module.exports = function (app) {
             // assume htlcStep === either 3 or 4
             return app.service('/transactions').find({
               query: {
-                txId: hook.result.htlcStep === 3 ? hook.result.htlcTxId3 : hook.result.htlcTxId4,
-                address: { $in: [hook.result.eqbAddress, hook.result.btcAddress] }
+                txId: hook.result.htlcStep === 3 ? hook.result.htlcTxId3 : hook.result.htlcTxId4
               }
             }).then(txes => {
               const tx = txes.data[0]
