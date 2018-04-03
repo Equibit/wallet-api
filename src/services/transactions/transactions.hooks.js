@@ -108,13 +108,16 @@ module.exports = app => {
           })
         )
       ],
-      update: [],
+      update: [
+        getEventAddress()
+      ],
       patch: [
         // Update offer if transaction is either htlc1 or htlc2 of the offer:
         iff(
           hook => hook.result.confirmationBlockHeight && (hook.result.htlcStep === 1 || hook.result.htlcStep === 2),
           updateOfferExpiration()
-        )
+        ),
+        getEventAddress()
       ],
       remove: []
     },
