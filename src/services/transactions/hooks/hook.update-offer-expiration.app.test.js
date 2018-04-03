@@ -1,8 +1,7 @@
 const assert = require('assert')
 // const feathers = require('feathers')
-const feathers = require('@feathersjs/feathers');
-const memory = require('feathers-memory');
-const offers = require('../../offers/offers.service.js')
+const feathers = require('@feathersjs/feathers')
+const memory = require('feathers-memory')
 const updateOfferExpiration = require('./hook.update-offer-expiration')
 
 const options = {
@@ -55,7 +54,7 @@ describe('Transactions Service - updateOfferExpiration Hook', function () {
       assert.equal(result.confirmationBlockHeight, 100)
     })
   })
-  //TODO: enable this after upgrading the hook to work with an array of results (e.g. when a patch with query is used: service.patch(null, {}, {query: { txId: { $in: ['abc', 'def'] }}))
+  // TODO: enable this after upgrading the hook to work with an array of results (e.g. when a patch with query is used: service.patch(null, {}, {query: { txId: { $in: ['abc', 'def'] }}))
   // it('should patch offer after updating multiple transactions', function (done) {
   //   let offerPatchCalled = 0
   //   app.service('offers').hooks({
