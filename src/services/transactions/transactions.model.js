@@ -35,6 +35,11 @@ module.exports = function (app) {
     // Hashlock for HTLC
     hashlock: { type: String },
 
+    // This is filled in when the blockchain confirms the tx
+    // The timelock expires when the current block height on the blockchain
+    //  is the sum of this property and the timelock property
+    confirmationBlockHeight: { type: Number },
+
     type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER', 'AUTH', 'CANCEL' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
 

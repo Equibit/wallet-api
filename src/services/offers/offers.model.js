@@ -29,6 +29,18 @@ module.exports = function (app) {
     timelock: { type: Number, required: true },
     // Timelock for HTLC2 (accept offer):
     timelock2: { type: Number },
+
+    // The blockheight at which the timelocks expire:
+    //  (timelock + htlcTx1.confirmationBlockHeight)
+    //  (timelock2 + htlcTx2.confirmationBlockHeight)
+    //  These are set downstream from when confirmationBlockHeight is set on the
+    timelockExpiresBlockheight: { type: Number },
+    timelock2ExpiresBlockheight: { type: Number },
+    // When these timelocks expired (timestamps)
+    // These also function to mark whether the timelocks have expired (values set = expired, unset = not expired)
+    timelockExpiredAt: { type: Date },
+    timelock2ExpiredAt: { type: Date },
+
     htlcStep: { type: Number },
     htlcTxId1: { type: String },
     htlcTxId2: { type: String },

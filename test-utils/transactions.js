@@ -105,6 +105,81 @@ exports.setupMock = function () {
           error: null,
           id: null
         }]
+      case 'getblock':
+        return [200, {
+          result: {
+            'hash': '516251b576ab780a73d4f24f9a0f447984a38409c2cd05d1a99f30ae06b68f9d',
+            'confirmations': 1,
+            'strippedsize': 228,
+            'size': 264,
+            'weight': 948,
+            'height': 1272,
+            'version': 536870912,
+            'versionHex': '20000000',
+            'merkleroot': 'dbaa4e97ed83f7fa6f4dae191e5189880ab2fbcdae7a9a3edf2f86604a417c51',
+            'tx': [
+              '2e7c903a1f6269d7f938b9189f6ed250d45a9f5c83c870aad1892d3109437126'
+            ],
+            'time': 1522430842,
+            'mediantime': 1522178441,
+            'nonce': 3,
+            'bits': '207fffff',
+            'difficulty': 4.656542373906925e-10,
+            'chainwork': '00000000000000000000000000000000000000000000000000000000000009bc',
+            'previousblockhash': '24ebfa22e3165a2968a109a5ab7771312aea1caff0b66fe3d569315bab86fea8'
+          }
+        }]
+      case 'getblockchaininfo':
+        return [200, {
+          'result': {
+            'chain': 'regtest',
+            'blocks': 1272,
+            'headers': 1272,
+            'bestblockhash': '516251b576ab780a73d4f24f9a0f447984a38409c2cd05d1a99f30ae06b68f9d',
+            'difficulty': 4.656542373906925e-10,
+            'mediantime': 1522178441,
+            'verificationprogress': 1,
+            'chainwork': '00000000000000000000000000000000000000000000000000000000000009bc',
+            'pruned': false,
+            'softforks': [{
+              'id': 'bip34',
+              'version': 2,
+              'reject': {
+                'status': false
+              }
+            },
+            {
+              'id': 'bip66',
+              'version': 3,
+              'reject': {
+                'status': false
+              }
+            },
+            {
+              'id': 'bip65',
+              'version': 4,
+              'reject': {
+                'status': false
+              }
+            }],
+            'bip9_softforks': {
+              'csv': {
+                'status': 'active',
+                'startTime': 0,
+                'timeout': 999999999999,
+                'since': 432
+              },
+              'segwit': {
+                'status': 'active',
+                'startTime': 0,
+                'timeout': 999999999999,
+                'since': 432
+              }
+            }
+          },
+          'error': null,
+          'id': null
+        }]
     }
   })
 }

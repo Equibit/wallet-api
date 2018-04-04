@@ -3,6 +3,7 @@ const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const userUtils = utils.users
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
+const offerUtils = require('../../../test-utils/offers')
 
 utils.clients.forEach(client => {
   runTests(client)
@@ -50,24 +51,10 @@ function runTests (feathersClient) {
               })
           })
           .then(() => {
-            const createOrderSkel = {
-              'userId': '000000000000000000000000',
-              issuanceId: '000000000000000000000000',
-              'issuanceAddress': '000000000000000000000000',
-              'type': 'SELL',
-              'portfolioId': '000000000000000000000000',
-              'quantity': 60,
-              'price': 10,
-              'status': 'OPEN',
-              'isFillOrKill': false,
-              'goodFor': 7,
-              'companyName': 'Foo',
-              'issuanceName': 'Bar',
-              'issuanceType': 'bonds'
-            }
-            return app.service('orders').create(createOrderSkel).then(order => {
-              this.order = order
-            })
+            return offerUtils.createOrder(app)
+          })
+          .then(order => {
+            this.order = order
           })
       })
 
@@ -141,22 +128,7 @@ function runTests (feathersClient) {
         userUtils.create(app).then(user => {
           this.user = user
 
-          const createOrderSkel = {
-            'userId': '000000000000000000000000',
-            issuanceId: '000000000000000000000000',
-            'issuanceAddress': '000000000000000000000000',
-            'type': 'SELL',
-            'portfolioId': '000000000000000000000000',
-            'quantity': 60,
-            'price': 10,
-            'status': 'OPEN',
-            'isFillOrKill': false,
-            'goodFor': 7,
-            'companyName': 'Foo',
-            'issuanceName': 'Bar',
-            'issuanceType': 'bonds'
-          }
-          return app.service('orders').create(createOrderSkel)
+          return offerUtils.createOrder(app)
         }).then(order => {
           this.order = order
           done()
@@ -215,12 +187,27 @@ function runTests (feathersClient) {
       })
 
       it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
+        let txObj
         const createData = Object.assign({}, createDataSkel, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
+          return app.service('transactions').create({
+            address: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
+            addressTxid: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
+            addressVout: 0,
+            type: 'SELL',
+            currencyType: 'BTC',
+            toAddress: '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
+            amount: 777123,
+            fee: 0.0001,
+            hex: `01000000012c6e7e8499a362e611b7cf3c50f55ea67528275cce4540e224cdd9265cf207a4010000006a4730440220299bb9f6493d2ab0dd9aad9123252d5f718618403bb19d77699f21cf732bb9c602201b5adcbcaf619c2c5ca43274b3362778bc70d09091d2447333990ebd4aff8f8a0121033701fc7f242ae2dd63a18753518b6d1425e53496878924b6c0dc08d800af46adffffffff0200a3e111000000001976a914ea3f916f7ad64b1ed044147d4b1df2af10ea9cb688ac98ecfa02000000001976a914b0abfca92c8a1ae023220d4134fe72ff3273a30988ac00000000`
+          })
+        })
+        .then(tx => {
+          txObj = tx
           return serviceOnClient.create(createData)
         })
         .then(offer => {
@@ -228,24 +215,29 @@ function runTests (feathersClient) {
           return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
         })
         .then(offer => {
-          return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED', htlcStep: 3 })
+          return serviceOnClient.patch(offer._id.toString(), {
+            status: 'CANCELLED',
+            htlcStep: 3,
+            htlcTxId3: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba'
+          })
         })
         .then(offer => {
           assert.equal(offer.status, 'CANCELLED', 'offer was cancelled')
           return serviceOnClient.patch(offer._id.toString(), {
             htlcStep: 4,
-            htlcTxId4: 'foo'
+            htlcTxId4: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba'
           })
         })
         .then(offer => {
           assert.equal(offer.htlcStep, 4, 'offer htlcStep was updated')
-          assert.equal(offer.htlcTxId4, 'foo', 'offer htlcTxId4 was updated')
+          assert.equal(offer.htlcTxId4, '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba', 'offer htlcTxId4 was updated')
           return serviceOnClient.patch(offer._id.toString(), {
             status: 'CLOSED'
           })
         })
         .catch(err => {
           assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Offer cannot be modified once CANCELLED')
+          app.service('transactions').remove(txObj._id)
           done()
         })
       })

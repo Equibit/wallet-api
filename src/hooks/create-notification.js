@@ -34,7 +34,7 @@ module.exports = function (options) {
       type: options.type || hook.service.path,
       isRead: false,
       data
-    })
+    }).catch(console.error.bind(console))
 
     return hook
   }

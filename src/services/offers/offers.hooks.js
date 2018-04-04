@@ -36,18 +36,37 @@ module.exports = function (app) {
           _id: hook.result.orderId
         }).then(result => {
           hook.params.order = result
-          if (hook.result.htlcStep === 3) {
-            if (hook.result.type === 'BUY') {
-              hook.notificationAddress = result.btcAddress
-            } else {
-              hook.notificationAddress = result.eqbAddress
-            }
+          if (hook.result.status === 'CANCELLED') {
+            // assume htlcStep === either 3 or 4
+            return app.service('/transactions').find({
+              query: {
+                txId: hook.result.htlcStep === 3 ? hook.result.htlcTxId3 : hook.result.htlcTxId4
+              }
+            }).then(txes => {
+              const tx = txes.data[0]
+              if (tx) {
+                if (tx.toAddress === hook.result.eqbAddress || tx.toAddress === hook.result.btcAddress) {
+                  hook.notificationAddress = hook.params.order.eqbAddress
+                } else {
+                  hook.notificationAddress = hook.result.eqbAddress
+                }
+              }
+              return hook
+            })
           } else {
-            // these updates (steps 2 or 4) were made by the order holder.
-            // Notify the offer creator
-            hook.notificationAddress = hook.result.eqbAddress
+            if (hook.result.htlcStep === 3) {
+              if (hook.result.type === 'BUY') {
+                hook.notificationAddress = result.btcAddress
+              } else {
+                hook.notificationAddress = result.eqbAddress
+              }
+            } else {
+              // these updates (steps 2 or 4) were made by the order holder.
+              // Notify the offer creator
+              hook.notificationAddress = hook.result.eqbAddress
+            }
+            return hook
           }
-          return hook
         })
       },
       createNotification({
@@ -77,6 +96,76 @@ module.exports = function (app) {
           issuanceName: 'result.issuanceName'
         }
       })
+    ),
+    // SAFETY ZONE notification.  Notify the order creator of the safety zone.
+    iff(
+      hook => {
+        return hook.result.timelock2ExpiredAt &&
+                !hook.params.before.timelock2ExpiredAt &&
+                hook.result.status !== 'CLOSED' &&
+                (hook.result.status !== 'CANCELLED' || !hook.result.htlcTxId4)
+      },
+      hook => {
+        return app.service('/orders').get({
+          _id: hook.result.orderId
+        }).then(result => {
+          hook.params.order = result
+          return hook
+        })
+      },
+      createNotification({
+        type: 'offer',
+        addressPath: 'params.order.eqbAddress',
+        fields: {
+          offerId: 'result._id',
+          orderId: 'result.orderId',
+          type: 'result.type',
+          status: hook => {
+            if (hook.result.timelock2ExpiredAt && !hook.result.timelockExpiredAt) {
+              return 'SAFETY_ZONE'
+            } else {
+              return 'EXPIRED'
+            }
+          },
+          action: hook => {
+            if (hook.result.timelock2ExpiredAt && !hook.result.timelockExpiredAt) {
+              return 'dealFlowMessageTitleOfferSafetyZone'
+            } else {
+              return 'dealFlowMessageTitleOfferExpired'
+            }
+          },
+          htlcStep: 'result.htlcStep',
+          quantity: 'result.quantity',
+          unit: 'Shares',
+          companyName: 'result.companyName',
+          issuanceName: 'result.issuanceName'
+        }
+      })
+    ),
+    // Full offer expiration.  Notify the offer creator
+    iff(
+      hook => {
+        return hook.result.timelockExpiredAt &&
+                !hook.params.before.timelockExpiredAt &&
+                !hook.result.htlcTxId4 &&
+                hook.result.status !== 'CLOSED'
+      },
+      createNotification({
+        type: 'offer',
+        addressPath: 'result.eqbAddress',
+        fields: {
+          offerId: 'result._id',
+          orderId: 'result.orderId',
+          type: 'result.type',
+          status: hook => 'EXPIRED',
+          action: hook => 'dealFlowMessageTitleOfferExpired',
+          htlcStep: 'result.htlcStep',
+          quantity: 'result.quantity',
+          unit: 'Shares',
+          companyName: 'result.companyName',
+          issuanceName: 'result.issuanceName'
+        }
+      })
     )
   ]
 
@@ -90,7 +179,13 @@ module.exports = function (app) {
       create: [
         iff(
           isProvider('external'),
-          statusOnCreateIsOPEN()
+          statusOnCreateIsOPEN(),
+          discard(
+            'timelockExpiredAt',
+            'timelock2ExpiredAt',
+            'timelockExpiresBlockheight',
+            'timelock2ExpiresBlockheight'
+          )
         )
       ],
       update: [
@@ -98,6 +193,12 @@ module.exports = function (app) {
         iff(
           isProvider('external'),
           idRequired(),
+          discard(
+            'timelockExpiredAt',
+            'timelock2ExpiredAt',
+            'timelockExpiresBlockheight',
+            'timelock2ExpiresBlockheight'
+          ),
           statusEnforcementOnChange(app)
         )
       ],
@@ -106,6 +207,12 @@ module.exports = function (app) {
         iff(
           isProvider('external'),
           idRequired(),
+          discard(
+            'timelockExpiredAt',
+            'timelock2ExpiredAt',
+            'timelockExpiresBlockheight',
+            'timelock2ExpiresBlockheight'
+          ),
           statusEnforcementOnChange(app)
         )
       ],
