@@ -1,7 +1,7 @@
 {
   "name": "wallet-api",
   "description": "Equibit Wallet API",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "homepage": "",
   "main": "src",
   "keywords": [
