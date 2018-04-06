@@ -1,5 +1,4 @@
 module.exports = function (data, connection, hook) {
-
   // TODO: review and complete.
   // We have two privacy cases here:
   // 1. Some tx may be publicly revealed (e.g. a trade)
