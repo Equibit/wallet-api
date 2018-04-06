@@ -2,7 +2,7 @@ const errors = require('feathers-errors')
 
 // Only allow cancelling of an order under certain conditions
 module.exports = function (app) {
-  return function statusOnCreateIsOPEN (context) {
+  return function allowCancel (context) {
     const { data, params } = context
     const newStatus = data.status || ''
 
@@ -18,7 +18,8 @@ module.exports = function (app) {
         return Promise.reject(new errors.BadRequest('Order cannot be cancelled unless it is open.'))
       }
 
-      return app.service('offers').find({ query: { orderId: order._id, isAccepted: true }})
+      return app.service('offers')
+        .find({ query: { orderId: order._id, isAccepted: true } })
         .then(response => {
           const acceptedOffers = response.data || []
           const hasAcceptedAny = !!(acceptedOffers.length)
