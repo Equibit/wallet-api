@@ -10,7 +10,7 @@ module.exports = function (data, connection, hook) {
   // if (addressMap && connection.addresses && connection.addresses[addressMap.address]) {
 
   if (connection.addresses && connection.addresses[ data.address ]) {
-    console.log(`+TRANSACTION FILTER: OK found. data.address=${data.address}`)
+    // console.log(`+TRANSACTION FILTER: OK found. data.address=${data.address}`)
     return data
   } else {
     return false
