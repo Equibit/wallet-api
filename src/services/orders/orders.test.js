@@ -107,7 +107,8 @@ function runTests (feathersClient) {
 
       it('can create order and cancel it', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: 0
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -126,7 +127,8 @@ function runTests (feathersClient) {
 
       it('cannot cancel an order that is TRADING', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: 0
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -155,7 +157,8 @@ function runTests (feathersClient) {
 
       it('can cancel an order that has offers', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: 0
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -185,7 +188,8 @@ function runTests (feathersClient) {
 
       it('cannot cancel an order that has accepted offers', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: 0
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {

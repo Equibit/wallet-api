@@ -9,9 +9,89 @@ utils.clients.forEach(client => {
   runTests(client)
 })
 
+const skels = {
+  sellOffer: Object.freeze({
+    userId: '000000000000000000000000',
+    type: 'SELL',
+    status: 'OPEN',
+    htlcStep: 1,
+    quantity: 10,
+    price: 333,
+    issuanceId: '000000000000000000000000',
+    issuanceAddress: '000000000000000000000000',
+    hashlock: '000000000000000000000000',
+    timelock: 1234,
+    btcAddress: '000000000000000000000000',
+    eqbAddress: '000000000000000000000000'
+  }),
+  buyOffer: Object.freeze({
+    userId: '000000000000000000000000',
+    type: 'BUY',
+    status: 'OPEN',
+    htlcStep: 1,
+    quantity: 10,
+    price: 333,
+    issuanceId: '000000000000000000000000',
+    issuanceAddress: '000000000000000000000000',
+    hashlock: '000000000000000000000000',
+    timelock: 1234,
+    btcAddress: '000000000000000000000000',
+    eqbAddress: '000000000000000000000000'
+  }),
+  sellOrder: Object.freeze({
+    userId: '000000000000000000000000',
+    issuanceId: '000000000000000000000000',
+    issuanceAddress: '000000000000000000000000',
+    type: 'SELL',
+    portfolioId: '000000000000000000000000',
+    quantity: 60,
+    price: 10,
+    status: 'OPEN',
+    isFillOrKill: false,
+    goodFor: 7,
+    companyName: 'Foo',
+    issuanceName: 'Bar',
+    issuanceType: 'bonds'
+  }),
+  buyOrder: Object.freeze({
+    userId: '000000000000000000000000',
+    issuanceId: '000000000000000000000000',
+    issuanceAddress: '000000000000000000000000',
+    type: 'BUY',
+    portfolioId: '000000000000000000000000',
+    quantity: 60,
+    price: 10,
+    status: 'OPEN',
+    isFillOrKill: false,
+    goodFor: 7,
+    companyName: 'Foo',
+    issuanceName: 'Bar',
+    issuanceType: 'bonds'
+  }),
+  issuance: Object.freeze({
+    userId: '000000000000000000000000',
+    index: 0,
+    companyIndex: 0,
+    issuanceTxId: '000000000000000000000000',
+    issuanceAddress: '000000000000000000000000',
+    companyId: '000000000000000000000000',
+    companyName: '000000000000000000000000',
+    companySlug: '000000000000000000000000',
+    domicile: '000000000000000000000000',
+    issuanceName: '000000000000000000000000',
+    issuanceType: '000000000000000000000000',
+    sharesIssued: 0,
+    sharesAuthorized: 10000
+  })
+}
+
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const serviceOnClient = feathersClient.service('offers')
+  const serviceOnServer = app.service('offers')
+
+  const ordersServiceOnServer = app.service('orders')
+  const issuanceServiceOnServer = app.service('issuances')
 
   describe(`Offers Service Tests - ${transport}`, function () {
     before(function () {
@@ -51,36 +131,29 @@ function runTests (feathersClient) {
               })
           })
           .then(() => {
-            return offerUtils.createOrder(app)
-          })
-          .then(order => {
-            this.order = order
+            return ordersServiceOnServer.create(skels.sellOrder).then(order => {
+              this.order = order
+            })
           })
       })
 
       after(function () {
         return feathersClient.logout()
           .then(() => userUtils.removeAll(app))
-          .then(() => app.service('orders').remove(null, { query: { userId: '000000000000000000000000' } }))
-          .then(() => app.service('offers').remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => ordersServiceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
       })
 
       if (transport === 'feathers-socketio') {
         it('Sends a real-time update', function (done) {
-          const offer = {
-            userId: '000000000000000000000000',
+          const offerData = Object.assign({}, skels.buyOffer, {
             orderId: this.order._id.toString(),
-            type: 'SELL',
-            issuanceAddress: '12345',
-            quantity: 1,
-            price: 0.00005,
-            status: 'OPEN',
 
             // Issuance info:
-            issuanceId: '000000000000000000000000',
             companyName: 'Test',
             issuanceName: 'Test',
             issuanceType: 'Stock',
+            issuanceAddress: '12345',
 
             // EQB address to receive securities to for a BUY offer
             // eqbAddress: 'string',
@@ -88,10 +161,8 @@ function runTests (feathersClient) {
             btcAddress: 'test-address',
 
             // HTLC:
-            eqbAddress: 'some-address',
-            timelock: 144,
-            hashlock: '123'
-          }
+            eqbAddress: 'some-address'
+          })
 
           const checkOffer = function checkOffer (offer) {
             assert(offer, 'should receive offer in the event')
@@ -100,7 +171,7 @@ function runTests (feathersClient) {
 
           serviceOnClient.once('created', checkOffer)
 
-          serviceOnClient.create(offer)
+          serviceOnClient.create(offerData)
             .catch(error => {
               done(error)
             })
@@ -109,26 +180,10 @@ function runTests (feathersClient) {
     })
 
     describe('With Auth', function () {
-      const createDataSkel = {
-        userId: '000000000000000000000000',
-        type: 'SELL',
-        status: 'OPEN',
-        htlcStep: 1,
-        quantity: 10,
-        price: 333,
-        issuanceId: '000000000000000000000000',
-        issuanceAddress: '000000000000000000000000',
-        hashlock: '000000000000000000000000',
-        timelock: 1234,
-        btcAddress: '000000000000000000000000',
-        eqbAddress: '000000000000000000000000'
-      }
-
       beforeEach(function (done) {
         userUtils.create(app).then(user => {
           this.user = user
-
-          return offerUtils.createOrder(app)
+          return ordersServiceOnServer.create(skels.buyOrder)
         }).then(order => {
           this.order = order
           done()
@@ -137,16 +192,17 @@ function runTests (feathersClient) {
 
       afterEach(function (done) {
         feathersClient.logout()
-          .then(() => app.service('offers').remove(null, { query: { userId: '000000000000000000000000' } }))
-          .then(() => app.service('orders').remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => ordersServiceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
           .then(() => userUtils.removeAll(app))
           .then(() => done())
       })
 
       it('sets offer.status automatically - normal flow and some edge cases', function (done) {
-        const createData = Object.assign({}, createDataSkel, {
+        const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: 0
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -181,16 +237,21 @@ function runTests (feathersClient) {
           return serviceOnClient.patch(offer._id.toString(), { status: 'CANCELLED' })
         })
         .catch(err => {
-          assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Cannot be cancelled after closed')
-          done()
+          try {
+            assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', err.message)
+            done()
+          } catch (assertionErr) {
+            done(assertionErr)
+          }
         })
       })
 
       it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
         let txObj
-        const createData = Object.assign({}, createDataSkel, {
+        const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: 0
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -236,16 +297,21 @@ function runTests (feathersClient) {
           })
         })
         .catch(err => {
-          assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', 'Offer cannot be modified once CANCELLED')
-          app.service('transactions').remove(txObj._id)
-          done()
+          try {
+            assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', err.message)
+            done()
+          } catch (assertionErr) {
+            done(assertionErr)
+          }
+          txObj && app.service('transactions').remove(txObj._id)
         })
       })
 
       it('offer.status can be set to CANCELLED while TRADING', function (done) {
-        const createData = Object.assign({}, createDataSkel, {
+        const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: 0
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
@@ -270,31 +336,18 @@ function runTests (feathersClient) {
           })
       })
 
-      const issuanceCreateData = {
-        userId: '000000000000000000000000',
-        index: 0,
-        companyIndex: 0,
-        issuanceTxId: '000000000000000000000000',
-        issuanceAddress: '000000000000000000000000',
-        companyId: '000000000000000000000000',
-        companyName: '000000000000000000000000',
-        companySlug: '000000000000000000000000',
-        domicile: '000000000000000000000000',
-        issuanceName: '000000000000000000000000',
-        issuanceType: '000000000000000000000000',
-        sharesIssued: 0
-      }
-
       it('patches the related issuance when CLOSED if offer user is issuer', function (done) {
-        const issuanceServiceOnServer = app.service('issuances')
         const initialSharesIssued = 22
         const offerQuantity = 200
-        const offerCreateData = Object.assign({}, createDataSkel, {
+        const offerCreateData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: offerQuantity
         })
-        issuanceCreateData.userId = this.user._id.toString()
-        issuanceCreateData.sharesIssued = initialSharesIssued
+        const issuanceCreateData = Object.assign({}, skels.issuance, {
+          userId: this.user._id.toString(),
+          sharesIssued: initialSharesIssued
+        })
 
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
@@ -304,7 +357,6 @@ function runTests (feathersClient) {
               assert.equal(issuance.sharesIssued, initialSharesIssued, 'issuance created correctly')
 
               offerCreateData.issuanceId = issuanceId
-              offerCreateData.quantity = offerQuantity
 
               serviceOnClient.create(offerCreateData)
                 .then(offer => {
@@ -332,15 +384,17 @@ function runTests (feathersClient) {
       })
 
       it('patches the related issuance when CLOSED if order user is the issuer', function (done) {
-        const issuanceServiceOnServer = app.service('issuances')
         const initialSharesIssued = 11
         const offerQuantity = 10
-        const offerCreateData = Object.assign({}, createDataSkel, {
+        const offerCreateData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: offerQuantity
         })
-        issuanceCreateData.userId = '000000000000000000000000'
-        issuanceCreateData.sharesIssued = initialSharesIssued
+        const issuanceCreateData = Object.assign({}, skels.issuance, {
+          userId: '000000000000000000000000',
+          sharesIssued: initialSharesIssued
+        })
 
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
@@ -350,7 +404,6 @@ function runTests (feathersClient) {
               assert.equal(issuance.sharesIssued, initialSharesIssued, 'issuance created correctly')
 
               offerCreateData.issuanceId = issuanceId
-              offerCreateData.quantity = offerQuantity
 
               serviceOnClient.create(offerCreateData)
                 .then(offer => {
@@ -378,15 +431,17 @@ function runTests (feathersClient) {
       })
 
       it('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
-        const issuanceServiceOnServer = app.service('issuances')
         const initialSharesIssued = 11
         const offerQuantity = 100
-        const offerCreateData = Object.assign({}, createDataSkel, {
+        const offerCreateData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          quantity: offerQuantity
         })
-        issuanceCreateData.userId = '000000000000000000000001'
-        issuanceCreateData.sharesIssued = initialSharesIssued
+        const issuanceCreateData = Object.assign({}, skels.issuance, {
+          userId: '222222222222222222222222',
+          sharesIssued: initialSharesIssued
+        })
 
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
@@ -396,7 +451,6 @@ function runTests (feathersClient) {
               assert.equal(issuance.sharesIssued, initialSharesIssued, 'issuance created correctly')
 
               offerCreateData.issuanceId = issuanceId
-              offerCreateData.quantity = offerQuantity
 
               serviceOnClient.create(offerCreateData)
                 .then(offer => {

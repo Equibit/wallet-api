@@ -6,6 +6,9 @@ const createNotification = require('../../hooks/create-notification')
 const statusOnCreateIsOPEN = require('./hooks/hook.status-on-create-is-open')
 const statusEnforcementOnChange = require('./hooks/hook.status-enforcement-on-change')
 const patchSharesIssuedAfterClosed = require('./hooks/hook.patch-shares-issued-after-closed')
+const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
+const blockOfferAcceptance = require('./hooks/hook.block-offer-acceptance')
+const errors = require('feathers-errors')
 
 /* Rules for Offer.status enforced by hooks:
   OPEN, htlcStep=1 (default)
@@ -180,6 +183,50 @@ module.exports = function (app) {
         iff(
           isProvider('external'),
           statusOnCreateIsOPEN(),
+          iff(
+            // if create data type is SELL
+            context => {
+              const { data } = context
+              const type = data && data.type
+
+              return (type || '').toUpperCase() === 'SELL'
+            },
+            addSellIssuanceDataToParams(app),
+            context => {
+              const { params, data } = context
+              const sellIssuanceData = params.sellIssuanceData || {}
+              const maxSellQuantity = sellIssuanceData.maxSellQuantity || 0
+              const sellQuantity = data.quantity || 0
+
+              if (sellQuantity > maxSellQuantity) {
+                return Promise.reject(new errors.BadRequest('Sell Quantity exceeds maximum available'))
+              }
+              return Promise.resolve(context)
+            }
+          ),
+          iff(
+            // if create data type is BUY
+            context => {
+              const { data } = context
+              const type = data && data.type
+
+              return (type || '').toUpperCase() === 'BUY'
+            },
+            context => {
+              const { data } = context
+              const ordersService = app.service('orders')
+              return ordersService.find({ query: { _id: data.orderId } })
+                .then(response => {
+                  const order = response.data[0] || {}
+                  const quantity = order.quantity || 0
+
+                  if (data.quantity > quantity) {
+                    return Promise.reject(new errors.BadRequest('Buy Quantity exceeds maximum'))
+                  }
+                  return Promise.resolve(context)
+                })
+            }
+          ),
           discard(
             'timelockExpiredAt',
             'timelock2ExpiredAt',
@@ -193,6 +240,7 @@ module.exports = function (app) {
         iff(
           isProvider('external'),
           idRequired(),
+          blockOfferAcceptance(app),
           discard(
             'timelockExpiredAt',
             'timelock2ExpiredAt',
@@ -207,6 +255,7 @@ module.exports = function (app) {
         iff(
           isProvider('external'),
           idRequired(),
+          blockOfferAcceptance(app),
           discard(
             'timelockExpiredAt',
             'timelock2ExpiredAt',
