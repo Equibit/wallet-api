@@ -1,9 +1,9 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { discard, iff, isProvider } = require('feathers-hooks-common')
+const { discard, iff, isProvider, stashBefore } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
 const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
+const allowCancel = require('./hooks/hook.allow-cancel')
 const errors = require('feathers-errors')
-
 // todo: discard userId if its different from current user
 
 module.exports = function (app) {
@@ -66,13 +66,17 @@ module.exports = function (app) {
       update: [
         iff(
           isProvider('external'),
-          idRequired()
+          idRequired(),
+          stashBefore(),
+          allowCancel(app)
         )
       ],
       patch: [
         iff(
           isProvider('external'),
-          idRequired()
+          idRequired(),
+          stashBefore(),
+          allowCancel(app)
         )
       ],
       remove: [

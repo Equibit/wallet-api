@@ -11,6 +11,7 @@ const getEventAddress = require('../../hooks/get-event-address')
 const defaultSort = require('./hooks/hook.default-sort')
 const conditionalRequirements = require('./hooks/hook.conditional-requirements')
 const createNotification = require('../../hooks/create-notification')
+const updateOfferExpiration = require('./hooks/hook.update-offer-expiration')
 
 module.exports = app => {
   const coreParams = {
@@ -21,7 +22,10 @@ module.exports = app => {
     before: {
       all: [ authenticate('jwt') ],
       find: [
-        requireAddresses(),
+        iff(
+          isProvider('external'),
+          requireAddresses()
+        ),
         defaultSort()
       ],
       get: [],
@@ -104,8 +108,14 @@ module.exports = app => {
           })
         )
       ],
-      update: [],
-      patch: [],
+      update: [
+        getEventAddress()
+      ],
+      patch: [
+        // Update offer if transaction is either htlc1 or htlc2 of the offer:
+        updateOfferExpiration(),
+        getEventAddress()
+      ],
       remove: []
     },
 

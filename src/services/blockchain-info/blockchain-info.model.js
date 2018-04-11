@@ -12,6 +12,7 @@ module.exports = function (app) {
     currentBlockHeight: { type: Number },
     bestblockhash: { type: String },
     difficulty: { type: Number },
+    mediantime: { type: Number },
     errorMessage: { type: String }
   }, {
     timestamps: true

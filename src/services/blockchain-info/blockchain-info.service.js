@@ -65,6 +65,7 @@ function normalizeBlockchainInfo (coinType) {
       currentBlockHeight: blockchainInfo.blocks,
       bestblockhash: blockchainInfo.bestblockhash,
       difficulty: blockchainInfo.difficulty,
+      mediantime: blockchainInfo.mediantime,
       errorMessage: ''
     }
     return newData
@@ -117,7 +118,7 @@ module.exports = function () {
   // Get our initialized service so that we can register hooks and filters
   const service = app.service('blockchain-info')
 
-  service.hooks(hooks)
+  service.hooks(hooks(app))
 
   if (service.filter) {
     service.filter(filters)
