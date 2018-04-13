@@ -23,7 +23,7 @@ module.exports = function (app) {
             context => {
               const { data } = context
               const assetType = data && data.assetType
-              const type = data && data.type || ''
+              const type = (data && data.type) || ''
 
               return assetType === 'ISSUANCE' && type.toUpperCase() === 'SELL'
             },
@@ -45,7 +45,7 @@ module.exports = function (app) {
             context => {
               const { data } = context
               const assetType = data && data.assetType
-              const type = data && data.type || ''
+              const type = (data && data.type) || ''
 
               return assetType === 'ISSUANCE' && type.toUpperCase() === 'BUY'
             },
