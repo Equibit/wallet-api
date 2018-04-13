@@ -21,9 +21,10 @@ module.exports = function (app) {
             // if create data type is SELL
             context => {
               const { data } = context
-              const type = data && data.type
+              const assetType = data && data.assetType
+              const type = data && data.type || ''
 
-              return (type || '').toUpperCase() === 'SELL'
+              return assetType === 'ISSUANCE' && type.toUpperCase() === 'SELL'
             },
             addSellIssuanceDataToParams(app),
             context => {
@@ -42,9 +43,10 @@ module.exports = function (app) {
             // if create data type is BUY
             context => {
               const { data } = context
-              const type = data && data.type
+              const assetType = data && data.assetType
+              const type = data && data.type || ''
 
-              return (type || '').toUpperCase() === 'BUY'
+              return assetType === 'ISSUANCE' && type.toUpperCase() === 'BUY'
             },
             context => {
               const { data } = context
