@@ -3,7 +3,7 @@ const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const userUtils = utils.users
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
-const offerUtils = require('../../../test-utils/offers')
+// const offerUtils = require('../../../test-utils/offers')
 
 utils.clients.forEach(client => {
   runTests(client)
