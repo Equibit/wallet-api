@@ -9,12 +9,13 @@ const errors = require('feathers-errors')
 module.exports = function (app) {
   return {
     before: {
-      all: [
+      all: [],
+      find: [],
+      get: [
         authenticate('jwt')
       ],
-      find: [],
-      get: [],
       create: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           iff(
@@ -66,6 +67,7 @@ module.exports = function (app) {
         )
       ],
       update: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           idRequired(),
@@ -74,6 +76,7 @@ module.exports = function (app) {
         )
       ],
       patch: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           idRequired(),
@@ -82,6 +85,7 @@ module.exports = function (app) {
         )
       ],
       remove: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           idRequired()
