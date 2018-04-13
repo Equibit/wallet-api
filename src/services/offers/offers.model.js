@@ -14,7 +14,7 @@ module.exports = function (app) {
     userId: { type: ObjectId, required: true },
     orderId: { type: ObjectId, required: true },
     type: { type: String, enum: [ 'SELL', 'BUY' ], required: true },
-    assetType: { type: String, enum: ['ISSUANCE', 'EQUIBIT'], default: 'ISSUANCE'},
+    assetType: { type: String, enum: ['ISSUANCE', 'EQUIBIT'], default: 'ISSUANCE' },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
     status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED' ] },
