@@ -2,12 +2,18 @@
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
+
+function issuanceRequired () {
+  return !this.assetType || this.assetType === 'ISSUANCE'
+}
+
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const { ObjectId } = mongooseClient.Schema.Types
   const orders = new mongooseClient.Schema({
-    userId: { type: ObjectId, required: true },
+    userId: { type: ObjectId, required: issuanceRequired },
     type: { type: String, required: true },
+    assetType: { type: String, enum: ['ISSUANCE', 'EQUIBIT'], default: 'ISSUANCE' },
 
     // For HTLC we need 2 or 3 addresses:
     // - Sell order:
@@ -21,7 +27,7 @@ module.exports = function (app) {
 
     timelock: { type: Number },
 
-    portfolioId: { type: String, required: true },
+    portfolioId: { type: String, required: issuanceRequired },
 
     // Number of units:
     quantity: { type: Number, required: true },
@@ -34,8 +40,8 @@ module.exports = function (app) {
     status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED' ] },
 
     // Issuance info:
-    issuanceId: { type: ObjectId, required: true },
-    issuanceAddress: { type: String, required: true },
+    issuanceId: { type: ObjectId, required: issuanceRequired },
+    issuanceAddress: { type: String, required: issuanceRequired },
     issuanceName: { type: String },
     issuanceType: { type: String },
     companyName: { type: String },

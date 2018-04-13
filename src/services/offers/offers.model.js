@@ -2,6 +2,11 @@
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
+
+function issuanceRequired () {
+  return !this.assetType || this.assetType === 'ISSUANCE'
+}
+
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const { ObjectId } = mongooseClient.Schema.Types
@@ -9,14 +14,15 @@ module.exports = function (app) {
     userId: { type: ObjectId, required: true },
     orderId: { type: ObjectId, required: true },
     type: { type: String, enum: [ 'SELL', 'BUY' ], required: true },
+    assetType: { type: String, enum: ['ISSUANCE', 'EQUIBIT'], default: 'ISSUANCE'},
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
     status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED' ] },
     isAccepted: { type: Boolean, default: false },
 
     // Issuance info:
-    issuanceId: { type: ObjectId, required: true },
-    issuanceAddress: { type: String, required: true },
+    issuanceId: { type: ObjectId, required: issuanceRequired },
+    issuanceAddress: { type: String, required: issuanceRequired },
     companyName: { type: String },
     issuanceName: { type: String },
     issuanceType: { type: String },
