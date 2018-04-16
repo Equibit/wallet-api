@@ -9,21 +9,22 @@ const errors = require('feathers-errors')
 module.exports = function (app) {
   return {
     before: {
-      all: [
-        authenticate('jwt')
-      ],
+      // Note: Order Book is public for viewing.
+      all: [],
       find: [],
       get: [],
       create: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           iff(
             // if create data type is SELL
             context => {
               const { data } = context
-              const type = data && data.type
+              const assetType = data && data.assetType
+              const type = (data && data.type) || ''
 
-              return (type || '').toUpperCase() === 'SELL'
+              return assetType === 'ISSUANCE' && type.toUpperCase() === 'SELL'
             },
             addSellIssuanceDataToParams(app),
             context => {
@@ -42,9 +43,10 @@ module.exports = function (app) {
             // if create data type is BUY
             context => {
               const { data } = context
-              const type = data && data.type
+              const assetType = data && data.assetType
+              const type = (data && data.type) || ''
 
-              return (type || '').toUpperCase() === 'BUY'
+              return assetType === 'ISSUANCE' && type.toUpperCase() === 'BUY'
             },
             context => {
               const { data } = context
@@ -64,6 +66,7 @@ module.exports = function (app) {
         )
       ],
       update: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           idRequired(),
@@ -72,6 +75,7 @@ module.exports = function (app) {
         )
       ],
       patch: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           idRequired(),
@@ -80,6 +84,7 @@ module.exports = function (app) {
         )
       ],
       remove: [
+        authenticate('jwt'),
         iff(
           isProvider('external'),
           idRequired()

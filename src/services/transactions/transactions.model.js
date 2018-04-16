@@ -43,14 +43,13 @@ module.exports = function (app) {
     type: { type: String, enum: [ 'OUT', 'IN', 'BUY', 'SELL', 'TRANSFER', 'AUTH', 'CANCEL' ], required: true },
     currencyType: { type: String, enum: [ 'BTC', 'EQB', 'BOTH' ], required: true },
 
+    assetType: { type: String, enum: [ 'ISSUANCE', 'EQUIBIT' ] },
     companyName: { type: String },
     companySlug: { type: String },
     issuanceId: { type: ObjectId },
     issuanceName: { type: String },
-
     // The values are defined by the Core:
     issuanceType: { type: String, enum: ['common_shares', 'bonds', 'preferred_shares', 'fund_units', 'trust_units', 'bitcoin', 'equibit'] },
-
     issuanceUnit: { type: String, enum: ['SHARES', 'BTC', 'UNITS'] },
 
     // status: { type: String, enum: [ 'Trading' ] }, // for Buy & Sell
