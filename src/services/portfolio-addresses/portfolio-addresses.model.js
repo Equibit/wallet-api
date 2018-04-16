@@ -2,7 +2,7 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const { Schema } = mongooseClient
   const { ObjectId } = mongooseClient.Schema.Types
-  const addressMeta = new Schema({
+  const AddressMeta = new Schema({
     portfolioId: { type: ObjectId, required: true },
     index: { type: Number, required: true },
     type: { type: String, required: true }, // EQB or BTC
@@ -14,5 +14,13 @@ module.exports = function (app) {
     timestamps: true
   })
 
-  return mongooseClient.model('portfolioAddresses', addressMeta)
+  const compoundIndex = {
+    portfolioId: 1,
+    index: 1,
+    type: 1,
+    isChange: 1
+  }
+  AddressMeta.index(compoundIndex, { unique: true, name: 'compound addresses meta index' })
+
+  return mongooseClient.model('portfolioAddresses', AddressMeta)
 }
