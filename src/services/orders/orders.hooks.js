@@ -9,11 +9,10 @@ const errors = require('feathers-errors')
 module.exports = function (app) {
   return {
     before: {
+      // Note: Order Book is public for viewing.
       all: [],
       find: [],
-      get: [
-        authenticate('jwt')
-      ],
+      get: [],
       create: [
         authenticate('jwt'),
         iff(
