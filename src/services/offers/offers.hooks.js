@@ -8,6 +8,7 @@ const statusEnforcementOnChange = require('./hooks/hook.status-enforcement-on-ch
 const patchSharesIssuedAfterClosed = require('./hooks/hook.patch-shares-issued-after-closed')
 const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
 const blockOfferAcceptance = require('./hooks/hook.block-offer-acceptance')
+const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const errors = require('feathers-errors')
 
 /* Rules for Offer.status enforced by hooks:
@@ -236,19 +237,7 @@ module.exports = function (app) {
         )
       ],
       update: [
-        stashBefore(),
-        iff(
-          isProvider('external'),
-          idRequired(),
-          blockOfferAcceptance(app),
-          discard(
-            'timelockExpiredAt',
-            'timelock2ExpiredAt',
-            'timelockExpiresBlockheight',
-            'timelock2ExpiresBlockheight'
-          ),
-          statusEnforcementOnChange(app)
-        )
+        mapUpdateToPatch()
       ],
       patch: [
         stashBefore(),
