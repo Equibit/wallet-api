@@ -80,6 +80,7 @@ module.exports = function (app) {
           offerId: 'result._id',
           orderId: 'result.orderId',
           type: 'result.type',
+          assetType: 'result.assetType',
           status: 'result.status',
           action: hook => {
             const offerStatus = hook.result.status === 'OPEN' || hook.result.status === 'TRADING'
