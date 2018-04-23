@@ -11,8 +11,14 @@ const sum = function (list, prop) {
  * `sellOrderTotal` sum of `SELL` Order.quantity where Issuance and User match and not expired and Order.status $in: ['OPEN', 'TRADING']
  * `sellOfferTotal` sum of `SELL` Offer.quantity where Issuance and User match and not expired and Offer.status $in: ['OPEN', 'TRADING']
  * `maxSellQuantity` = issuance.sharesAuthorized - issuance.sharesIssued - sellOrderTotal - sellOfferTotal
- * (NOTE: issuance.sharesAuthorized - issuance.sharesIssued should be equal to issuance.utxoAmountTotal on the front end)
  */
+
+// issuance.utxoAmountTotal on the front end should equal on the backend:
+// primary market: if issuance.userId === params.user._id then issuance.sharesAuthorized - issuance.sharesIssued
+// secondary mrkt: else total quantities of offer and orders in status === CLOSED where offer/order userId is the current user
+// BUT this doesn't account for trades outside the system OR directly sending securities
+
+// currently this doesn't account for secondary market
 module.exports = function (app) {
   return function addSellIssuanceDataToParams (context) {
     const { params, data } = context
@@ -26,7 +32,6 @@ module.exports = function (app) {
       userId: user._id,
       issuanceId: data.issuanceId,
       type: 'SELL',
-      // TODO: not expired
       status: { $in: ['OPEN', 'TRADING'] }
     }
 
