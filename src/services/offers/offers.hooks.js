@@ -192,8 +192,9 @@ module.exports = function (app) {
           //   context => {
           //     const { data } = context
           //     const type = data && data.type
+          //     const assetType = data && data.assetType
           //
-          //     return (type || '').toUpperCase() === 'SELL'
+          //     return (type || '').toUpperCase() === 'SELL' && assetType === 'ISSUANCE'
           //   },
           //   addSellIssuanceDataToParams(app),
           //   context => {
