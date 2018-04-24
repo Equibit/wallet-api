@@ -1,7 +1,7 @@
 const { authenticate } = require('feathers-authentication').hooks
 const { discard, iff, isProvider, stashBefore } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
-const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
+// const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
 const allowCancel = require('./hooks/hook.allow-cancel')
 const errors = require('feathers-errors')
 // todo: discard userId if its different from current user
@@ -17,28 +17,30 @@ module.exports = function (app) {
         authenticate('jwt'),
         iff(
           isProvider('external'),
-          iff(
-            // if create data type is SELL
-            context => {
-              const { data } = context
-              const assetType = data && data.assetType
-              const type = (data && data.type) || ''
-
-              return assetType === 'ISSUANCE' && type.toUpperCase() === 'SELL'
-            },
-            addSellIssuanceDataToParams(app),
-            context => {
-              const { params, data } = context
-              const sellIssuanceData = params.sellIssuanceData || {}
-              const maxSellQuantity = sellIssuanceData.maxSellQuantity || 0
-              const sellQuantity = data.quantity || 0
-
-              if (sellQuantity > maxSellQuantity) {
-                return Promise.reject(new errors.BadRequest('Sell Quantity exceeds maximum available'))
-              }
-              return Promise.resolve(context)
-            }
-          ),
+          // disabling this for now, backend cannot track or enforce this if trades happen outside of the system
+          // must trust the utxo from the front end user.
+          // iff(
+          //   // if create data type is SELL
+          //   context => {
+          //     const { data } = context
+          //     const assetType = data && data.assetType
+          //     const type = (data && data.type) || ''
+          //
+          //     return assetType === 'ISSUANCE' && type.toUpperCase() === 'SELL'
+          //   },
+          //   addSellIssuanceDataToParams(app),
+          //   context => {
+          //     const { params, data } = context
+          //     const sellIssuanceData = params.sellIssuanceData || {}
+          //     const maxSellQuantity = sellIssuanceData.maxSellQuantity || 0
+          //     const sellQuantity = data.quantity || 0
+          //
+          //     if (sellQuantity > maxSellQuantity) {
+          //       return Promise.reject(new errors.BadRequest('Sell Quantity exceeds maximum available'))
+          //     }
+          //     return Promise.resolve(context)
+          //   }
+          // ),
           iff(
             // if create data type is BUY
             context => {
