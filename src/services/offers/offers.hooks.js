@@ -186,12 +186,13 @@ module.exports = function (app) {
           isProvider('external'),
           statusOnCreateIsOPEN(),
           iff(
-            // if create data type is SELL
+            // if create data type is SELL and assetType ISSUANCE
             context => {
               const { data } = context
               const type = data && data.type
+              const assetType = data && data.assetType
 
-              return (type || '').toUpperCase() === 'SELL'
+              return (type || '').toUpperCase() === 'SELL' && assetType === 'ISSUANCE'
             },
             addSellIssuanceDataToParams(app),
             context => {

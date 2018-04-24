@@ -18,6 +18,7 @@ module.exports = function (options) {
         fromAddress: data.fromAddress,
         toAddress: data.toAddress,
         type: typeMap[data.type],
+        assetType: data.assetType,
         currencyType: data.currencyType,
         companyName: data.companyName,
         companySlug: data.companySlug,
