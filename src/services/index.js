@@ -21,8 +21,9 @@ const xpubCrawl = require('./xpub-crawl/xpub-crawl.service.js')
 const offers = require('./offers/offers.service.js')
 const bitcoinAverage = require('./bitcoin-average/bitcoin-average.service.js')
 const notifications = require('./notifications/notifications.service.js')
-
 const blockchainInfo = require('./blockchain-info/blockchain-info.service.js')
+
+const dedupefix = require('./dedupefix/dedupefix.service.js')
 
 module.exports = function () {
   const app = this
@@ -48,4 +49,5 @@ module.exports = function () {
   app.configure(bitcoinAverage)
   app.configure(notifications)
   app.configure(blockchainInfo)
+  app.configure(dedupefix)
 }
