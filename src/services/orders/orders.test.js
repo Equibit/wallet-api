@@ -81,7 +81,8 @@ function runTests (feathersClient) {
     })
 
     describe('Client Without Auth', function () {
-      const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
+      // 'find', 'get' don't require auth - Order Book is public for viewing.
+      const methods = ['create', 'update', 'patch', 'remove']
 
       methods.forEach(method => {
         it(`requires auth on ${method}`, function () {

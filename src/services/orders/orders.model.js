@@ -17,11 +17,11 @@ module.exports = function (app) {
 
     // For HTLC we need 2 or 3 addresses:
     // - Sell order:
-    //    1. btcAddress for receiving payment from a buyer.
+    //    1. btcAddress for receiving payment from a buyer. Multiple offers!
     //    2. eqbAddress for a refund.
     // - Buy order:
-    //    1. eqbAddress for receiving securities from a seller.
-    //    2. btcAddress for our own refund.
+    //    1. eqbAddress for receiving securities from a seller. The same addr for multiple offers is OK.
+    //    2. btcAddress for our own refund. Must be separate for each offer.
     btcAddress: { type: String },
     eqbAddress: { type: String },
 
