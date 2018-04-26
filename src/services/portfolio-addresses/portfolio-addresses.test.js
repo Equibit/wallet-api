@@ -93,6 +93,29 @@ describe(`${servicePath} Service`, function () {
           })
           .catch(done)
       })
+
+      it('returns the same single record on rapid duplicate create of a portfolio address', function (done) {
+        const data = {
+          portfolioId: '5a3d5de27f4c2a5832bdf420',
+          index,
+          type: 'BTC', // EQB or BTC
+          isChange: true,
+          isUsed: false
+        }
+
+        Promise.all([
+          serviceOnServer.create(data),
+          serviceOnServer.create(data),
+          serviceOnServer.create(data),
+          serviceOnServer.create(data)
+        ]).then(responses => {
+          assert.equal(responses.length, 4, 'returned 4 responses')
+          assert.equal(responses[0]._id.toString(), responses[1]._id.toString(), 'first two are the same')
+          assert.equal(responses[2]._id.toString(), responses[3]._id.toString(), 'last two are the same')
+          assert.equal(responses[0]._id.toString(), responses[3]._id.toString(), 'all are the same')
+          done()
+        }).catch(done)
+      })
     })
 
     describe.skip('Update', function () {

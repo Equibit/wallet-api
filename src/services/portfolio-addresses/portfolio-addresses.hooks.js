@@ -120,7 +120,22 @@ module.exports = function (app) {
       all: [],
       find: [],
       get: [],
-      create: [],
+      create: [
+        // If multiple of same NEW data are created at once (see tests), the async hooks on event loop each say that it doesn't exist yet
+        // then, async, each is created one after the other anyway
+        // (but 2nd one (and 3rd etc) throws because of the compound index restriction on the Schema)
+        // This un-throws the duplication of compound index on creation and returns the first one created with the compound key.
+        context => {
+          const { error } = context
+
+          if (error && error.name === 'Conflict' && error.message === 'index: value already exists.') {
+            context.error = null
+            return returnIfExistsAlready(app)(context)
+          }
+
+          return Promise.resolve(context)
+        }
+      ],
       update: [],
       patch: [],
       remove: []
