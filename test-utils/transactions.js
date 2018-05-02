@@ -187,3 +187,7 @@ exports.setupMock = function () {
 exports.resetMock = function resetTransactionsMock () {
   mock.reset()
 }
+
+exports.removeAll = function remove (app) {
+  return app.service('/transactions').remove(null, { query: { fromAddress: { $in: ['000000000000000000000000', 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32'] } } })
+}

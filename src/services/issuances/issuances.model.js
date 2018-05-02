@@ -24,6 +24,7 @@ module.exports = function (app) {
     issuanceName: { type: String, required: true },
     issuanceType: { type: String, required: true },
     restriction: { type: String },
+    isCancelled: { type: Boolean, default: false },
 
     marketCap: { type: Number },
     change: { type: Number },

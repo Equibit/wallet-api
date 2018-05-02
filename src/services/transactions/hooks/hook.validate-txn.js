@@ -36,7 +36,7 @@ module.exports = function (options) {
     }
 
     // Make sure the `address`, `addressTxid`, and `addressVout` are all provided
-    const addressAttrs = ['address', 'addressTxid', 'addressVout']
+    const addressAttrs = ['fromAddress', 'addressTxid', 'addressVout']
     const missingAttr = addressAttrs.reduce((acc, attr) => {
       return acc || (!context.data.hasOwnProperty(attr) && attr) || acc
     }, '')
@@ -79,7 +79,7 @@ module.exports = function (options) {
       }
       // Make sure `context.data.address` matches one of the gettxout response's scriptPubKey.addresses.
       // console.log(`hook.validate-txn: gettxout with formattedParams, result:`, formattedParams, response.data.result)
-      if (response.data.result.scriptPubKey.addresses && !response.data.result.scriptPubKey.addresses.includes(context.data.address)) {
+      if (response.data.result.scriptPubKey.addresses && !response.data.result.scriptPubKey.addresses.includes(context.data.fromAddress)) {
         return Promise.reject(
           new errors.BadRequest(`The provided "address" did not match the "gettxout" verification for ${formattedParams.toString()}`)
         )

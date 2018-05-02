@@ -88,10 +88,10 @@ describe('\'blockchain-info\' service', () => {
         return app.service('/transactions').create({
           txId,
           offerId: offer._id.toString(),
-          address: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
+          fromAddress: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
           addressTxid: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
           addressVout: 0,
-          type: 'BUY',
+          type: 'TRADE',
           currencyType: 'BTC',
           toAddress: '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
           amount: 777123,
@@ -114,7 +114,7 @@ describe('\'blockchain-info\' service', () => {
       .then(() => {
         return app.service('/transactions').find({
           query: {
-            address: { $in: ['mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32'] },
+            fromAddress: { $in: ['mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32'] },
             txId
           }
         })

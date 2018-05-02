@@ -51,7 +51,9 @@ const skels = {
     goodFor: 7,
     companyName: 'Foo',
     issuanceName: 'Bar',
-    issuanceType: 'bonds'
+    issuanceType: 'bonds',
+    btcAddress: '000000000000000000000000',
+    eqbAddress: '000000000000000000000000'
   }),
   buyOrder: Object.freeze({
     userId: '000000000000000000000000',
@@ -66,7 +68,9 @@ const skels = {
     goodFor: 7,
     companyName: 'Foo',
     issuanceName: 'Bar',
-    issuanceType: 'bonds'
+    issuanceType: 'bonds',
+    btcAddress: '000000000000000000000000',
+    eqbAddress: '000000000000000000000000'
   }),
   issuance: Object.freeze({
     userId: '000000000000000000000000',
@@ -259,7 +263,7 @@ function runTests (feathersClient) {
             address: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
             addressTxid: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
             addressVout: 0,
-            type: 'SELL',
+            type: 'TRADE',
             currencyType: 'BTC',
             toAddress: '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
             amount: 777123,

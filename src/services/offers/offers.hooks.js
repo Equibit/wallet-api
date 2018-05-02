@@ -96,7 +96,7 @@ module.exports = function (app) {
           },
           htlcStep: 'result.htlcStep',
           quantity: 'result.quantity',
-          unit: 'Shares',
+          unit: () => 'Shares',
           companyName: 'result.companyName',
           issuanceName: 'result.issuanceName'
         }
