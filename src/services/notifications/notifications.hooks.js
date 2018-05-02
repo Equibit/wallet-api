@@ -3,7 +3,7 @@ const { iff, keep, isProvider } = require('feathers-hooks-common')
 
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const getEventAddress = require('../../hooks/get-event-address')
-const requireAddresses = require('../transactions/hooks/hook.require-addresses')
+const requireAddresses = require('./hooks/hook.require-addresses')
 
 module.exports = app => {
   return {
