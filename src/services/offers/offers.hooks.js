@@ -316,7 +316,7 @@ module.exports = function (app) {
           }
         })
       ],
-      update: postUpdateHooks,
+      update: [],
       patch: postUpdateHooks,
       remove: []
     },
