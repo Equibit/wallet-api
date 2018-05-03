@@ -1,6 +1,7 @@
 // const { authenticate } = require('feathers-authentication').hooks;
 const { disallow, iff, isProvider } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
+const updateTransaction = require('../transactions/hooks/hook.update-transaction')
 
 module.exports = function (app) {
   return {
@@ -14,26 +15,7 @@ module.exports = function (app) {
       ],
       find: [],
       get: [],
-      create: [
-        // hook => {
-        //   function cast (item) {
-        //     const fields = ['marketCap', 'change', 'changePercentage'];
-        //     fields.forEach(field => {
-        //       if (typeof item[field] === 'string') {
-        //         item[field] = parseFloat(item[field]);
-        //       }
-        //     });
-        //   }
-
-        //   if (Array.isArray(hook.data)) {
-        //     hook.data.forEach(item => {
-        //       cast(item);
-        //     });
-        //   } else {
-        //     cast(hook.data);
-        //   }
-        // }
-      ],
+      create: [],
       update: [
         iff(
           isProvider('external'),
@@ -55,7 +37,17 @@ module.exports = function (app) {
       all: [],
       find: [],
       get: [],
-      create: [],
+      create: [
+        updateTransaction({
+          txIdPath: 'result.issuanceTxId',
+          fieldsToUpdate: {
+            issuanceId: 'result._id',
+            issuanceName: 'result.issuanceName',
+            issuanceType: 'result.issuanceType',
+            issuanceUnit: () => 'SHARES'
+          }
+        })
+      ],
       update: [],
       patch: [],
       remove: []
