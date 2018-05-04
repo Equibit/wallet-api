@@ -212,9 +212,9 @@ function runTests (feathersClient) {
 
       it.skip('only allows the creator to update the description', function (done) {})
 
-      it('updates related issuance.sharesIssued for cancel type transactions', function (done) {
+      it('updates related issuance.sharesAuthorized for cancel type transactions', function (done) {
         const issuanceServiceOnServer = app.service('issuances')
-        const initialSharesIssued = 222
+        const initialSharesAuthorized = 222
         const transactionAmount = 22
 
         const issuanceCreateData = {
@@ -229,14 +229,14 @@ function runTests (feathersClient) {
           domicile: '000000000000000000000000',
           issuanceName: '000000000000000000000000',
           issuanceType: '000000000000000000000000',
-          sharesIssued: initialSharesIssued
+          sharesAuthorized: initialSharesAuthorized
         }
         authenticate(app, feathersClient, this.user)
           .then(loggedInResponse => {
             issuanceServiceOnServer.create(issuanceCreateData).then(issuance => {
               const issuanceId = issuance._id.toString()
               assert(issuanceId, 'issuance created')
-              assert.equal(issuance.sharesIssued, initialSharesIssued, 'issuance created correctly')
+              assert.equal(issuance.sharesAuthorized, initialSharesAuthorized, 'issuance created correctly')
 
               const createData = Object.assign({}, dummyTransaction)
               createData.issuanceId = issuanceId
@@ -250,7 +250,7 @@ function runTests (feathersClient) {
                 })
                 .then(findResponse => {
                   const issuanceUpdated = findResponse.data[0]
-                  assert.equal(issuanceUpdated.sharesIssued, initialSharesIssued - transactionAmount, 'sharesIssued was updated correctly')
+                  assert.equal(issuanceUpdated.sharesAuthorized, initialSharesAuthorized - transactionAmount, 'sharesAuthorized was updated correctly')
                   done()
                 })
                 .catch(done)
