@@ -24,7 +24,6 @@ module.exports = function (app) {
     issuanceName: { type: String, required: true },
     issuanceType: { type: String, required: true },
     restriction: { type: String },
-    isCancelled: { type: Boolean, default: false },
 
     marketCap: { type: Number },
     change: { type: Number },
@@ -39,7 +38,7 @@ module.exports = function (app) {
     // meta data:
     volume24h: { type: Number },
     sharesAuthorized: { type: Number },
-    sharesIssued: { type: Number },
+    sharesIssued: { type: Number, default: 0 },
     sharesDividend: { type: Number },
     sharesDividendYield: { type: Number },
 

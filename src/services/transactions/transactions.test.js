@@ -258,6 +258,74 @@ function runTests (feathersClient) {
           })
           .catch(done)
       })
+      it('updates related issuance.sharesIssued for transfer/trade type transactions', function (done) {
+        const issuanceServiceOnServer = app.service('issuances')
+        const initialSharesAuthorized = 222
+        const transactionAmount = 22
+
+        const issuanceCreateData = {
+          userId: this.user._id.toString(),
+          index: 0,
+          companyIndex: 0,
+          issuanceTxId: '000000000000000000000000',
+          issuanceAddress: '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
+          companyId: '000000000000000000000000',
+          companyName: '000000000000000000000000',
+          companySlug: '000000000000000000000000',
+          domicile: '000000000000000000000000',
+          issuanceName: '000000000000000000000000',
+          issuanceType: '000000000000000000000000',
+          sharesAuthorized: initialSharesAuthorized
+        }
+        authenticate(app, feathersClient, this.user)
+          .then(loggedInResponse => {
+            issuanceServiceOnServer.create(issuanceCreateData).then(issuance => {
+              const issuanceId = issuance._id.toString()
+              assert(issuanceId, 'issuance created')
+              assert.equal(issuance.sharesAuthorized, initialSharesAuthorized, 'issuance created correctly')
+              assert.equal(issuance.sharesIssued, 0, 'issuance created correctly')
+
+              let createData = Object.assign({}, dummyTransaction)
+              createData.issuanceId = issuanceId
+              createData.type = 'TRANSFER'
+              createData.amount = transactionAmount
+              // swap to and from.
+              const fa = createData.toAddress
+              createData.toAddress = createData.fromAddress
+              createData.fromAddress = fa
+              // change to a different TXID due to uniqueness constraints
+              createData.txId = '7ca26e1d69a6420d2807a36d8ad3d7d8d5ce3ef6dfbff4e58ffbd1f6e6980a55'
+
+              serviceOnClient.create(createData)
+                .then(transaction => {
+                  assert.equal(transaction.type, 'TRANSFER')
+                  return issuanceServiceOnServer.find({ query: { _id: issuanceId } })
+                })
+                .then(findResponse => {
+                  const issuanceUpdated = findResponse.data[0]
+                  assert.equal(issuanceUpdated.sharesIssued, transactionAmount, 'sharesIssued was updated correctly (increment)')
+                  // now go the other direction, TO the issuance address
+                  createData = Object.assign({}, dummyTransaction)
+                  createData.issuanceId = issuanceId
+                  createData.type = 'TRANSFER'
+                  createData.amount = transactionAmount
+
+                  return serviceOnClient.create(createData)
+                })
+                .then(transaction => {
+                  assert.equal(transaction.type, 'TRANSFER')
+                  return issuanceServiceOnServer.find({ query: { _id: issuanceId } })
+                })
+                .then(findResponse => {
+                  const issuanceUpdated = findResponse.data[0]
+                  assert.equal(issuanceUpdated.sharesIssued, 0, 'sharesIssued was updated correctly (decrement)')
+                  done()
+                })
+                .catch(done)
+            })
+          })
+          .catch(done)
+      })
       it('creates a transaction note when description is defined', function (done) {
         const user = this.user
         authenticate(app, feathersClient, user)

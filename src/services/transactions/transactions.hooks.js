@@ -11,6 +11,7 @@ const defaultSort = require('./hooks/hook.default-sort')
 const conditionalRequirements = require('./hooks/hook.conditional-requirements')
 const createNotification = require('../../hooks/create-notification')
 const updateOfferExpiration = require('./hooks/hook.update-offer-expiration')
+const updateIssuanceTotals = require('./hooks/hook.update-issuance-totals')
 
 module.exports = app => {
   const coreParams = {
@@ -83,36 +84,7 @@ module.exports = app => {
       find: [],
       get: [],
       create: [
-        // Patch any related issuance if type is CANCEL to decrease the 'sharesIssued' number
-        context => {
-          const transaction = context.result || {}
-          const { type, issuanceId, amount } = transaction
-          const issuancesService = app.service('issuances')
-          // if cancelling an issuance (blanking the eqb), then the shares authorized should be decreased by amount
-          if (type === 'CANCEL' && issuanceId && amount) {
-            // $inc increases the value that's on the record atomicly (so don't need to worry about other changes at the same time)
-            // patching { sharesIssued: issuance.sharesIssued - amount } is dangerous if issuance changed between a fetch and the patch
-            // https://docs.mongodb.com/manual/reference/operator/update/inc/ (inc by negative is a decrease)
-            return issuancesService.patch(issuanceId, { $inc: { sharesAuthorized: -amount } })
-              .then(patchResponse => {
-                if (patchResponse.sharesAuthorized <= 0) {
-                  return issuancesService.patch(issuanceId, { $set: { isCancelled: true } })
-                }
-              })
-              .then(() => Promise.resolve(context))
-          } else if (issuanceId && amount) {
-            return issuancesService.get(issuanceId).then(issuance => {
-              if (issuance.issuanceAddress === transaction.toAddress) {
-                return issuancesService.patch(issuanceId, { $inc: { sharesIssued: -amount } })
-              }
-              if (issuance.issuanceAddress === transaction.fromAddress) {
-                return issuancesService.patch(issuanceId, { $inc: { sharesIssued: amount } })
-              }
-            }).then(patchResponse => Promise.resolve(context))
-          }
-
-          return Promise.resolve(context)
-        },
+        updateIssuanceTotals(),
         // adds the matching /address-map record to the hook params for use in filters
         getEventAddress(),
         iff(

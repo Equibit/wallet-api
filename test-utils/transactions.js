@@ -31,7 +31,8 @@ const decodedTxn = {
         'reqSigs': 1,
         'type': 'pubkeyhash',
         'addresses': [
-          '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z'
+          '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
+          'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32' // stub address for reverse-direction transactions
         ]
       }
     }
@@ -97,7 +98,8 @@ exports.setupMock = function () {
               'hex': '76a914a11418d3c144876258ba02909514d90e71ad844388ac',
               'reqSigs': 1,
               'type': 'pubkeyhash',
-              'addresses': [ 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32' ]
+              'addresses': [ 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
+                '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z' ]
             },
             'version': 1,
             'coinbase': false
@@ -189,5 +191,15 @@ exports.resetMock = function resetTransactionsMock () {
 }
 
 exports.removeAll = function remove (app) {
-  return app.service('/transactions').remove(null, { query: { fromAddress: { $in: ['000000000000000000000000', 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32'] } } })
+  return app.service('/transactions').remove(null, {
+    query: {
+      fromAddress: {
+        $in: [
+          '000000000000000000000000',
+          'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
+          '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z'
+        ]
+      }
+    }
+  })
 }
