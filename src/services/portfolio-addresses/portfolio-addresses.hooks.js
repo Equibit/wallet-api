@@ -128,7 +128,7 @@ module.exports = function (app) {
         context => {
           const { error } = context
 
-          if (error && error.name === 'Conflict' && error.message === 'index: value already exists.') {
+          if (error && error.name === 'Conflict' && /index.*already exists/i.test(error.message)) {
             context.error = null
             return returnIfExistsAlready(app)(context)
           }
