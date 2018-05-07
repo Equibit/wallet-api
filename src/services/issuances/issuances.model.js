@@ -38,7 +38,7 @@ module.exports = function (app) {
     // meta data:
     volume24h: { type: Number },
     sharesAuthorized: { type: Number },
-    sharesIssued: { type: Number },
+    sharesIssued: { type: Number, default: 0 },
     sharesDividend: { type: Number },
     sharesDividendYield: { type: Number },
 

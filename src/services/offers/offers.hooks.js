@@ -10,6 +10,7 @@ const patchSharesIssuedAfterClosed = require('./hooks/hook.patch-shares-issued-a
 const blockOfferAcceptance = require('./hooks/hook.block-offer-acceptance')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const errors = require('feathers-errors')
+const updateTransaction = require('../transactions/hooks/hook.update-transaction')
 
 /* Rules for Offer.status enforced by hooks:
   OPEN, htlcStep=1 (default)
@@ -96,7 +97,7 @@ module.exports = function (app) {
           },
           htlcStep: 'result.htlcStep',
           quantity: 'result.quantity',
-          unit: 'Shares',
+          unit: () => 'Shares',
           companyName: 'result.companyName',
           issuanceName: 'result.issuanceName'
         }
@@ -273,6 +274,10 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [
+        updateTransaction({
+          txIdPath: 'result.htlcTxId1',
+          fieldsToUpdate: { offerId: 'result._id' }
+        }),
         getEventAddress({
           from: 'data.btcAddress'
         }),
@@ -311,7 +316,7 @@ module.exports = function (app) {
           }
         })
       ],
-      update: postUpdateHooks,
+      update: [],
       patch: postUpdateHooks,
       remove: []
     },

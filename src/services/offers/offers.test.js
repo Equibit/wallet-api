@@ -1,7 +1,7 @@
 const assert = require('assert')
 const app = require('../../app')
 const utils = require('../../../test-utils/index')
-const userUtils = utils.users
+const { users: userUtils, transactions: txUtils } = utils
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
 // const offerUtils = require('../../../test-utils/offers')
 
@@ -51,7 +51,9 @@ const skels = {
     goodFor: 7,
     companyName: 'Foo',
     issuanceName: 'Bar',
-    issuanceType: 'bonds'
+    issuanceType: 'bonds',
+    btcAddress: '000000000000000000000000',
+    eqbAddress: '000000000000000000000000'
   }),
   buyOrder: Object.freeze({
     userId: '000000000000000000000000',
@@ -66,7 +68,9 @@ const skels = {
     goodFor: 7,
     companyName: 'Foo',
     issuanceName: 'Bar',
-    issuanceType: 'bonds'
+    issuanceType: 'bonds',
+    btcAddress: '000000000000000000000000',
+    eqbAddress: '000000000000000000000000'
   }),
   issuance: Object.freeze({
     userId: '000000000000000000000000',
@@ -195,6 +199,7 @@ function runTests (feathersClient) {
           .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
           .then(() => ordersServiceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
           .then(() => userUtils.removeAll(app))
+          .then(() => txUtils.removeAll(app))
           .then(() => done())
       })
 
@@ -256,10 +261,10 @@ function runTests (feathersClient) {
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
           return app.service('transactions').create({
-            address: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
+            fromAddress: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
             addressTxid: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
             addressVout: 0,
-            type: 'SELL',
+            type: 'TRADE',
             currencyType: 'BTC',
             toAddress: '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
             amount: 777123,
@@ -475,6 +480,43 @@ function runTests (feathersClient) {
             })
             .catch(done)
           })
+      })
+
+      it('sets offerId on HTLC tx #1 when created', function (done) {
+        const txId = 'c824797bdb100b2dde4855c1ff46333206823cf7060d175daef8be2b342f2421'
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          quantity: 0,
+          htlcTxId1: txId
+        })
+        userUtils.authenticateTemp(app, feathersClient, this.user)
+          .then(loggedInResponse => {
+            return app.service('transactions').create({
+              fromAddress: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
+              addressTxid: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
+              addressVout: 0,
+              type: 'TRADE',
+              currencyType: 'BTC',
+              toAddress: '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
+              amount: 777123,
+              fee: 0.0001,
+              txId,
+              hex: `01000000012c6e7e8499a362e611b7cf3c50f55ea67528275cce4540e224cdd9265cf207a4010000006a4730440220299bb9f6493d2ab0dd9aad9123252d5f718618403bb19d77699f21cf732bb9c602201b5adcbcaf619c2c5ca43274b3362778bc70d09091d2447333990ebd4aff8f8a0121033701fc7f242ae2dd63a18753518b6d1425e53496878924b6c0dc08d800af46adffffffff0200a3e111000000001976a914ea3f916f7ad64b1ed044147d4b1df2af10ea9cb688ac98ecfa02000000001976a914b0abfca92c8a1ae023220d4134fe72ff3273a30988ac00000000`
+            })
+          })
+          .then(tx => {
+            return serviceOnClient.create(createData)
+          })
+          .then(offer => {
+            const offerId = offer._id
+            return app.service('transactions').find({ query: { txId } })
+              .then(result => {
+                const tx = result.data[0]
+                assert.equal(tx.offerId, offerId, 'offerId set on transaction')
+              }).then(() => done())
+          })
+          .catch(done)
       })
     })
   })

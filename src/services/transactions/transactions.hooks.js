@@ -1,17 +1,17 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { iff, isProvider, discard } = require('feathers-hooks-common')
+const { iff, isProvider, discard, disallow } = require('feathers-hooks-common')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const decodeRawTxn = require('./hooks/hook.decode-raw-txn')
 const validateDecodedTxn = require('./hooks/hook.validate-txn')
 const sendRawTxn = require('./hooks/hook.send-raw-txn')
 const formatTxn = require('./hooks/hook.format-txn')
-const createReceiverTxn = require('./hooks/hook.create-receiver-txn')
 const requireAddresses = require('./hooks/hook.require-addresses')
 const getEventAddress = require('../../hooks/get-event-address')
 const defaultSort = require('./hooks/hook.default-sort')
 const conditionalRequirements = require('./hooks/hook.conditional-requirements')
 const createNotification = require('../../hooks/create-notification')
 const updateOfferExpiration = require('./hooks/hook.update-offer-expiration')
+const updateIssuanceTotals = require('./hooks/hook.update-issuance-totals')
 
 module.exports = app => {
   const coreParams = {
@@ -49,21 +49,33 @@ module.exports = app => {
           // Record the transaction in the core
           sendRawTxn(coreParams),
 
-          // Set the createReceiverTxn flag so that the createReceiverTxn will create the other txn.
-          context => {
-            if (['OUT', 'BUY', 'SELL'].indexOf(context.data.type) !== -1) {
-              context.data.createReceiverTxn = true
-            }
-          },
-
           // Format the transaction to be saved in the wallet-api db
-          formatTxn()
+          formatTxn(),
+
+          // Create the transaction description via the transaction-notes service
+          hook => {
+            return Promise.all([
+              hook.app.service('transaction-notes').create({
+                txId: hook.data.txId,
+                address: hook.data.fromAddress,
+                description: hook.data.description
+              }),
+              hook.app.service('transaction-notes').create({
+                txId: hook.data.txId,
+                address: hook.data.toAddress,
+                description: hook.data.description
+              })
+            ]).then(() => hook)
+          },
+          discard('description')
         )
       ],
       update: [
         mapUpdateToPatch()
       ],
-      patch: [],
+      patch: [
+        disallow('external')
+      ],
       remove: []
     },
 
@@ -72,38 +84,21 @@ module.exports = app => {
       find: [],
       get: [],
       create: [
-        // Patch any related issuance if type is CANCEL to decrease the 'sharesIssued' number
-        context => {
-          const transaction = context.result || {}
-          const { type, issuanceId, amount } = transaction
-          const issuancesService = app.service('issuances')
-          // if cancelling an issuance (blanking the eqb), then the sharesIssued should be decreased by amount
-          if (type === 'CANCEL' && issuanceId && amount) {
-            // $inc increases the value that's on the record atomicly (so don't need to worry about other changes at the same time)
-            // patching { sharesIssued: issuance.sharesIssued - amount } is dangerous if issuance changed between a fetch and the patch
-            // https://docs.mongodb.com/manual/reference/operator/update/inc/ (inc by negative is a decrease)
-            return issuancesService.patch(issuanceId, { $inc: { sharesIssued: -amount } })
-              .then(patchResponse => Promise.resolve(context))
-          }
-
-          return Promise.resolve(context)
-        },
-        // Creates a separate txn for the receiver's address
-        createReceiverTxn(),
+        updateIssuanceTotals(),
         // adds the matching /address-map record to the hook params for use in filters
         getEventAddress(),
         iff(
-          hook => hook.data.type === 'OUT',
+          hook => hook.data.type === 'TRANSFER',
           createNotification({
             type: 'transaction',
-            addressPath: 'receiverTxn.toAddress',
+            addressPath: 'result.toAddress',
             fields: {
-              type: 'receiverTxn.type',
-              address: 'receiverTxn.address',
-              amount: 'receiverTxn.amount',
-              issuanceType: 'receiverTxn.issuanceType',
-              currencyType: 'receiverTxn.currencyType',
-              transactionId: 'receiverTxn.txId'
+              type: 'result.type',
+              address: 'result.toAddress',
+              amount: 'result.amount',
+              issuanceType: 'result.issuanceType',
+              currencyType: 'result.currencyType',
+              transactionId: 'result.txId'
             }
           })
         )

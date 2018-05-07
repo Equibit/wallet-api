@@ -23,7 +23,7 @@ describe('Transactions Service - validateRawTxn Hook', function () {
         decodedTxn: txnUtils.decodedTxn
       },
       data: {
-        address: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
+        fromAddress: 'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32',
         addressTxid: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
         addressVout: 0,
         currencyType: 'BTC',

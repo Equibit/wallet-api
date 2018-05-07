@@ -13,7 +13,9 @@ module.exports = {
       'goodFor': 7,
       'companyName': 'Foo',
       'issuanceName': 'Bar',
-      'issuanceType': 'bonds'
+      'issuanceType': 'bonds',
+      btcAddress: '000000000000000000000000',
+      eqbAddress: '000000000000000000000000'
     }
     return app.service('orders').create(Object.assign(createOrderSkel, options))
   },
