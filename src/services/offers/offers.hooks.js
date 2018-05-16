@@ -126,6 +126,7 @@ module.exports = function (app) {
           offerId: 'result._id',
           orderId: 'result.orderId',
           type: 'result.type',
+          assetType: 'result.assetType',
           status: hook => {
             if (hook.result.timelock2ExpiredAt && !hook.result.timelockExpiredAt) {
               return 'SAFETY_ZONE'
@@ -163,6 +164,7 @@ module.exports = function (app) {
           offerId: 'result._id',
           orderId: 'result.orderId',
           type: 'result.type',
+          assetType: 'result.assetType',
           status: hook => 'EXPIRED',
           action: hook => 'dealFlowMessageTitleOfferExpired',
           htlcStep: 'result.htlcStep',
@@ -305,6 +307,7 @@ module.exports = function (app) {
             offerId: 'result._id',
             orderId: 'result.orderId',
             type: 'result.type',
+            assetType: 'result.assetType',
             action: () => 'dealFlowMessageTitleOfferReceived',
             status: 'result.status',
             htlcStep: 'result.htlcStep',
