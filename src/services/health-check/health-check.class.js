@@ -13,25 +13,25 @@ class Service {
   }
 
   get (id, params) {
-    if (id !== 'equibit') {
-      return Promise.resolve({message: 'wrong id'})
+    if (id !== '12345') {
+      return Promise.resolve({message: 'reauires auth'})
     }
     const app = this.options.app
     const mongooseClient = app.get('mongooseClient')
     const connection = mongooseClient.connection
-    const config = {
-      mongodb: app.get('mongodb')
-    }
+    // const config = {
+    //   mongodb: app.get('mongodb').substring(0,10) + '...'
+    // }
     return Promise.resolve({
       version: packageJson.version,
-      config,
+      //config,
       db: {
         mongooseVersion: mongooseClient.version,
         readyState: connection.readyState,
-        readyStateCode: dbReadyStateCodes[connection.readyState],
-        host: connection.host || 'null',
-        port: connection.port || 'null',
-        databaseName: (connection.db && connection.db.databaseName) || 'null'
+        readyStateCode: dbReadyStateCodes[connection.readyState]
+        //host: connection.host || 'null',
+        //port: connection.port || 'null',
+        //databaseName: (connection.db && connection.db.databaseName)
       }
     })
   }
