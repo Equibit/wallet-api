@@ -25,6 +25,8 @@ const blockchainInfo = require('./blockchain-info/blockchain-info.service.js')
 
 const transactionNotes = require('./transaction-notes/transaction-notes.service.js')
 
+const healthCheck = require('./health-check/health-check.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -50,4 +52,5 @@ module.exports = function () {
   app.configure(notifications)
   app.configure(blockchainInfo)
   app.configure(transactionNotes)
+  app.configure(healthCheck)
 }
