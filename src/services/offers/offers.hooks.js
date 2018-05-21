@@ -5,7 +5,6 @@ const getEventAddress = require('../../hooks/get-event-address')
 const createNotification = require('../../hooks/create-notification')
 const statusOnCreateIsOPEN = require('./hooks/hook.status-on-create-is-open')
 const statusEnforcementOnChange = require('./hooks/hook.status-enforcement-on-change')
-const patchSharesIssuedAfterClosed = require('./hooks/hook.patch-shares-issued-after-closed')
 // const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
 const blockOfferAcceptance = require('./hooks/hook.block-offer-acceptance')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
@@ -23,7 +22,6 @@ const updateTransaction = require('../transactions/hooks/hook.update-transaction
 
 module.exports = function (app) {
   const postUpdateHooks = [
-    patchSharesIssuedAfterClosed(app),
     getEventAddress({
       from: 'data.btcAddress'
     }),
