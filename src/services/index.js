@@ -22,6 +22,7 @@ const offers = require('./offers/offers.service.js')
 const bitcoinAverage = require('./bitcoin-average/bitcoin-average.service.js')
 const notifications = require('./notifications/notifications.service.js')
 const blockchainInfo = require('./blockchain-info/blockchain-info.service.js')
+const sellOrdersQuantityOpen = require('./sell-orders-quantity-open/sell-orders-quantity-open.service.js')
 
 const transactionNotes = require('./transaction-notes/transaction-notes.service.js')
 
@@ -51,6 +52,7 @@ module.exports = function () {
   app.configure(bitcoinAverage)
   app.configure(notifications)
   app.configure(blockchainInfo)
+  app.configure(sellOrdersQuantityOpen)
   app.configure(transactionNotes)
   app.configure(healthCheck)
 }

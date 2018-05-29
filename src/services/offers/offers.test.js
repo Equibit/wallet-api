@@ -341,7 +341,8 @@ function runTests (feathersClient) {
           })
       })
 
-      it('patches the related issuance when CLOSED if offer user is issuer', function (done) {
+      // hooks were updated so transactions take care of this
+      it.skip('patches the related issuance when CLOSED if offer user is issuer', function (done) {
         const initialSharesIssued = 22
         const offerQuantity = 200
         const offerCreateData = Object.assign({}, skels.sellOffer, {
@@ -388,7 +389,8 @@ function runTests (feathersClient) {
           })
       })
 
-      it('patches the related issuance when CLOSED if order user is the issuer', function (done) {
+      // hooks were updated so transactions take care of this
+      it.skip('patches the related issuance when CLOSED if order user is the issuer', function (done) {
         const initialSharesIssued = 11
         const offerQuantity = 10
         const offerCreateData = Object.assign({}, skels.sellOffer, {
