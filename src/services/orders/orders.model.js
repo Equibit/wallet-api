@@ -12,7 +12,7 @@ module.exports = function (app) {
   const { ObjectId } = mongooseClient.Schema.Types
   const orders = new mongooseClient.Schema({
     userId: { type: ObjectId, required: issuanceRequired },
-    type: { type: String, required: true },
+    type: { type: String, enum: [ 'SELL', 'BUY' ], required: true },
     assetType: { type: String, enum: ['ISSUANCE', 'EQUIBIT'], default: 'ISSUANCE' },
 
     // For HTLC we need 2 or 3 addresses:
