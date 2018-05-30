@@ -1,15 +1,28 @@
 const mongoose = require('mongoose')
 
 module.exports = function () {
-  const app = this
-  const mongodbUri = app.get('mongodb')
+  const app = this;
+  const mongodbUri = app.get('mongodb');
 
-  mongoose.connect(mongodbUri, function (error) {
-    console.log(`*** ERROR! Cannot connect to database! Mongo DB URI: "${mongodbUri || 'UNDEFINED!'}"`)
-    console.log('Error: ', error)
-  })
+  // Connect to DB 
+  mongoose.connect(mongodbUri);
+  const db = mongoose.connection;
 
-  mongoose.Promise = global.Promise
+  db.on('error', (error) => {
+    if (error){
+      console.log(`*** ERROR! Cannot connect to database! Mongo DB URI: "${mongodbUri || 'UNDEFINED!'}"`);
+      console.log('Error: ', error);
+    }
+  });
 
-  app.set('mongooseClient', mongoose)
-}
+  // mongoose.connect(mongodbUri, function (error) {
+  //   if (error){
+  //     console.log(`*** ERROR! Cannot connect to database! Mongo DB URI: "${mongodbUri || 'UNDEFINED!'}"`);
+  //     console.log('Error: ', error);
+  //   }
+  // });
+
+  mongoose.Promise = global.Promise;
+
+  app.set('mongooseClient', mongoose);
+};
