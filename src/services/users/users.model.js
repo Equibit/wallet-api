@@ -31,6 +31,7 @@ module.exports = function (app) {
     twoFactorValidatedSession: { type: Boolean, default: false },
     emailVerificationCode: { type: String },
     emailVerified: { type: Boolean, default: false },
+    autoLogoutTime: { type: Number, default: 300000 },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   }, {
