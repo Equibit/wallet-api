@@ -15,12 +15,6 @@ module.exports = function () {
     }
   })
 
-  // mongoose.connect(mongodbUri, function (error) {
-  //   if (error){
-  //     console.log(`*** ERROR! Cannot connect to database! Mongo DB URI: "${mongodbUri || 'UNDEFINED!'}"`);
-  //     console.log('Error: ', error);
-  //   }
-  // });
 
   mongoose.Promise = global.Promise
 
