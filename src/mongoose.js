@@ -15,7 +15,6 @@ module.exports = function () {
     }
   })
 
-
   mongoose.Promise = global.Promise
 
   app.set('mongooseClient', mongoose)
