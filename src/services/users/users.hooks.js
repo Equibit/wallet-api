@@ -1,6 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
 const { restrictToOwner } = require('feathers-authentication-hooks')
-const { iff, unless, discard, disallow, isProvider, lowerCase, preventChanges } = require('feathers-hooks-common')
+const { iff, unless, keep, discard, disallow, isProvider, lowerCase, preventChanges } = require('feathers-hooks-common')
 const { generateSalt, hashPassword } = require('feathers-authentication-signed').hooks
 const { randomBytes, pbkdf2 } = require('crypto')
 const errors = require('feathers-errors')
@@ -18,19 +18,6 @@ const sendDuplicateSignupEmail = require('./hooks/hook.email.duplicate-signup')
 const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-
-/* NB: keep() is slated for the next release of feathers-hooks-common.
-This is a stub version that only works on hook.data, to be used until
-the next feathers-hooks-common is released */
-function keep (...fields) {
-  return function (hook) {
-    const data = Object.assign({}, hook.data)
-    fields.forEach(field => {
-      delete data[field]
-    })
-    return discard(...Object.keys(data))(hook)
-  }
-}
 
 function findUser (options) {
   return function (hook) {

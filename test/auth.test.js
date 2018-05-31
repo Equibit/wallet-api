@@ -38,7 +38,8 @@ function runTests (feathersClient) {
       'twoFactorValidatedSession',
       'passwordCreatedAt',
       'provisionalSalt',
-      'hasRecordedMnemonic'
+      'hasRecordedMnemonic',
+      'autoLogoutTime'
     ]
 
     before(function () {
