@@ -16,8 +16,9 @@ Getting up and running is as easy as 1, 2, 3.
     ```
     cd path/to/wallet-api; npm install
     ```
-
-3. Start your app
+3. For local development remember to get `local-development-local.json` or correct bitcoin settings from one of the maintainers.
+4. For local development you also need to have a running MongoDB instance on your local machine; you can run `docker-compose up` if you're working with Docker.
+5. Start your app
     
     ```
     npm start
