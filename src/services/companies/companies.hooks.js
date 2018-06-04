@@ -1,8 +1,9 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { associateCurrentUser } = require('feathers-authentication-hooks')
-const { disallow } = require('feathers-hooks-common')
+const { associateCurrentUser, restrictToOwner } = require('feathers-authentication-hooks')
+const { disallow, keep, discard, iff, isProvider } = require('feathers-hooks-common')
 const slugify = require('feathers-slugify')
 const assignIndex = require('./hooks/hook.assign-index')
+const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 
 module.exports = function (app) {
   return {
@@ -12,18 +13,29 @@ module.exports = function (app) {
       get: [],
       create: [
         authenticate('jwt'),
+        keep(
+          'index',
+          'name',
+          'registrationNumber',
+          'domicile',
+          'state'
+        ),
         associateCurrentUser({ idField: '_id', as: 'userId' }),
         slugify({ slug: 'name' }),
         assignIndex()
       ],
       update: [
-        authenticate('jwt'),
-        associateCurrentUser({ idField: '_id', as: 'userId' }),
-        slugify({ slug: 'name' })
+        mapUpdateToPatch()
       ],
       patch: [
         authenticate('jwt'),
-        associateCurrentUser({ idField: '_id', as: 'userId' }),
+        keep(
+          'name',
+          'registrationNumber',
+          'domicile',
+          'state'
+        ),
+        restrictToOwner({ idField: '_id', ownerField: 'userId' }),
         slugify({ slug: 'name' })
       ],
       remove: [
@@ -34,8 +46,28 @@ module.exports = function (app) {
 
     after: {
       all: [],
-      find: [],
-      get: [],
+      find: [
+        iff(
+          isProvider('external'),
+          iff(
+            context => {
+              return true //TODO: Return false if owner
+            },
+            discard('index', 'userId')
+          )
+        )
+      ],
+      get: [
+        iff(
+          isProvider('external'),
+          iff(
+            context => {
+              return true //TODO: Return false if owner
+            },
+            discard('index', 'userId')
+          )
+        )
+      ],
       create: [],
       update: [],
       patch: [],
