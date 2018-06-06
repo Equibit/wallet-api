@@ -24,14 +24,14 @@ class Service {
     // }
     return Promise.resolve({
       version: packageJson.version,
-      //config,
+      // config,
       db: {
         mongooseVersion: mongooseClient.version,
         readyState: connection.readyState,
         readyStateCode: dbReadyStateCodes[connection.readyState]
-        //host: connection.host || 'null',
-        //port: connection.port || 'null',
-        //databaseName: (connection.db && connection.db.databaseName)
+        // host: connection.host || 'null',
+        // port: connection.port || 'null',
+        // databaseName: (connection.db && connection.db.databaseName)
       }
     })
   }

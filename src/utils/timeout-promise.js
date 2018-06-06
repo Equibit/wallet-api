@@ -1,5 +1,4 @@
 
-
 function timeout (promise, millis, message) {
   return Promise.race([
     promise,

@@ -49,7 +49,7 @@ class Service {
     return Promise.all(importPromises)
     .catch(err => {
       console.warn('Import during listUnspent failed: ', err)
-      return Promise.resolve();
+      return Promise.resolve()
     })
     .then(() => Promise.all([
       timeout(
@@ -81,10 +81,8 @@ class Service {
           BTC: results[0] && (byAddress ? aggregateByAddress(results[0]) : addSummary(results[0])),
           EQB: results[1] && (byAddress ? aggregateByAddress(results[1]) : addSummary(results[1]))
         }
-        return Promise.reject({
-          message: 'timed out'
-        })
       }
+      return Promise.reject(new errors.GeneralError({ message: 'timed out' }))
     })
     .catch(err => {
       const errRes = (err.response && err.response.data) || {
