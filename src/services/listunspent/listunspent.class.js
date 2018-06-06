@@ -6,6 +6,8 @@ const {
   resultToSatoshi
 } = require('./listunspent-utils')
 
+const { timeout } = require('../../utils/timeout-promise')
+
 // http://localhost:3030/proxycore?method=listunspent&params[0]=0&params[1]=99999&params[2][]=mp9GiieHrLQvLu4C8nE9bbwxNmXqcC3nVf&params[2][]=mwd7FgMkm9yfPmNTnntsRbugZS7BEZaf32
 
 class Service {
@@ -29,20 +31,59 @@ class Service {
     const importPromises = []
 
     if (doImport) {
-      addressesBtc.length && importPromises.push(importmultiService.create({ addresses: addressesBtc, type: 'BTC' }))
-      addressesEqb.length && importPromises.push(importmultiService.create({ addresses: addressesEqb, type: 'EQB' }))
+      addressesBtc.length && importPromises.push(
+        timeout(
+          importmultiService.create({ addresses: addressesBtc, type: 'BTC' }),
+          1000,
+          'BTC import timed out'
+        )
+      )
+      addressesEqb.length && importPromises.push(
+        timeout(
+          importmultiService.create({ addresses: addressesEqb, type: 'EQB' }),
+          1000,
+          'EQB import timed out'
+        )
+      )
     }
-
-    return Promise.all(importPromises).then(() => Promise.all([
-      fetchListunspent(configBtc, addressesBtc),
-      fetchListunspent(configEqb, addressesEqb)
+    return Promise.all(importPromises)
+    .catch(err => {
+      console.warn('Import during listUnspent failed: ', err)
+      return Promise.resolve();
+    })
+    .then(() => Promise.all([
+      timeout(
+        fetchListunspent(configBtc, addressesBtc),
+        1000
+      ).catch(err => {
+        console.warn('Error retrieving unspent BTC: ', err)
+        Promise.resolve(undefined)
+      }),
+      timeout(
+        fetchListunspent(configEqb, addressesEqb),
+        1000
+      ).catch(err => {
+        console.warn('Error retrieving unspent EQB: ', err)
+        Promise.resolve(undefined)
+      })
     ]))
-    .then(results => results.map(r => r.data.result))
-    .then(results => results.map(resultToSatoshi))
     .then(results => {
-      return {
-        BTC: byAddress ? aggregateByAddress(results[0]) : addSummary(results[0]),
-        EQB: byAddress ? aggregateByAddress(results[1]) : addSummary(results[1])
+      return results
+    })
+    .then(results => results.map(r => r && r.data ? r.data.result : undefined))
+    .then(results => {
+      return results
+    })
+    .then(results => results.map(r => r ? resultToSatoshi(r) : undefined))
+    .then(results => {
+      if (results.some(r => r)) {
+        return {
+          BTC: results[0] && (byAddress ? aggregateByAddress(results[0]) : addSummary(results[0])),
+          EQB: results[1] && (byAddress ? aggregateByAddress(results[1]) : addSummary(results[1]))
+        }
+        return Promise.reject({
+          message: 'timed out'
+        })
       }
     })
     .catch(err => {
@@ -86,7 +127,6 @@ function fetchListunspent (config, addresses = []) {
     return Promise.resolve({data: {result: []}})
   }
   // console.log('fetchListunspent', arguments)
-
   return axios({
     method: 'POST',
     url: config.url,
