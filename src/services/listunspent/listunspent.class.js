@@ -34,18 +34,28 @@ class Service {
       addressesBtc.length && importPromises.push(
         timeout(
           importmultiService.create({ addresses: addressesBtc, type: 'BTC' }),
-          1000,
+          app.get('btcImportTimeout'),
           'BTC import timed out'
         )
       )
       addressesEqb.length && importPromises.push(
         timeout(
           importmultiService.create({ addresses: addressesEqb, type: 'EQB' }),
-          1000,
+          app.get('eqbImportTimeout'),
           'EQB import timed out'
         )
       )
     }
+
+    // If promises fail or time out, they resolve as undefined. This way, we
+    // can select the successful ones after all requests are handled
+    function parseResult(r) {
+      if (r && r.data && r.data.result) {
+        return resultToSatoshi(r.data.result)
+      }
+      return undefined
+    }
+
     return Promise.all(importPromises)
     .catch(err => {
       console.warn('Import during listUnspent failed: ', err)
@@ -53,35 +63,29 @@ class Service {
     })
     .then(() => Promise.all([
       timeout(
-        fetchListunspent(configBtc, addressesBtc),
-        1000
+        fetchListunspent(configBtc, addressesBtc).then(parseResult),
+        app.get('btcRetrieveTimeout'),
       ).catch(err => {
         console.warn('Error retrieving unspent BTC: ', err)
-        Promise.resolve(undefined)
+        return undefined
       }),
       timeout(
-        fetchListunspent(configEqb, addressesEqb),
-        1000
+        fetchListunspent(configEqb, addressesEqb).then(parseResult),
+        app.get('eqbRetrieveTimeout'),
       ).catch(err => {
         console.warn('Error retrieving unspent EQB: ', err)
-        Promise.resolve(undefined)
+        return undefined
       })
     ]))
     .then(results => {
-      return results
-    })
-    .then(results => results.map(r => r && r.data ? r.data.result : undefined))
-    .then(results => {
-      return results
-    })
-    .then(results => results.map(r => r ? resultToSatoshi(r) : undefined))
-    .then(results => {
+      // check if at least one request was successful
       if (results.some(r => r)) {
         return {
           BTC: results[0] && (byAddress ? aggregateByAddress(results[0]) : addSummary(results[0])),
           EQB: results[1] && (byAddress ? aggregateByAddress(results[1]) : addSummary(results[1]))
         }
       }
+      // all requests failed, return an error
       return Promise.reject(new errors.GeneralError({ message: 'timed out' }))
     })
     .catch(err => {
