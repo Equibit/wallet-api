@@ -36,11 +36,6 @@ function getFromDB (service, coinType) {
   return service.find({ query: { coinType } }).then(result => {
     // console.log(`- [getFromDB ${coinType}] result.total = ${result.total}`)
     const blockchainInfo = (result.total && result.data && result.data[0]) || null
-    if (blockchainInfo && !blockchainInfo.feeRates) {
-      return service
-        .patch(blockchainInfo._id, { feeRates: { priority: 20, regular: 5 } })
-        .then(blockchainInfo)
-    }
     return blockchainInfo ? Promise.resolve(blockchainInfo) : service.create({
       coinType,
       status: false,
