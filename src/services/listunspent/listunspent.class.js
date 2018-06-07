@@ -17,7 +17,7 @@ class Service {
 
   // Given a list of addresses return txouts and a summary OR amounts by address and a summary.
   find (params) {
-    // console.log('listunspent.find params.query: ', params.query)
+    console.log('listunspent.find params.query: ', params.query)
     const app = this.options.app
     const query = params.query
     const addressesBtc = query.btc || []
@@ -49,7 +49,7 @@ class Service {
 
     // If promises fail or time out, they resolve as undefined. This way, we
     // can select the successful ones after all requests are handled
-    function parseResult(r) {
+    function parseResult (r) {
       if (r && r.data && r.data.result) {
         return resultToSatoshi(r.data.result)
       }
@@ -64,14 +64,14 @@ class Service {
     .then(() => Promise.all([
       timeout(
         fetchListunspent(configBtc, addressesBtc).then(parseResult),
-        app.get('btcRetrieveTimeout'),
+        app.get('btcRetrieveTimeout')
       ).catch(err => {
         console.warn('Error retrieving unspent BTC: ', err)
         return undefined
       }),
       timeout(
         fetchListunspent(configEqb, addressesEqb).then(parseResult),
-        app.get('eqbRetrieveTimeout'),
+        app.get('eqbRetrieveTimeout')
       ).catch(err => {
         console.warn('Error retrieving unspent EQB: ', err)
         return undefined
