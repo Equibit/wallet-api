@@ -44,7 +44,7 @@ function getFromDB (service, coinType) {
     return blockchainInfo ? Promise.resolve(blockchainInfo) : service.create({
       coinType,
       status: false,
-      feeRates: { priority: 20, regular: 5},
+      feeRates: { priority: 20, regular: 5 },
       mode: 'unknown'
     })
   })
