@@ -17,7 +17,7 @@ class Service {
 
   // Given a list of addresses return txouts and a summary OR amounts by address and a summary.
   find (params) {
-    console.log('listunspent.find params.query: ', params.query)
+    // console.log('listunspent.find params.query: ', params.query)
     const app = this.options.app
     const query = params.query
     const addressesBtc = query.btc || []
