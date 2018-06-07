@@ -47,11 +47,11 @@ const doubleTimeoutConfig = {
 
 const query = { doImport: false,
   btc: [
-    'msJ1C4ukeRZG5LWvuiq7xFw26tD8cQzsYt'
+    'someBitcoinAddress'
   ],
   eqb:
   [
-    'mqVy3AmMsh4DjDfekGfjpAUfGtQ3XffFoN'
+    'someEquibitAddress'
   ],
   byaddress: true
 }

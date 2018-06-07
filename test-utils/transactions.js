@@ -1,7 +1,7 @@
 const axios = require('axios')
 const MockAdapter = require('axios-mock-adapter')
 
-const mock = new MockAdapter(axios)
+const mock = new MockAdapter(axios, { delayResponse: 20 })
 
 const decodedTxn = {
   'txid': '52309405287e737cf412fc42883d65a392ab950869fae80b2a5f1e33326aca46',
