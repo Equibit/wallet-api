@@ -2,6 +2,7 @@ const { iff, isProvider, stashBefore } = require('feathers-hooks-common')
 const errors = require('feathers-errors')
 const confirmedTransactionHooks = require('./hooks/hook.confirmed-transactions')
 const expireOffers = require('./hooks/hook.expire-offers')
+const addEnvSettings = require('./hooks/hook.add-env-settings')
 
 module.exports = function (app) {
   return {
@@ -37,7 +38,9 @@ module.exports = function (app) {
     },
 
     after: {
-      all: [],
+      all: [
+        addEnvSettings()
+      ],
       find: [],
       get: [],
       create: [],

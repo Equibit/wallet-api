@@ -161,11 +161,11 @@ describe('\'blockchain-info\' service', () => {
               'bestblockhash': '1962811fcbe887ad37049cc33bf635e3e3ba6a955aacd5edd436ba708c552445',
               'currentBlockHeight': 1271,
               'mediantime': 1521682385,
-              'errorMessage': ''
+              'errorMessage': '',
+              'feeRates': { 'priority': 20, 'regular': 5 }
             }
           ]
-        }
-        )
+        })
       }
       checkBlockchain(service, proxycoreService)('BTC').then(result => {
         assert.equal(result, true)

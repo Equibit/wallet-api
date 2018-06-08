@@ -14,7 +14,8 @@
       "difficulty": 4.656542373906925e-10,
       "bestblockhash": "2c31d13e10517f1731cc9c0e883ddf91e3594efc13b834303ea1ae1e6d47f1c0",
       "currentBlockHeight": 1272,
-      "errorMessage": ""
+      "errorMessage": "",
+      "feeRates": { "priority": 20, "regular": 5 }
     },
     {
       "_id": "5aba92a302fb78d9a969bd93",
@@ -27,7 +28,8 @@
       "difficulty": 4.656542373906925e-10,
       "bestblockhash": "24ebfa22e3165a2968a109a5ab7771312aea1caff0b66fe3d569315bab86fea8",
       "currentBlockHeight": 1244,
-      "errorMessage": ""
+      "errorMessage": "",
+      "feeRates": { "priority": 20, "regular": 5 }
     }
   ]
 }

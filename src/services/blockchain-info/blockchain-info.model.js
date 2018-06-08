@@ -13,6 +13,7 @@ module.exports = function (app) {
     bestblockhash: { type: String },
     difficulty: { type: Number },
     mediantime: { type: Number },
+    feeRates: { type: Object },
     errorMessage: { type: String }
   }, {
     timestamps: true
