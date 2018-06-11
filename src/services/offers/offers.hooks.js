@@ -1,5 +1,5 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { discard, keep, iff, isProvider, stashBefore, unless } = require('feathers-hooks-common')
+const { discard, keepQuery, iff, isProvider, stashBefore, unless } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
 const getEventAddress = require('../../hooks/get-event-address')
 const createNotification = require('../../hooks/create-notification')
@@ -188,13 +188,13 @@ module.exports = function (app) {
         const ordersService = app.service('orders')
         return ordersService.find({ query: { _id: response.data[0].orderId } })
       })
-      .then(response => response.data[0].userId.equals(userId))
+      .then(response => response.data[0].userId && response.data[0].userId.equals(userId))
   }
 
   function offerOwnedByUser (userId, offerId) {
     const offersService = app.service('offers')
     return offersService.find({ query: { _id: offerId } })
-      .then(response => response.data[0].userId.equals(userId))
+      .then(response => response.data[0].userId && response.data[0].userId.equals(userId))
   }
 
   return {
@@ -207,7 +207,7 @@ module.exports = function (app) {
       create: [
         iff(
           isProvider('external'),
-          keep('orderId', 'type', 'assetType', 'quantity', 'btcAddress', 'eqbAddress', 'description'),
+          keepQuery('orderId', 'type', 'assetType', 'quantity', 'btcAddress', 'eqbAddress', 'description'),
           statusOnCreateIsOPEN(),
           // disabling this for now, backend cannot track or enforce this if trades happen outside of the system
           // must trust the utxo from the front end user.
@@ -273,11 +273,11 @@ module.exports = function (app) {
           isProvider('external'),
           iff(
             hook => orderOwnedByUser(hook.params.user._id, hook.id),
-            keep('isAccepted', 'htlcTxId2', 'htlcTxId4', 'htlcStep')
+            keepQuery('isAccepted', 'htlcTxId2', 'htlcTxId4', 'htlcStep', 'before')
           ),
           iff(
             hook => offerOwnedByUser(hook.params.user._id, hook.id),
-            keep('description', 'status')
+            keepQuery('description', 'status', 'before')
           ),
           idRequired(),
           blockOfferAcceptance(app),
