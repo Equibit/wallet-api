@@ -175,13 +175,13 @@ module.exports = function (app) {
     )
   ]
 
-  function removeOtherId(id, offer) {
-    if (!offer.userId.equals(id)) {
+  function removeOtherId (id, offer) {
+    if (!(offer && offer.userId && offer.userId.equals(id))) {
       offer.userId = undefined
     }
   }
 
-  function orderOwnedByUser(userId, offerId) {
+  function orderOwnedByUser (userId, offerId) {
     const offersService = app.service('offers')
     return offersService.find({ query: { _id: offerId } })
       .then(response => {
@@ -191,7 +191,7 @@ module.exports = function (app) {
       .then(response => response.data[0].userId.equals(userId))
   }
 
-  function offerOwnedByUser(userId, offerId) {
+  function offerOwnedByUser (userId, offerId) {
     const offersService = app.service('offers')
     return offersService.find({ query: { _id: offerId } })
       .then(response => response.data[0].userId.equals(userId))
@@ -304,11 +304,11 @@ module.exports = function (app) {
       ],
       find: [
         hook => hook.result.data.forEach(offer => {
-          removeOtherId(hook.params.user._id, offer)
+          removeOtherId(hook.params.user ? hook.params.user._id : undefined, offer)
         })
       ],
       get: [
-        hook => removeOtherId(hook.params.user._id, hook.result.data)
+        hook => removeOtherId(hook.params.user ? hook.params.user._id : undefined, hook.result.data)
       ],
       create: [
         updateTransaction({
