@@ -1,5 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { discard, iff, isProvider, stashBefore } = require('feathers-hooks-common')
+const { restrictToOwner } = require('feathers-authentication-hooks')
+const { discard, iff, isProvider, stashBefore, unless } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
 const getEventAddress = require('../../hooks/get-event-address')
 const createNotification = require('../../hooks/create-notification')
@@ -175,10 +176,16 @@ module.exports = function (app) {
     )
   ]
 
+  function removeOtherId(id, offer) {
+    if (!offer.userId.equals(id)) {
+      offer.userId = undefined
+    }
+  }
+
   return {
     before: {
       all: [
-        authenticate('jwt')
+        unless(hook => hook.method === 'find', authenticate('jwt'))
       ],
       find: [],
       get: [],
@@ -271,8 +278,14 @@ module.exports = function (app) {
       all: [
         discard('__v')
       ],
-      find: [],
-      get: [],
+      find: [
+        hook => hook.result.data.forEach(offer => {
+          removeOtherId(hook.params.query.userId, offer)
+        })
+      ],
+      get: [
+        hook => removeOtherId(hook.params.query.userId, hook.result.data)
+      ],
       create: [
         updateTransaction({
           txIdPath: 'result.htlcTxId1',
