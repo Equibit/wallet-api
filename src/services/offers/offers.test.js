@@ -312,7 +312,7 @@ function runTests (feathersClient) {
         })
       })
 
-      it.only('offer.status can be set to CANCELLED while TRADING', function (done) {
+      it('offer.status can be set to CANCELLED while TRADING', function (done) {
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
