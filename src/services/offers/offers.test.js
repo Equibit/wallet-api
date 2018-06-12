@@ -117,6 +117,11 @@ function runTests (feathersClient) {
           return assertAuthNotRequired(serviceOnClient, method)
         })
       })
+      it('removes all userIds for an unauthenticated request', () => {
+        return serviceOnClient.find([{}]).then(result => {
+          return assert(!result.data.some(offer => offer.userId))
+        })
+      })
     })
 
     describe('Real-time notfications with Auth', function () {
