@@ -176,8 +176,10 @@ module.exports = function (app) {
   ]
 
   function removeOtherId (id, offer) {
-    if (!(offer && offer.userId && offer.userId.equals(id))) {
-      offer.userId = undefined
+    if (offer && offer.userId) {
+      if (!offer.userId.equals(id)) {
+        offer.userId = undefined
+      }
     }
   }
 
@@ -303,12 +305,18 @@ module.exports = function (app) {
         discard('__v')
       ],
       find: [
-        hook => hook.result.data.forEach(offer => {
-          removeOtherId(hook.params.user ? hook.params.user._id : undefined, offer)
-        })
+        iff(
+          isProvider('external'),
+          hook => hook.result.data.forEach(offer => {
+            removeOtherId(hook.params.user ? hook.params.user._id : undefined, offer)
+          })
+        )
       ],
       get: [
-        hook => removeOtherId(hook.params.user ? hook.params.user._id : undefined, hook.result.data)
+        iff(
+          isProvider('external'),
+          hook => removeOtherId(hook.params.user ? hook.params.user._id : undefined, hook.result.data)
+        )
       ],
       create: [
         updateTransaction({

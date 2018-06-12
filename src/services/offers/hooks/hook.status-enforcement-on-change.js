@@ -20,8 +20,6 @@ module.exports = function (app) {
     // no need to re-get offer since we use stashBefore earlier in hooks
     // see https://feathers-plus.github.io/v1/feathers-hooks-common/#stashbefore
     const offer = params.before
-    console.log('params')
-    console.log(params)
     const currentStatus = offer.status
     const currentHtlcStep = offer.htlcStep || 0
 
