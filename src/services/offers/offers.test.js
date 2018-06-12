@@ -3,6 +3,7 @@ const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const { users: userUtils, transactions: txUtils } = utils
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
+const assertAuthNotRequired = require('../../../test-utils/assert/auth-not-required')
 // const offerUtils = require('../../../test-utils/offers')
 
 utils.clients.forEach(client => {
@@ -103,11 +104,17 @@ function runTests (feathersClient) {
     })
 
     describe('Client Unauthenticated', function () {
-      const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
+      const authMethods = ['create', 'update', 'patch', 'remove']
+      const noAuthMethods = ['get', 'find']
 
-      methods.forEach(method => {
+      authMethods.forEach(method => {
         it(`requires auth on ${method}`, function () {
-          assertRequiresAuth(serviceOnClient, method)
+          return assertRequiresAuth(serviceOnClient, method)
+        })
+      })
+      noAuthMethods.forEach(method => {
+        it(`does not require auth on ${method}`, function () {
+          return assertAuthNotRequired(serviceOnClient, method)
         })
       })
     })
