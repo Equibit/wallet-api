@@ -87,8 +87,7 @@ function runTests (feathersClient) {
 
       methods.forEach(method => {
         it(`requires auth on ${method}`, function () {
-          return
-        assertRequiresAuth(serviceOnClient, method)
+          return assertRequiresAuth(serviceOnClient, method)
         })
       })
     })
