@@ -346,23 +346,23 @@ function runTests (feathersClient) {
         })
       })
 
-      describe('Cannot remove multiple', function () {
-        it('requires id', function (done) {
+      describe('Cannot remove', function () {
+        it.only('requires id', function (done) {
           const user = this.user
 
           userUtils.authenticateTemp(app, feathersClient, user)
-            .then(() => {
-              serviceOnClient.remove(null)
-                .then(() => {
-                  done('should have errored')
-                })
-                .catch(err => {
-                  assert(err, 'errors without id')
-                  assert.equal(err.message, 'id must be specified', 'correct error')
-                  done()
-                })
-            })
-            .catch(done)
+          .then(() =>
+            serviceOnClient.remove({id: 'placeholder'})
+          )
+          .then(() => {
+            done('should have errored')
+          })
+          .catch(err => {
+            assert(err, 'causes an error')
+            assert(err.message.indexOf('disallow') >= 0, 'correct error')
+            done()
+          })
+          .catch(done)
         })
       })
     })
