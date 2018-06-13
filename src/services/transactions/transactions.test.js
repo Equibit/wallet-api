@@ -87,7 +87,8 @@ function runTests (feathersClient) {
 
       methods.forEach(method => {
         it(`requires auth on ${method}`, function () {
-          return assertRequiresAuth(serviceOnClient, method)
+          return
+        assertRequiresAuth(serviceOnClient, method)
         })
       })
     })
@@ -381,7 +382,7 @@ function runTests (feathersClient) {
             done()
           })
           .catch(error => {
-            assert(error instanceof BadRequest, 'a BadRequest was thrown for attempting to patch the tx')
+            assert(error instanceof BadRequest, 'a BadRequest was thrown for attempting to delete the tx')
             done()
           })
       })
