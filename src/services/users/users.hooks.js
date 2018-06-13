@@ -57,14 +57,15 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [
+        // the only things the user is allowed to choose for their
+        // account (on creation)
+        keep('email', 'autoLogoutTime'),
         lowerCase('email'),
         // Sets `hook.params.existingUser` to the existing user.
         // Also sets hook.result to only contain the passed-in email.
         isExistingUser(),
         iff(
           hook => !hook.params.existingUser,
-          // If the user has passed a password for account creation, delete it.
-          discard('password'),
           createTemporaryPassword({ passwordField: 'tempPassword', plainPasswordField: 'tempPasswordPlain' }),
           generateSalt({ randomBytes }),
           hashPassword({ pbkdf2, passwordField: 'tempPassword', timeStampField: 'tempPasswordCreatedAt' })
@@ -258,17 +259,19 @@ module.exports = function (app) {
           isProvider('external'),
           discard(
             'password',
-            'tempPassword',
-            'challenge',
             'failedLogins',
+            'challenge',
+            'tempPassword',
             'pastPasswordHashes',
-            'emailVerificationCode',
-            'twoFactorCode'
+            'encryptedKey',
+            'encryptedMnemonic',
+            'twoFactorCode',
+            'emailVerificationCode'
           ),
           // don't remove salt for update and patch
           iff(
             context => context.method !== 'update' && context.method !== 'patch',
-            discard('salt')
+            discard('salt', 'provisionalSalt')
           )
         )
       ],
