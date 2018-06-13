@@ -87,7 +87,7 @@ function runTests (feathersClient) {
 
       methods.forEach(method => {
         it(`requires auth on ${method}`, function () {
-          assertRequiresAuth(serviceOnClient, method)
+          return assertRequiresAuth(serviceOnClient, method)
         })
       })
     })
@@ -358,6 +358,26 @@ function runTests (feathersClient) {
           })
           .then(response => {
             assert(false, 'Non-error condition reached when updating tx (error expected)')
+            done()
+          })
+          .catch(error => {
+            assert(error instanceof BadRequest, 'a BadRequest was thrown for attempting to patch the tx')
+            done()
+          })
+      })
+      it('does not allow client to delete transactions', function (done) {
+        const user = this.user
+        authenticate(app, feathersClient, user)
+          .then(response => {
+            return serviceOnClient.create(dummyTransaction)
+          })
+          .then(response => {
+            return serviceOnClient.remove(response._id, {
+              toAddress: dummyTransaction.fromAddress
+            })
+          })
+          .then(response => {
+            assert(false, 'Non-error condition reached when deleting tx (error expected)')
             done()
           })
           .catch(error => {
