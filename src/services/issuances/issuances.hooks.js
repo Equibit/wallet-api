@@ -1,6 +1,9 @@
-// const { authenticate } = require('feathers-authentication').hooks;
-const { disallow, iff, isProvider } = require('feathers-hooks-common')
+const { authenticate } = require('feathers-authentication').hooks
+const { disallow, iff, isProvider, keep } = require('feathers-hooks-common')
+const { restrictToOwner, associateCurrentUser } = require('feathers-authentication-hooks')
 const idRequired = require('../../hooks/hook.id-required')
+const assignIndex = require('../../hooks/hook.assign-index')
+const associateCompany = require('./hooks/hook.company-details')
 const updateTransaction = require('../transactions/hooks/hook.update-transaction')
 
 module.exports = function (app) {
@@ -8,14 +11,37 @@ module.exports = function (app) {
     before: {
       all: [
         // call the authenticate hook before every method except 'create'
-        // iff(
-        //   (hook) => hook.method !== 'create' || !hook.params.internal,
-        //   authenticate('jwt')
-        // )
+        iff(
+          (hook) => hook.method !== 'get' && hook.method !== 'find',
+          iff(
+            isProvider('external'),
+            authenticate('jwt')
+          )
+        )
       ],
       find: [],
       get: [],
-      create: [],
+      create: [
+        iff(
+          isProvider('external'),
+          keep(
+            'issuanceTxId',
+            'issuanceAddress',
+            'companyIndex',
+            'companyId',
+            'companyName',
+            'companySlug',
+            'domicile',
+            'issuanceName',
+            'issuanceType',
+            'restriction',
+            'sharesAuthorized'
+          ),
+          associateCurrentUser({ idField: '_id', as: 'userId' }),
+          assignIndex(),
+          associateCompany()
+        )
+      ],
       update: [
         iff(
           isProvider('external'),
@@ -25,7 +51,9 @@ module.exports = function (app) {
       patch: [
         iff(
           isProvider('external'),
-          idRequired()
+          idRequired(),
+          restrictToOwner({ idField: '_id', ownerField: 'userId' }),
+          keep('name')
         )
       ],
       remove: [
@@ -55,9 +83,9 @@ module.exports = function (app) {
 
     error: {
       all: [
-        error => {
-          console.log(error)
-        }
+        // error => {
+        //   console.log(error)
+        // }
       ],
       find: [],
       get: [],
