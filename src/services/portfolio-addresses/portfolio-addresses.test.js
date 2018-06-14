@@ -347,7 +347,7 @@ function runTests (feathersClient) {
       })
 
       describe('Cannot remove', function () {
-        it.only('requires id', function (done) {
+        it('requires id', function (done) {
           const user = this.user
 
           userUtils.authenticateTemp(app, feathersClient, user)
