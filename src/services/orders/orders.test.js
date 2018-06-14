@@ -89,6 +89,53 @@ function runTests (feathersClient) {
           assertRequiresAuth(serviceOnClient, method)
         })
       })
+
+      it('can get all orders without userId field', function (done) {
+        serviceOnClient.find()
+        .then(orders => {
+          orders.data.forEach(order => assert.ok(!('userId' in orders)))
+          done()
+        })
+        .catch(done)
+      })
+
+      it('cannot create an order', function (done) {
+        const createData = Object.assign({}, skels.sellOrder)
+        serviceOnClient.create(createData)
+        .then(() => done('order should not be created'))
+        .catch((err) => {
+          assert.equal(err.name, 'NotAuthenticated')
+          done()
+        })
+      })
+
+      it('cannot update an order', function (done) {
+        let data = {}
+        const createData = Object.assign({}, skels.sellOrder)
+        userUtils.create(app)
+        .then(user => {
+          this.user = user
+          userUtils.authenticateTemp(app, feathersClient, user)
+        })
+        .then(loggedInResponse => serviceOnClient.create(createData))
+        .then(order => {
+          data = order
+          return feathersClient.logout()
+        })
+        .then(() => serviceOnClient.patch(data._id.toString(), { status: 'CANCELLED' }))
+        .then(() => {
+          done('order should not be patched')
+        })
+        .catch((err) => {
+          assert.equal(err.name, 'NotAuthenticated')
+          return serviceOnServer.remove(null, { query: { userId: this.user._id.toString() } })
+        })
+        .then(() => {
+          userUtils.removeAll(app)
+          done()
+        })
+        .catch(done)
+      })
     })
 
     describe('Client With Auth', function () {
@@ -101,7 +148,7 @@ function runTests (feathersClient) {
 
       afterEach(function (done) {
         feathersClient.logout()
-          .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => serviceOnServer.remove(null, { query: { userId: this.user._id.toString() } }))
           .then(() => userUtils.removeAll(app))
           .then(() => done())
       })
@@ -221,6 +268,129 @@ function runTests (feathersClient) {
           } catch (err) {
             done(err)
           }
+        })
+      })
+
+      it('cannot create an order with restricted fields', function (done) {
+        const createData = Object.assign({}, skels.buyOrder, {
+          userId: this.user._id.toString(),
+          btcAddress: '123123123',
+          eqbAddress: '123123123',
+          status: 'CLOSED',
+          issuanceName: 'TEST',
+          issuanceType: 'ISSUANCE',
+          companyName: 'TEST'
+        })
+        userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => serviceOnClient.create(createData))
+        .then(order => {
+          Object.keys(order).forEach(key => assert.ok(key in order))
+          done()
+        })
+        .catch(done)
+      })
+
+      it('cannot see the userId that does not belong to the user', function (done) {
+        const createData = Object.assign({}, skels.buyOrder, {
+          userId: this.user._id.toString()
+        })
+
+        userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => serviceOnClient.create(createData))
+        .then(order => feathersClient.logout())
+        .then(() => app.service('/users').create({ email: userUtils.testEmails[1] }))
+        .then(user => app.service('users').find({ query: { email: userUtils.testEmails[1] } }))
+        .then(users => {
+          users = users.data || users
+          return userUtils.authenticateTemp(app, feathersClient, users[0])
+        })
+        .then(loggedInResponse => serviceOnClient.find())
+        .then(orders => {
+          const myOrders = orders.data.filter(order => 'userId' in order)
+          assert.equal(myOrders.length, 0)
+          done()
+        }).catch(done)
+      })
+
+      it('cannot remove an order', function (done) {
+        const createData = Object.assign({}, skels.buyOrder, {
+          userId: this.user._id.toString()
+        })
+
+        userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => serviceOnClient.create(createData))
+        .then(order => {
+          this.id = order._id
+          serviceOnClient.remove(null, { query: { userId: this.user._id.toString() } })
+        })
+        .then(() => serviceOnClient.get(this.id))
+        .then(order => {
+          assert.ok(order)
+          done()
+        })
+      })
+
+      it('can see the userId that belongs to the user', function (done) {
+        const createData = Object.assign({}, skels.sellOrder, {
+          userId: this.user._id.toString()
+        })
+
+        userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => serviceOnClient.find())
+        .then((orders) => serviceOnClient.create(createData))
+        .then(() => serviceOnClient.find())
+        .then(orders => {
+          const myOrders = orders.data.filter(order => 'userId' in order)
+          assert.equal(myOrders.length, 1)
+          done()
+        }).catch(done)
+      })
+
+      it('cannot update an order with restricted fields', function (done) {
+        const createData = Object.assign({}, skels.buyOrder, {
+          userId: this.user._id.toString(),
+          quantity: 0
+        })
+        userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => serviceOnClient.create(createData))
+        .then(order => serviceOnClient.patch(order._id.toString(), { price: 0 }))
+        .then(order => {
+          assert.equal(order.price, 10)
+          done()
+        }).catch(done)
+      })
+
+      describe('that is a non-owner', function () {
+        it('cannot update an order that does not belong to them', function (done) {
+          const createData = Object.assign({}, skels.buyOrder, {
+            userId: this.user._id.toString(),
+            quantity: 0
+          })
+
+          userUtils.authenticateTemp(app, feathersClient, this.user)
+          .then(loggedInResponse => serviceOnClient.create(createData))
+          .then(order => {
+            this.order = order
+            feathersClient.logout()
+          })
+          .then(() => app.service('/users').create({ email: userUtils.testEmails[1] }))
+          .then(user => app.service('users').find({ query: { email: userUtils.testEmails[1] } }))
+          .then(users => {
+            users = users.data || users
+            return userUtils.authenticateTemp(app, feathersClient, users[0])
+          })
+          .then(loggedInResponse => serviceOnClient.patch(this.order._id.toString(), { status: 'CANCELLED' }))
+          .then(() => {
+            done('order should not be patched')
+          })
+          .catch(err => {
+            try {
+              assert.equal(err.name, 'Forbidden')
+              done()
+            } catch (err) {
+              done(err)
+            }
+          })
         })
       })
     })

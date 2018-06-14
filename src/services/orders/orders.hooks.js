@@ -1,22 +1,38 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { discard, iff, isProvider, stashBefore } = require('feathers-hooks-common')
+const { discard, iff, isProvider, stashBefore, keep, disallow, discardQuery } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
+const { restrictToOwner } = require('feathers-authentication-hooks')
 // const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
 const allowCancel = require('./hooks/hook.allow-cancel')
 const errors = require('feathers-errors')
 // todo: discard userId if its different from current user
 
 module.exports = function (app) {
+  const authorizeCheckHook = [
+    iff(
+      isProvider('external'),
+      iff(
+        context => context.params.accessToken || (context.params.headers && context.params.headers.authorization),
+        authenticate('jwt')
+      ).else(discardQuery('userId')))
+  ]
+
   return {
     before: {
       // Note: Order Book is public for viewing.
       all: [],
-      find: [],
-      get: [],
+      find: authorizeCheckHook,
+      get: authorizeCheckHook,
       create: [
         authenticate('jwt'),
         iff(
           isProvider('external'),
+          keep('portfolioId', 'type', 'assetType', 'timelock', 'quantity', 'price', 'isFillOrKill', 'goodFor', 'issuanceId', 'issuanceAddress'),
+          context => {
+            context.data.status = 'OPEN'
+            context.data.userId = context.params.user._id.toString()
+            return Promise.resolve(context)
+          },
           // disabling this for now, backend cannot track or enforce this if trades happen outside of the system
           // must trust the utxo from the front end user.
           // iff(
@@ -69,8 +85,10 @@ module.exports = function (app) {
       ],
       update: [
         authenticate('jwt'),
+        restrictToOwner({ idField: '_id', ownerField: 'userId' }),
         iff(
           isProvider('external'),
+          keep('status'),
           idRequired(),
           stashBefore(),
           allowCancel(app)
@@ -78,19 +96,18 @@ module.exports = function (app) {
       ],
       patch: [
         authenticate('jwt'),
+        restrictToOwner({ idField: '_id', ownerField: 'userId' }),
         iff(
           isProvider('external'),
+          keep('status'),
           idRequired(),
           stashBefore(),
           allowCancel(app)
         )
       ],
       remove: [
-        authenticate('jwt'),
-        iff(
-          isProvider('external'),
-          idRequired()
-        )
+        disallow('external'),
+        authenticate('jwt')
       ]
     },
 
@@ -98,8 +115,29 @@ module.exports = function (app) {
       all: [
         discard('__v')
       ],
-      find: [],
-      get: [],
+      find: [
+        iff(
+          isProvider('external'),
+          iff(
+            context => context.params.authenticated,
+            context => {
+              const { result, params } = context
+              result.data.forEach(order => {
+                if (order.userId.toString() !== params.user._id.toString()) order.userId = undefined
+              })
+              return Promise.resolve(context)
+            }))],
+      get: [
+        iff(
+          isProvider('external'),
+          iff(
+            context => context.params.authenticated,
+            context => {
+              const { result, params } = context
+              if (result.userId.toString() !== params.user._id.toString()) context.result.userId = undefined
+              return Promise.resolve(context)
+            }
+          ))],
       create: [],
       update: [],
       patch: [],
