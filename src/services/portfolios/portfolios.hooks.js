@@ -28,7 +28,7 @@ module.exports = {
     update: [
       mapUpdateToPatch()
     ],
-    patch: [ iff(isProvider('external'), keep('name')), ...restrict ],
+    patch: [ iff(isProvider('external'), keep('name'), ...restrict) ],
     remove: [ disallow('external') ]
   },
 
