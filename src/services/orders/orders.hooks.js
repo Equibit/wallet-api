@@ -1,5 +1,5 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { discard, iff, isProvider, stashBefore, keep, disallow, discardQuery } = require('feathers-hooks-common')
+const { discard, iff, isProvider, stashBefore, keep, disallow } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
 const { restrictToOwner } = require('feathers-authentication-hooks')
 // const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
@@ -14,7 +14,7 @@ module.exports = function (app) {
       iff(
         context => context.params.accessToken || (context.params.headers && context.params.headers.authorization),
         authenticate('jwt')
-      ).else(discardQuery('userId')))
+      ))
   ]
 
   return {
@@ -126,7 +126,7 @@ module.exports = function (app) {
                 if (order.userId.toString() !== params.user._id.toString()) order.userId = undefined
               })
               return Promise.resolve(context)
-            }))],
+            }).else(discard('userId')))],
       get: [
         iff(
           isProvider('external'),
@@ -137,7 +137,7 @@ module.exports = function (app) {
               if (result.userId.toString() !== params.user._id.toString()) context.result.userId = undefined
               return Promise.resolve(context)
             }
-          ))],
+          ).else(discard('userId')))],
       create: [],
       update: [],
       patch: [],
