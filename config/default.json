@@ -48,7 +48,8 @@
   "equibitCore": {
     "url": "http://localhost:18335",
     "username": "undefined",
-    "password": "undefined"
+    "password": "undefined",
+    "sha": "EQUIBIT_SHA_TYPE"
   },
   "seeder": {
     "enabled": true,
