@@ -363,7 +363,6 @@ function runTests (feathersClient) {
               })
               .then(offer => {
                 assert.equal(offer.status, 'OPEN')
-                // DAVID not updating to trading
                 return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
               })
               .then(offer => {
