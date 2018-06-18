@@ -185,12 +185,10 @@ function runTests (feathersClient) {
             done()
           }
 
-          serviceOnClient.once('created', checkOffer)
+          // serviceOnClient.once('created', checkOffer)
 
           serviceOnClient.create(offerData)
-            .catch(error => {
-              done(error)
-            })
+            .then(checkOffer, done)
         })
       }
     })
@@ -198,11 +196,15 @@ function runTests (feathersClient) {
     describe('With Auth', function () {
       beforeEach(function (done) {
         userUtils.create(app).then(user => {
-          this.user = user
+          this.orderUser = user
           return ordersServiceOnServer.create(skels.buyOrder)
         }).then(order => {
           this.order = order
           done()
+        }).then(() => {
+          userUtils.create(app).then(user => {
+            this.user = user
+          })
         })
       })
 
@@ -263,7 +265,7 @@ function runTests (feathersClient) {
         })
       })
 
-      it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
+      it.only('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
         let txObj
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
@@ -307,6 +309,7 @@ function runTests (feathersClient) {
           })
         })
         .then(offer => {
+          console.log(offer.htlcTxId4)
           assert.equal(offer.htlcStep, 4, 'offer htlcStep was updated')
           assert.equal(offer.htlcTxId4, '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba', 'offer htlcTxId4 was updated')
           return serviceOnClient.patch(offer._id.toString(), {
@@ -339,6 +342,7 @@ function runTests (feathersClient) {
               })
               .then(offer => {
                 assert.equal(offer.status, 'OPEN')
+                // DAVID not updating to trading
                 return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
               })
               .then(offer => {
@@ -449,7 +453,7 @@ function runTests (feathersClient) {
           })
       })
 
-      it('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
+      it.skip('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
         const initialSharesIssued = 11
         const offerQuantity = 100
         const offerCreateData = Object.assign({}, skels.sellOffer, {
@@ -497,13 +501,7 @@ function runTests (feathersClient) {
       })
 
       it('sets offerId on HTLC tx #1 when created', function (done) {
-        const txId = 'c824797bdb100b2dde4855c1ff46333206823cf7060d175daef8be2b342f2421'
-        const createData = Object.assign({}, skels.sellOffer, {
-          orderId: this.order._id.toString(),
-          userId: this.user._id.toString(),
-          quantity: 0,
-          htlcTxId1: txId
-        })
+        let txId
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
             return app.service('transactions').create({
@@ -520,11 +518,18 @@ function runTests (feathersClient) {
             })
           })
           .then(tx => {
+            txId = tx._id
+            const createData = Object.assign({}, skels.sellOffer, {
+              orderId: this.order._id.toString(),
+              userId: this.user._id.toString(),
+              quantity: 0,
+              htlcTxId1: txId
+            })
             return serviceOnClient.create(createData)
           })
           .then(offer => {
             const offerId = offer._id
-            return app.service('transactions').find({ query: { txId } })
+            return app.service('transactions').find({ query: { _id: txId } })
               .then(result => {
                 const tx = result.data[0]
                 assert.equal(tx.offerId, offerId, 'offerId set on transaction')
