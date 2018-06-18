@@ -195,19 +195,28 @@ function runTests (feathersClient) {
 
     describe('With Auth', function () {
       beforeEach(function (done) {
-        userUtils.create(app).then(user => {
+        userUtils.create(app, 1).then(user => {
           this.orderUser = user
-          return ordersServiceOnServer.create(skels.buyOrder)
+          return userUtils.authenticateTemp(
+            app, feathersClient, this.orderUser
+          ).then(() => {
+            const skel = { ...skels.buyOrder }
+            skel.userId = user._id
+            return ordersServiceOnServer.create(skel)
+          })
         }).then(order => {
           this.order = order
-          done()
-        }).then(() => {
-          userUtils.create(app).then(user => {
+        }).then(() =>
+          userUtils.create(app, 0).then(user => {
             this.user = user
+            done()
           })
-        })
+        )
       })
-
+      const auth = user => {
+        return promiseResult =>
+          userUtils.authenticateTemp(app, feathersClient, user).then(() => promiseResult)
+      }
       afterEach(function (done) {
         feathersClient.logout()
           .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
@@ -265,7 +274,7 @@ function runTests (feathersClient) {
         })
       })
 
-      it.only('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
+      it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
         let txObj
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
@@ -290,10 +299,16 @@ function runTests (feathersClient) {
           txObj = tx
           return serviceOnClient.create(createData)
         })
+        .then(
+          auth(this.orderUser)
+        )
         .then(offer => {
           assert.equal(offer.status, 'OPEN')
           return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
         })
+        .then(
+          auth(this.user)
+        )
         .then(offer => {
           return serviceOnClient.patch(offer._id.toString(), {
             status: 'CANCELLED',
@@ -301,6 +316,9 @@ function runTests (feathersClient) {
             htlcTxId3: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba'
           })
         })
+        .then(
+          auth(this.orderUser)
+        )
         .then(offer => {
           assert.equal(offer.status, 'CANCELLED', 'offer was cancelled')
           return serviceOnClient.patch(offer._id.toString(), {
@@ -308,17 +326,20 @@ function runTests (feathersClient) {
             htlcTxId4: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba'
           })
         })
+        .then(
+          auth(this.user)
+        )
         .then(offer => {
-          console.log(offer.htlcTxId4)
           assert.equal(offer.htlcStep, 4, 'offer htlcStep was updated')
           assert.equal(offer.htlcTxId4, '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba', 'offer htlcTxId4 was updated')
           return serviceOnClient.patch(offer._id.toString(), {
             status: 'CLOSED'
           })
         })
-        .catch(err => {
+        .then(() => done('should not have succeeded'), err => {
           try {
             assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', err.message)
+
             done()
           } catch (assertionErr) {
             done(assertionErr)
