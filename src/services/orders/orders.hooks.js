@@ -5,6 +5,7 @@ const { restrictToOwner } = require('feathers-authentication-hooks')
 // const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
 const allowCancel = require('./hooks/hook.allow-cancel')
 const errors = require('feathers-errors')
+const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 // todo: discard userId if its different from current user
 
 module.exports = function (app) {
@@ -27,7 +28,7 @@ module.exports = function (app) {
         authenticate('jwt'),
         iff(
           isProvider('external'),
-          keep('portfolioId', 'type', 'assetType', 'timelock', 'quantity', 'price', 'isFillOrKill', 'goodFor', 'issuanceId', 'issuanceAddress'),
+          keep('btcAddress', 'eqbAddress', 'portfolioId', 'type', 'assetType', 'timelock', 'quantity', 'price', 'isFillOrKill', 'goodFor', 'issuanceId', 'issuanceAddress'),
           context => {
             context.data.status = 'OPEN'
             context.data.userId = context.params.user._id.toString()
@@ -83,23 +84,13 @@ module.exports = function (app) {
           )
         )
       ],
-      update: [
-        authenticate('jwt'),
-        restrictToOwner({ idField: '_id', ownerField: 'userId' }),
-        iff(
-          isProvider('external'),
-          keep('status'),
-          idRequired(),
-          stashBefore(),
-          allowCancel(app)
-        )
-      ],
+      update: [mapUpdateToPatch()],
       patch: [
         authenticate('jwt'),
         restrictToOwner({ idField: '_id', ownerField: 'userId' }),
         iff(
           isProvider('external'),
-          keep('status'),
+          keep('status', 'btcAddress', 'eqbAddress'),
           idRequired(),
           stashBefore(),
           allowCancel(app)
