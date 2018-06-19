@@ -6,6 +6,7 @@ const { restrictToOwner } = require('feathers-authentication-hooks')
 const allowCancel = require('./hooks/hook.allow-cancel')
 const errors = require('feathers-errors')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
+const filterUserIdField = require('../../hooks/hook.filter-userid-field')
 // todo: discard userId if its different from current user
 
 module.exports = function (app) {
@@ -106,29 +107,14 @@ module.exports = function (app) {
       all: [
         discard('__v')
       ],
-      find: [
-        iff(
-          isProvider('external'),
-          iff(
-            context => context.params.authenticated,
-            context => {
-              const { result, params } = context
-              result.data.forEach(order => {
-                if (order.userId.toString() !== params.user._id.toString()) order.userId = undefined
-              })
-              return Promise.resolve(context)
-            }).else(discard('userId')))],
-      get: [
-        iff(
-          isProvider('external'),
-          iff(
-            context => context.params.authenticated,
-            context => {
-              const { result, params } = context
-              if (result.userId.toString() !== params.user._id.toString()) context.result.userId = undefined
-              return Promise.resolve(context)
-            }
-          ).else(discard('userId')))],
+      find: [iff(
+        isProvider('external'),
+        filterUserIdField())
+      ],
+      get: [iff(
+        isProvider('external'),
+        filterUserIdField())
+      ],
       create: [],
       update: [],
       patch: [],
