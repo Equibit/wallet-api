@@ -16,7 +16,8 @@
     "jwt": {
       "audience": "https://equibitgroup.com",
       "issuer": "Equibit",
-      "subject": "user"
+      "subject": "user",
+      "expiresIn": "30m"
     },
     "strategies": [
       "jwt",
