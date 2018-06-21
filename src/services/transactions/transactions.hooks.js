@@ -76,7 +76,9 @@ module.exports = app => {
       patch: [
         disallow('external')
       ],
-      remove: []
+      remove: [
+        disallow('external')
+      ]
     },
 
     after: {
