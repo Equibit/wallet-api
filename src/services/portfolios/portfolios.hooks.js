@@ -3,7 +3,7 @@ const { associateCurrentUser, restrictToOwner } = require('feathers-authenticati
 const validate = require('./hooks/hook.validate')
 const getNextIndex = require('./hooks/hook.get-next-index')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const { discard } = require('feathers-hooks-common')
+const { discard, disallow, keep, iff, isProvider } = require('feathers-hooks-common')
 
 const restrict = [
   restrictToOwner({
@@ -20,15 +20,16 @@ module.exports = {
     find: [ ...restrict ],
     get: [ ...restrict ],
     create: [
+      validate(),
+      iff(isProvider('external'), keep('name')),
       associateCurrentUser({ idField: '_id', as: 'userId' }),
-      getNextIndex(),
-      validate()
+      getNextIndex()
     ],
     update: [
       mapUpdateToPatch()
     ],
-    patch: [ ...restrict ],
-    remove: [ ...restrict ]
+    patch: [ iff(isProvider('external'), keep('name'), ...restrict) ],
+    remove: [ disallow('external') ]
   },
 
   after: {
