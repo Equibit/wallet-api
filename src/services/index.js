@@ -28,6 +28,8 @@ const transactionNotes = require('./transaction-notes/transaction-notes.service.
 
 const healthCheck = require('./health-check/health-check.service.js')
 
+const bitMessage = require('./bit-message/bit-message.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -55,4 +57,5 @@ module.exports = function () {
   app.configure(sellOrdersQuantityOpen)
   app.configure(transactionNotes)
   app.configure(healthCheck)
+  app.configure(bitMessage)
 }
