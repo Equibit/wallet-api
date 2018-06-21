@@ -1,6 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const { discard, iff, isProvider, preventChanges } = require('feathers-hooks-common')
+const { discard, iff, isProvider, preventChanges, disallow } = require('feathers-hooks-common')
 
 // decorate params with portfolios the user owns in 'userPortfolios' property for validations
 const addUserPortfoliosToParams = require('../../hooks/hook.add-user-portfolios-to-params')
@@ -89,11 +89,7 @@ module.exports = function (app) {
         )
       ],
       remove: [
-        iff(
-          isProvider('external'),
-          idRequired(),
-          verifyIdBelongsToUser(app)
-        )
+        disallow('external')
       ]
     },
 
