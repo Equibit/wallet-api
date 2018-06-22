@@ -6,23 +6,7 @@ class Service {
   }
 
   find (params) {
-    const { app } = this.options
-    const proxycoreService = app.service('proxycore')
-    const sendPromise = proxycoreService.find({
-      query: {
-        node: params.query.node,
-        method: 'sendrawmessage',
-        params: params.query.params
-      }
-    }).catch(err => {
-      const errRes = (err.response && err.response.data) || {
-        message: err.message
-      }
-      console.log('_______ PROXY ERROR: ', errRes)
-      throw new errors.GeneralError(errRes)
-    })
-
-    return sendPromise
+    return Promise.resolve(params)
   }
 
   get (id, params) {
@@ -32,11 +16,26 @@ class Service {
   }
 
   create (data, params) {
-    if (Array.isArray(data)) {
-      return Promise.all(data.map(current => this.create(current)))
-    }
+    const { app } = this.options
+    const proxycoreService = app.service('proxycore')
+    const sendPromise = proxycoreService.find({
+      query: {
+        node: data.node,
+        method: 'sendrawmessage',
+        params: [data.message]
+      }})
+      .then(data => {
+        return Promise.resolve(data)
+      })
+      .catch(err => {
+        const errRes = (err.response && err.response.data) || {
+          message: err.message
+        }
+        console.log('_______ PROXY ERROR: ', errRes)
+        throw new errors.GeneralError(errRes)
+      })
 
-    return Promise.resolve(data)
+    return sendPromise
   }
 
   update (id, data, params) {
