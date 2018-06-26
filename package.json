@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test": "npm run lint && NODE_ENV=ci npm run mocha",
-    "test-local": "npm run lint && TESTING=true npm run mocha",
+    "test-local": "npm run lint && TESTING=true NODE_ENV=testing npm run mocha",
     "lint": "standard --fix",
     "start": "node src/",
     "mocha": "nyc mocha -u tdd --timeout 999999 --colors \"./+(src|test|test-utils)/**/*.test.js\" --recursive"
