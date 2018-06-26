@@ -68,9 +68,8 @@ module.exports = function (app) {
               // these updates (steps 2 or 4) were made by the order holder.
               // Notify the offer creator
               hook.notificationAddress = hook.result.eqbAddress
-              if (hook.result.status === 'ACCEPTED' && order.isFillOrKill) {
-                return app.service('/orders').patch({
-                  _id: hook.result.orderId,
+              if (hook.result.isAccepted && order.isFillOrKill) {
+                return app.service('/orders').patch(hook.result.orderId, {
                   status: 'CLOSED'
                 }).then(() => hook)
               }
