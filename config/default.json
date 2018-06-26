@@ -50,7 +50,7 @@
     "url": "http://localhost:18335",
     "username": "undefined",
     "password": "undefined",
-    "sha": "SHA256"
+    "sha": "SHA3_256"
   },
   "seeder": {
     "enabled": true,

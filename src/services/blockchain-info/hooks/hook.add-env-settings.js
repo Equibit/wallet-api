@@ -10,7 +10,7 @@ module.exports = function (options = {}) { // eslint-disable-line no-unused-vars
     if (result && result.length) {
       result.forEach(nodeInfo => {
         if (nodeInfo.coinType === 'EQB') {
-          nodeInfo.sha = hook.app.get('equibitCore').sha || 'SHA256'
+          nodeInfo.sha = hook.app.get('equibitCore').sha || 'SHA3_256'
         }
       })
     }
