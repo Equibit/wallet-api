@@ -388,10 +388,6 @@ function runTests (feathersClient) {
           status: 'TRADING',
           quantity: 0
         })
-        // Fill or kill order exists *
-        // offer exists in htlc step 3 *
-        // order owner accepts
-        // offer should be closed
         let createdId
         ordersServiceOnServer.patch(this.order._id.toString(), {
           isFillOrKill: true
