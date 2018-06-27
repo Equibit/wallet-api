@@ -24,9 +24,6 @@ class Service {
         method: 'sendrawmessage',
         params: [data.message]
       }})
-      .then(data => {
-        return Promise.resolve(data)
-      })
       .catch(err => {
         const errRes = (err.response && err.response.data) || {
           message: err.message
