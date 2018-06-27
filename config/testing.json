@@ -1,0 +1,24 @@
+{
+    "postmark": {
+      "key": "1b3c3908-8965-42fe-b655-173437c9dd38"
+    },
+    "mongodb": "mongodb://localhost:27017/wallet_api-testing",
+    "bitcoinCore": {
+      "url": "http://169.55.144.155:18332",
+      "username": "equibitqa",
+      "password": "V5yfZLWJAcQmM0EgUOK8oSCDvqjQ9e8XU6jVUBTXsI8=",
+      "methodPrefix": ""
+    },
+    "equibitCore": {
+      "url": "http://169.55.144.154:18331",
+      "username": "equibitqa",
+      "password": "V5yfZLWJAcQmM0EgUOK8oSCDvqjQ9e8XU6jVUBTXsI8=",
+      "methodPrefix": ""
+    },
+    "addressMapEncryptionKey": "10789b383c9b6c853f605e303f2a80ef",
+    "bitcoinAverage1": {
+      "key": "YmU3NzJhYmJmMmI2NDZiMzhlN2EzZDA1MzBhZGQ4NDM",
+      "secret": "ZWRkMTgyZmIyZTAyNGQyYjkwNzE2N2UwYWRjM2JmNTU1YzA0YjgzNTQ2MjM0NTllYTZmMmQwZDQwNGMwZTlmNQ"
+    },
+    "blockchainInfoInterval": 5000
+}
