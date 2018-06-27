@@ -380,7 +380,7 @@ function runTests (feathersClient) {
           })
       })
 
-      it.only('closes a fill or kill offer once it is accepted', function (done) {
+      it('closes a fill or kill offer once it is accepted', function (done) {
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
@@ -399,11 +399,10 @@ function runTests (feathersClient) {
           serviceOnServer.create(createData).then(offer => {
             createdId = offer._id.toString()
           })
-        ).then(
+        ).then(() =>
           userUtils.authenticateTemp(app, feathersClient, this.orderUser)
-        ).then(() => {
-          return serviceOnClient.patch(createdId, { htlcStep: 4, isAccepted: true })
-        }
+        ).then(() =>
+          serviceOnClient.patch(createdId, { htlcStep: 4, isAccepted: true })
         )
         .then(() =>
           ordersServiceOnServer.get(this.order._id)
