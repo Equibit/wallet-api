@@ -144,7 +144,7 @@ module.exports = function (app) {
             } else {
               delete hook.data.emailVerified
             }
-            console.log('Hey David')
+            hook.user.tempPasswordCreatedAt = undefined
             hook.data.passwordCreatedAt = Date.now()
           },
           // On password change, ignore any changes not related to this flow
@@ -155,6 +155,7 @@ module.exports = function (app) {
             'provisionalSalt',
             'pastPasswordHashes',
             'tempPassword',
+            'tempPasswordCreatedAt',
             'isNewUser',
             'encryptedKey',
             'encryptedMnemonic',
@@ -251,8 +252,7 @@ module.exports = function (app) {
             )
           )
         ),
-        hook => { hook.data.updatedAt = Date.now() },
-        hook => console.log(hook)
+        hook => { hook.data.updatedAt = Date.now() }
       ],
       remove: [
         disallow('external')
