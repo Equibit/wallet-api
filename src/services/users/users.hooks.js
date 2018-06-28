@@ -66,9 +66,13 @@ module.exports = function (app) {
         isExistingUser(),
         iff(
           hook => !hook.params.existingUser,
-          createTemporaryPassword({ passwordField: 'tempPassword', plainPasswordField: 'tempPasswordPlain' }),
+          createTemporaryPassword({
+            passwordField: 'tempPassword',
+            plainPasswordField: 'tempPasswordPlain',
+            timeStampField: 'tempPasswordCreatedAt'
+          }),
           generateSalt({ randomBytes }),
-          hashPassword({ pbkdf2, passwordField: 'tempPassword', timeStampField: 'tempPasswordCreatedAt' })
+          hashPassword({ pbkdf2, passwordField: 'tempPassword' })
         )
       ],
       update: [mapUpdateToPatch()],
@@ -140,6 +144,7 @@ module.exports = function (app) {
             } else {
               delete hook.data.emailVerified
             }
+            console.log('Hey David')
             hook.data.passwordCreatedAt = Date.now()
           },
           // On password change, ignore any changes not related to this flow
@@ -246,7 +251,8 @@ module.exports = function (app) {
             )
           )
         ),
-        hook => { hook.data.updatedAt = Date.now() }
+        hook => { hook.data.updatedAt = Date.now() },
+        hook => console.log(hook)
       ],
       remove: [
         disallow('external')

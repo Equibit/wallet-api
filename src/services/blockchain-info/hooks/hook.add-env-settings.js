@@ -6,7 +6,7 @@ module.exports = function (options = {}) { // eslint-disable-line no-unused-vars
     // Hooks can either return nothing or a promise
     // that resolves with the `hook` object for asynchronous operations
     const result = hook.result.data || [hook.result]
-    console.log(`hook.addEnvSettings: `, result)
+    // console.log(`hook.addEnvSettings: `, result)
     if (result && result.length) {
       result.forEach(nodeInfo => {
         if (nodeInfo.coinType === 'EQB') {
