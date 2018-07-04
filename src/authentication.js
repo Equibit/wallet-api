@@ -71,7 +71,7 @@ module.exports = function () {
           hook => hook.data.strategy === 'challenge',
           hook => {
             if (hook.params.usingTempPassword && hook.params.user.tempPassword) {
-              if (hook.params.user.tempPasswordCreatedAt.getTime() < Date.now() - (0.75 * 60000)) {
+              if (hook.params.user.tempPasswordCreatedAt.getTime() < Date.now() - app.get('tempPasswordExpiry')) {
                 throw new Error('temporary password has expired')
               }
               hook.result.usingTempPassword = true
