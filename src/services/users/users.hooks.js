@@ -154,6 +154,7 @@ module.exports = function (app) {
             'salt',
             'provisionalSalt',
             'pastPasswordHashes',
+            'requestPasswordChange',
             'tempPassword',
             'tempPasswordCreatedAt',
             'isNewUser',
