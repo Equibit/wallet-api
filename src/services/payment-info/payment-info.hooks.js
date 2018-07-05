@@ -14,7 +14,7 @@ module.exports = function(app) {
         keep(),
         hook => {
           return hook.service.find({ query: {} }).then(
-            data => {
+            ({data}) => {
               if (data && data.length) {
                 // if there is already a record, don't create a new one
                 console.log('A')
