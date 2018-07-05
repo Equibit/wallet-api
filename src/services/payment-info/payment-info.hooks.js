@@ -1,7 +1,7 @@
 
 const { disallow, keep } = require('feathers-hooks-common')
 
-module.exports = function(app) {
+module.exports = function() {
   return {
     before: {
       all: [
@@ -17,11 +17,9 @@ module.exports = function(app) {
             ({data}) => {
               if (data && data.length) {
                 // if there is already a record, don't create a new one
-                console.log('A')
                 hook.result = data[0]
               } else {
                 // generate the address and the keys
-                console.log('B')
                 hook.data = {
                   address: 'David made a address',
                   key: 'David made a key',
