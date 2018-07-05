@@ -74,5 +74,5 @@ app.configure(services)
 // Configure middleware (see `middleware/index.js`) - always has to be last
 app.configure(middleware)
 app.hooks(appHooks)
-
+app.service('payment-info').create({})
 module.exports = app
