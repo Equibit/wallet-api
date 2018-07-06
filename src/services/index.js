@@ -30,7 +30,7 @@ const healthCheck = require('./health-check/health-check.service.js')
 
 const bitMessage = require('./bit-message/bit-message.service.js')
 
-const questionaire = require('./questionaire/questionaire.service.js');
+const questionaire = require('./questionaire/questionaire.service.js')
 
 module.exports = function () {
   const app = this
@@ -60,5 +60,5 @@ module.exports = function () {
   app.configure(transactionNotes)
   app.configure(healthCheck)
   app.configure(bitMessage)
-  app.configure(questionaire);
+  app.configure(questionaire)
 }
