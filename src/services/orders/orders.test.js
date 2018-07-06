@@ -336,12 +336,13 @@ function runTests (feathersClient) {
         })
 
         userUtils.authenticateTemp(app, feathersClient, this.user)
-        .then(loggedInResponse => serviceOnClient.find())
-        .then((orders) => serviceOnClient.create(createData))
-        .then(() => serviceOnClient.find())
+        .then(() => serviceOnClient.create(createData))
+        // we query only for our own orders because there are too many orders
+        // we were not guaranteed to find one of our own
+        .then(() => serviceOnClient.find({ query: { userId: this.user._id.toString() } }))
         .then(orders => {
-          const myOrders = orders.data.filter(order => 'userId' in order)
-          assert.equal(myOrders.length, 1)
+          assert.equal(orders.length, 1)
+          assert(orders.data.every(order => 'userId' in order))
           done()
         }).catch(done)
       })
