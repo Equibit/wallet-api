@@ -1,6 +1,7 @@
 
 const { disallow, keep } = require('feathers-hooks-common')
 const bitcoin = require('bitcoinjs-lib')
+const errors = require('feathers-errors')
 
 module.exports = function() {
   return {
@@ -20,11 +21,10 @@ module.exports = function() {
                 // if there is already a record, don't create a new one
                 hook.result = data[0]
               } else {
+                // create an address and key
                 const pair = bitcoin.ECPair.makeRandom()
                 const address = pair.getAddress()
                 const key = pair.toWIF()
-                console.log(address)// 1FkKMsKNJqWSDvTvETqcCeHcUQQ64kSC6s
-                console.log(key)// 1FkKMsKNJqWSDvTvETqcCeHcUQQ64kSC6s
                 hook.data = {
                   address,
                   key,
@@ -34,9 +34,17 @@ module.exports = function() {
           )
         }
       ],
-      update: [],
-      patch: [],
-      remove: []
+      // only a DB operator should be able to take any action which
+      // might remove or alter the keys
+      update: [
+        disallow(),
+      ],
+      patch: [
+        disallow(),
+      ],
+      remove: [
+        disallow(),
+      ]
     },
 
     after: {
