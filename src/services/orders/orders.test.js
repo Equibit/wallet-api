@@ -341,7 +341,7 @@ function runTests (feathersClient) {
         // we were not guaranteed to find one of our own
         .then(() => serviceOnClient.find({ query: { userId: this.user._id.toString() } }))
         .then(orders => {
-          assert.equal(orders.length, 1)
+          assert.equal(orders.data.length, 1)
           assert(orders.data.every(order => 'userId' in order))
           done()
         }).catch(done)
