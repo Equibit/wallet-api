@@ -1,7 +1,6 @@
 
 const { disallow, keep } = require('feathers-hooks-common')
 const bitcoin = require('bitcoinjs-lib')
-const errors = require('feathers-errors')
 
 module.exports = function() {
   return {
