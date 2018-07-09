@@ -66,7 +66,34 @@ module.exports = function (app) {
           verifyPortfolioIdOnData()
         ),
         returnIfExistsAlready(app),
-        importIfNew(app)
+        importIfNew(app),
+        hook => {
+          const investorsService = app.service('icoinvestors')
+          let addressEQB
+          if (hook.data.type === 'EQB') {
+            addressEQB = hook.data.importAddress
+          }
+          if (hook.params.user.email) {
+            return investorsService.find({ query: { email: hook.params.user.email } })
+              .then(({data}) => {
+                // If balance is set, that means we can automatically dispense and delete. If it is not, then it is manual
+                if (data[0].balanceOwed) {
+                  // Here we add the payment methods, payable to EQB address of user
+                  // Then remove the entry
+                  investorsService.remove(null, { query: { email: hook.params.user.email } })
+                  return hook
+                } else {
+                  return investorsService.patch(
+                    data[0]._id,
+                    { address: addressEQB,
+                      flag: true
+                    })
+                }
+              })
+          } else {
+            return Promise.resolve(hook)
+          }
+        }
       ],
       update: [
         mapUpdateToPatch()

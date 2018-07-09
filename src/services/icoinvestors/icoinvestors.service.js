@@ -1,10 +1,10 @@
 'use strict'
 
-// Initializes the `investor-emails` service on path `/investor-emails`
+// Initializes the `icoinvestors` service on path `/icoinvestors`
 const createService = require('feathers-mongoose')
-const createModel = require('./investor-emails.model')
-const hooks = require('./investor-emails.hooks')
-const filters = require('./investor-emails.filters')
+const createModel = require('./icoinvestors.model')
+const hooks = require('./icoinvestors.hooks')
+const filters = require('./icoinvestors.filters')
 
 module.exports = function () {
   const app = this
@@ -12,16 +12,16 @@ module.exports = function () {
   const paginate = app.get('paginate')
 
   const options = {
-    name: 'investor-emails',
+    name: 'icoinvestors',
     Model,
     paginate
   }
 
   // Initialize our service with any options it requires
-  app.use('/investor-emails', createService(options))
+  app.use('/icoinvestors', createService(options))
 
   // Get our initialized service so that we can register hooks and filters
-  const service = app.service('investor-emails')
+  const service = app.service('icoinvestors')
 
   service.hooks(hooks(app))
 
