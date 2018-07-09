@@ -505,7 +505,7 @@ function runTests (feathersClient) {
           })
       })
 
-      it.skip('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
+      it('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
         const initialSharesIssued = 11
         const offerQuantity = 100
         const offerCreateData = Object.assign({}, skels.sellOffer, {
