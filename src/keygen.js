@@ -5,10 +5,12 @@ const icoKey = icoPair.toWIF()
 const rewardPair = bitcoin.ECPair.makeRandom()
 const rewardAddress = rewardPair.getAddress()
 const rewardKey = rewardPair.toWIF()
-console.log('set the following environment variables to enable the server to make automated payments')
-console.log('{')
-console.log(`\t"icoPayoutAddress": "${icoAddress}",`)
-console.log(`\t"icoPayoutKey": "${icoKey}",`)
-console.log(`\t"rewardAddress": "${rewardAddress}",`)
-console.log(`\t"rewardKey": "${rewardKey}",`)
-console.log('}')
+console.log(
+`set the following environment variables to enable the server to make automated payments
+{
+  "icoPayoutAddress": "${icoAddress}",
+  "icoPayoutKey": "${icoKey}",
+  "rewardAddress": "${rewardAddress}",
+  "rewardKey": "${rewardKey}",
+}`
+)
