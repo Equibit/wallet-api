@@ -1,11 +1,13 @@
-// questionaire-model.js - A mongoose model
+// questions-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
+  const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const { Schema } = mongooseClient
-  const questionaire = new Schema({
+  const questions = new Schema({
+    questionaireId: { type: ObjectId, required: true },
     question: { type: String, required: true },
     sortIndex: { type: Number },
     questionType: { type: String, enum: ['SINGLE', 'MULTI', 'DROPDOWN'], default: 'SINGLE' },
@@ -15,5 +17,5 @@ module.exports = function (app) {
     timestamps: true
   })
 
-  return mongooseClient.model('questionaire', questionaire)
+  return mongooseClient.model('questions', questions)
 }
