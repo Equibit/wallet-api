@@ -157,11 +157,14 @@ function runTests (feathersClient) {
           .then(response => {
             assert(response && response.data, 'got a response')
             assert.equal(response.data.sellOrdersQuantityOpen, 825, 'amount is correct: 825')
-            done()
           })
           .catch(error => {
             console.log('ERROR ', error)
             assert(!error, 'this error should not have occurred')
+            done()
+          })
+          .then(() => {
+            ordersService.remove(null, { query: { userId: this.user._id.toString() } })
             done()
           })
       })
