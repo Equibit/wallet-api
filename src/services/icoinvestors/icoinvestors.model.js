@@ -12,7 +12,7 @@ module.exports = function (app) {
     // Address will be populated by Wallet when new user is created with the same email
     address: { type: String },
     balanceOwed: { type: Number },
-    flag: { type: Boolean, default: false }
+    manualPaymentRequired: { type: Boolean, default: false }
 
   }, {
     timestamps: true
