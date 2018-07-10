@@ -70,24 +70,30 @@ module.exports = function (app) {
         hook => {
           const investorsService = app.service('icoinvestors')
           let addressEQB
+          const email = (hook.params.user && hook.params.user.email) || hook.data.email
           if (hook.data.type === 'EQB') {
             addressEQB = hook.data.importAddress
           }
-          if (hook.params.user.email) {
-            return investorsService.find({ query: { email: hook.params.user.email } })
-              .then(({data}) => {
-                // If balance is set, that means we can automatically dispense and delete. If it is not, then it is manual
-                if (data[0].balanceOwed) {
-                  // Here we add the payment methods, payable to EQB address of user
-                  // Then remove the entry
-                  investorsService.remove(null, { query: { email: hook.params.user.email } })
-                  return hook
+          if (email && addressEQB) {
+            return investorsService.find({ query: { email } })
+              .then(({ data }) => {
+                if (data[0]) {
+                  // If balance is set, that means we can automatically dispense and delete. If it is not, then it is manual
+                  if (data[0].balanceOwed) {
+                    // Here we add the payment methods, payable to EQB address of user
+                    // Then remove the entry
+                    investorsService.remove(null, { query: { email } })
+                  } else {
+                    return investorsService.patch(
+                      data[0]._id,
+                      { address: addressEQB,
+                        flag: true
+                      }).then(() => {
+                        return hook
+                      })
+                  }
                 } else {
-                  return investorsService.patch(
-                    data[0]._id,
-                    { address: addressEQB,
-                      flag: true
-                    })
+                  return hook
                 }
               })
           } else {
