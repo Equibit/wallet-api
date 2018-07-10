@@ -115,7 +115,7 @@ function runTests (feathersClient) {
           const query = { portfolioId: null, type: 'btc', xpub: xpubs.btc }
 
           utils.users.authenticate(app, feathersClient, user)
-            .then(response => feathersClient.service('portfolios').create({ name: 'my portfolio' }))
+            .then(response => feathersClient.service('portfolios').create({ name: 'My Test Portfolio' }))
             .then(portfolio => {
               query.portfolioId = portfolio._id
               return serviceOnClient.find({ query })

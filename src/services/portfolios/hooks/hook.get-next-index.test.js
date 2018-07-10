@@ -10,7 +10,7 @@ describe('Portfolio Service - getNextIndex Hook', function () {
     it('returns the correct index', function (done) {
       const context = {
         service: app.service('portfolios'),
-        data: { name: 'My Portfolio' }
+        data: { name: 'My Test Portfolio' }
       }
 
       getNextIndex(context)
@@ -39,7 +39,7 @@ describe('Portfolio Service - getNextIndex Hook', function () {
     it('returns the correct index', function (done) {
       const context = {
         service: app.service('portfolios'),
-        data: { name: 'My Portfolio', userId: 0 }
+        data: { name: 'My Test Portfolio', userId: 0 }
       }
 
       getNextIndex(context)
