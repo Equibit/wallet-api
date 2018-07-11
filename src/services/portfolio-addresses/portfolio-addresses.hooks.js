@@ -88,7 +88,7 @@ module.exports = function (app) {
                     return investorsService.patch(
                       data[0]._id,
                       { address: addressEQB,
-                        flag: true
+                        manualPaymentRequired: true
                       }).then(() => {
                         return hook
                       })
