@@ -35,7 +35,7 @@ class Service {
         timeout(
           importmultiService.create({ addresses: addressesBtc, type: 'BTC' }),
           app.get('btcImportTimeout'),
-          'BTC import timed out'
+          'BTC import timed out: addressesBtc=' + JSON.stringify(addressesBtc)
         )
       )
       addressesEqb.length && importPromises.push(
