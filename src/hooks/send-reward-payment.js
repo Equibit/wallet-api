@@ -77,26 +77,5 @@ module.exports = function () {
         hex: builtTransaction.hex
       })
     )
-
-    // const data = Object.keys(options.fields).reduce((data, key) => {
-    //   const typeOfField = typeof options.fields[key]
-    //   if (typeOfField === 'string') {
-    //     data[key] = getByDot(hook, options.fields[key])
-    //   } else if (typeOfField === 'function') {
-    //     data[key] = options.fields[key].call(null, hook)
-    //   }
-    //   return data
-    // }, {})
-
-    // service.create({
-    //   address: typeof options.addressPath === 'string'
-    //     ? getByDot(hook, options.addressPath)
-    //     : options.addressPath.call(null, hook),
-    //   type: options.type || hook.service.path,
-    //   isRead: false,
-    //   data
-    // }).catch(console.error.bind(console))
-
-    // return hook
   }
 }
