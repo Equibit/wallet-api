@@ -23,6 +23,9 @@ const returnIfExistsAlready = require('./hooks/hook.return-if-exists-already')
 // import if create data is a new addresses and 'importAddress' was provided
 const importIfNew = require('./hooks/hook.import-if-new')
 
+// import if create data is a new addresses and 'importAddress' was provided
+const sendIcoPayment = require('./hooks/hook.send-ico-payment')
+
 module.exports = function (app) {
   return {
     before: {
@@ -67,40 +70,10 @@ module.exports = function (app) {
         ),
         returnIfExistsAlready(app),
         importIfNew(app),
-        hook => {
-          const investorsService = app.service('icoinvestors')
-          const balanceThreshold = 100
-          let addressEQB
-          const email = (hook.params.user && hook.params.user.email) || hook.data.email
-          if (hook.data.type === 'EQB') {
-            addressEQB = hook.data.importAddress
-          }
-          if (email && addressEQB) {
-            return investorsService.find({ query: { email } })
-              .then(({ data }) => {
-                if (data[0]) {
-                  // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
-                  if (data[0].balanceOwed < balanceThreshold) {
-                    // Here we add the payment methods, payable to EQB address of user
-                    // Then remove the entry
-                    investorsService.remove(null, { query: { email } })
-                  } else {
-                    return investorsService.patch(
-                      data[0]._id,
-                      { address: addressEQB,
-                        manualPaymentRequired: true
-                      }).then(() => {
-                        return hook
-                      })
-                  }
-                } else {
-                  return hook
-                }
-              })
-          } else {
-            return Promise.resolve(hook)
-          }
-        }
+        iff(
+          hook => hook.data.type === 'EQB',
+          sendIcoPayment()
+        )
       ],
       update: [
         mapUpdateToPatch()
