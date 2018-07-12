@@ -20,7 +20,7 @@ module.exports = app => {
   }
   return {
     before: {
-      all: [ authenticate('jwt') ],
+      all: [ authenticate('jwt'), hook => console.log(hook) ],
       find: [
         iff(
           isProvider('external'),
