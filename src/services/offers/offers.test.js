@@ -3,6 +3,7 @@ const app = require('../../app')
 const utils = require('../../../test-utils/index')
 const { users: userUtils, transactions: txUtils } = utils
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
+const assertAuthNotRequired = require('../../../test-utils/assert/auth-not-required')
 // const offerUtils = require('../../../test-utils/offers')
 
 utils.clients.forEach(client => {
@@ -97,17 +98,31 @@ function runTests (feathersClient) {
   const ordersServiceOnServer = app.service('orders')
   const issuanceServiceOnServer = app.service('issuances')
 
+  // socketio has trouble with switching accounts
+  const restOnly = feathersClient.io ? it.skip : it
+
   describe(`Offers Service Tests - ${transport}`, function () {
     before(function () {
       return userUtils.removeAll(app)
     })
 
     describe('Client Unauthenticated', function () {
-      const methods = ['find', 'get', 'create', 'update', 'patch', 'remove']
+      const authMethods = ['create', 'update', 'patch', 'remove']
+      const noAuthMethods = ['get', 'find']
 
-      methods.forEach(method => {
+      authMethods.forEach(method => {
         it(`requires auth on ${method}`, function () {
-          assertRequiresAuth(serviceOnClient, method)
+          return assertRequiresAuth(serviceOnClient, method)
+        })
+      })
+      noAuthMethods.forEach(method => {
+        it(`does not require auth on ${method}`, function () {
+          return assertAuthNotRequired(serviceOnClient, method)
+        })
+      })
+      it('removes all userIds for an unauthenticated request', () => {
+        return serviceOnClient.find([{}]).then(result => {
+          return assert(!result.data.some(offer => offer.userId))
         })
       })
     })
@@ -173,27 +188,38 @@ function runTests (feathersClient) {
             done()
           }
 
-          serviceOnClient.once('created', checkOffer)
+          // serviceOnClient.once('created', checkOffer)
 
           serviceOnClient.create(offerData)
-            .catch(error => {
-              done(error)
-            })
+            .then(checkOffer, done)
         })
       }
     })
 
     describe('With Auth', function () {
       beforeEach(function (done) {
-        userUtils.create(app).then(user => {
-          this.user = user
-          return ordersServiceOnServer.create(skels.buyOrder)
+        userUtils.create(app, 1).then(user => {
+          this.orderUser = user
+          return userUtils.authenticateTemp(
+            app, feathersClient, this.orderUser
+          ).then(() => {
+            const skel = { ...skels.buyOrder }
+            skel.userId = user._id
+            return ordersServiceOnServer.create(skel)
+          })
         }).then(order => {
           this.order = order
-          done()
-        })
+        }).then(() =>
+          userUtils.create(app, 0).then(user => {
+            this.user = user
+            done()
+          })
+        )
       })
-
+      const auth = user => {
+        return promiseResult =>
+          userUtils.authenticateTemp(app, feathersClient, user).then(() => promiseResult)
+      }
       afterEach(function (done) {
         feathersClient.logout()
           .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
@@ -251,7 +277,7 @@ function runTests (feathersClient) {
         })
       })
 
-      it('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
+      restOnly('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
         let txObj
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
@@ -276,10 +302,16 @@ function runTests (feathersClient) {
           txObj = tx
           return serviceOnClient.create(createData)
         })
+        .then(
+          auth(this.orderUser)
+        )
         .then(offer => {
           assert.equal(offer.status, 'OPEN')
           return serviceOnClient.patch(offer._id.toString(), { htlcStep: 2 })
         })
+        .then(
+          auth(this.user)
+        )
         .then(offer => {
           return serviceOnClient.patch(offer._id.toString(), {
             status: 'CANCELLED',
@@ -287,6 +319,9 @@ function runTests (feathersClient) {
             htlcTxId3: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba'
           })
         })
+        .then(
+          auth(this.orderUser)
+        )
         .then(offer => {
           assert.equal(offer.status, 'CANCELLED', 'offer was cancelled')
           return serviceOnClient.patch(offer._id.toString(), {
@@ -294,6 +329,9 @@ function runTests (feathersClient) {
             htlcTxId4: '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba'
           })
         })
+        .then(
+          auth(this.user)
+        )
         .then(offer => {
           assert.equal(offer.htlcStep, 4, 'offer htlcStep was updated')
           assert.equal(offer.htlcTxId4, '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba', 'offer htlcTxId4 was updated')
@@ -301,9 +339,10 @@ function runTests (feathersClient) {
             status: 'CLOSED'
           })
         })
-        .catch(err => {
+        .then(() => done('should not have succeeded'), err => {
           try {
             assert.equal(err.message, 'Offer cannot be modified once CLOSED or CANCELLED.', err.message)
+
             done()
           } catch (assertionErr) {
             done(assertionErr)
@@ -485,13 +524,7 @@ function runTests (feathersClient) {
       })
 
       it('sets offerId on HTLC tx #1 when created', function (done) {
-        const txId = 'c824797bdb100b2dde4855c1ff46333206823cf7060d175daef8be2b342f2421'
-        const createData = Object.assign({}, skels.sellOffer, {
-          orderId: this.order._id.toString(),
-          userId: this.user._id.toString(),
-          quantity: 0,
-          htlcTxId1: txId
-        })
+        let txId
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
             return app.service('transactions').create({
@@ -508,11 +541,18 @@ function runTests (feathersClient) {
             })
           })
           .then(tx => {
+            txId = tx._id
+            const createData = Object.assign({}, skels.sellOffer, {
+              orderId: this.order._id.toString(),
+              userId: this.user._id.toString(),
+              quantity: 0,
+              htlcTxId1: txId
+            })
             return serviceOnClient.create(createData)
           })
           .then(offer => {
             const offerId = offer._id
-            return app.service('transactions').find({ query: { txId } })
+            return app.service('transactions').find({ query: { _id: txId } })
               .then(result => {
                 const tx = result.data[0]
                 assert.equal(tx.offerId, offerId, 'offerId set on transaction')

@@ -20,6 +20,9 @@ module.exports = function (options) {
       if (options.passwordField) {
         hook.data[options.passwordField] = createHash(tempPassword)
       }
+      if (options.timeStampField) {
+        hook.data[options.timeStampField] = Date.now()
+      }
       resolve(hook)
     })
   }
