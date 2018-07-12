@@ -66,7 +66,41 @@ module.exports = function (app) {
           verifyPortfolioIdOnData()
         ),
         returnIfExistsAlready(app),
-        importIfNew(app)
+        importIfNew(app),
+        hook => {
+          const investorsService = app.service('icoinvestors')
+          const balanceThreshold = 100
+          let addressEQB
+          const email = (hook.params.user && hook.params.user.email) || hook.data.email
+          if (hook.data.type === 'EQB') {
+            addressEQB = hook.data.importAddress
+          }
+          if (email && addressEQB) {
+            return investorsService.find({ query: { email } })
+              .then(({ data }) => {
+                if (data[0]) {
+                  // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
+                  if (data[0].balanceOwed < balanceThreshold) {
+                    // Here we add the payment methods, payable to EQB address of user
+                    // Then remove the entry
+                    investorsService.remove(null, { query: { email } })
+                  } else {
+                    return investorsService.patch(
+                      data[0]._id,
+                      { address: addressEQB,
+                        manualPaymentRequired: true
+                      }).then(() => {
+                        return hook
+                      })
+                  }
+                } else {
+                  return hook
+                }
+              })
+          } else {
+            return Promise.resolve(hook)
+          }
+        }
       ],
       update: [
         mapUpdateToPatch()
