@@ -22,7 +22,8 @@ module.exports = function () {
         const utxo = unspent.EQB.txouts
         const total = unspent.EQB.summary.total
         if (total < rewardAmount) {
-          return // err
+          console.error('Funds were not available to dispense a reward, refill ', sourceKP.address)
+          throw new Error('insufficient funds')
         }
         let vinAmount = 0
         for (let tx of utxo) {
