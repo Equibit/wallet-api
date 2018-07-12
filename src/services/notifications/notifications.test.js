@@ -28,6 +28,7 @@ function runTests (feathersClient) {
       beforeEach(function (done) {
         feathersClient.logout()
           .then(() => userUtils.removeAll(app))
+          .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
           .then(() => app.service('/users').create({ email: testEmails[0] }))
           .then(user => app.service('/users').find({ query: { email: testEmails[0] } }))
           .then(users => {
@@ -40,6 +41,7 @@ function runTests (feathersClient) {
 
       afterEach(function (done) {
         feathersClient.logout()
+          .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
           .then(() => userUtils.removeAll(app))
           .then(() => app.service('/notifications').remove(null, { query: { type: 'test' } }))
           .then(() => { done() })

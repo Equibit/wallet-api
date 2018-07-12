@@ -16,6 +16,7 @@ function runTests (feathersClient) {
     beforeEach(function () {
       return app.service('login-attempts').remove(null, {})
         .then(() => userUtils.removeAll(app))
+        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
         .then(() => app.service('users').create({ email: testEmails[1] }))
         .then(user => app.service('users').find({ query: { email: testEmails[1] } }))
         .then(users => {
@@ -30,6 +31,7 @@ function runTests (feathersClient) {
       // Remove all users and login-attempts after tests run.
       return feathersClient.logout()
         .then(() => app.service('login-attempts').remove(null, {}))
+        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
         .then(() => userUtils.removeAll(app))
         .catch(error => {
           console.log(error)

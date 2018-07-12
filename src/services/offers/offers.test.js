@@ -209,7 +209,9 @@ function runTests (feathersClient) {
           })
         }).then(order => {
           this.order = order
-        }).then(() =>
+        })
+        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
+        .then(() =>
           userUtils.create(app, 0).then(user => {
             this.user = user
             done()
@@ -224,6 +226,7 @@ function runTests (feathersClient) {
         feathersClient.logout()
           .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
           .then(() => ordersServiceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
+          .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
           .then(() => userUtils.removeAll(app))
           .then(() => txUtils.removeAll(app))
           .then(() => done())

@@ -4,16 +4,20 @@ const testHook = require('./hook.password.past-policy')
 const userUtils = require('../../../../test-utils/users')
 const crypto = require('crypto')
 
-describe('Hook : Users : Enforce Past Password Policy', function (done) {
+describe('Hook: Users : Enforce Past Password Policy', function (done) {
   beforeEach(function (done) {
-    userUtils.create(app).then(user => {
+    userUtils.create(app)
+    .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
+    .then(user => {
       this.user = user
       done()
     })
   })
 
   afterEach(function (done) {
-    userUtils.removeAll(app).then(() => done())
+    userUtils.removeAll(app)
+    .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
+    .then(() => done())
   })
 
   it(`throws an error if !hook.data.password`, function (done) {

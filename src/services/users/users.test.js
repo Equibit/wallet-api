@@ -48,6 +48,7 @@ function runTests (feathersClient) {
           this.user2 = users[1]
           done()
         })
+        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
         .catch(error => {
           console.log(error)
         })
@@ -57,6 +58,7 @@ function runTests (feathersClient) {
       // Remove all users after tests run.
       feathersClient.logout()
         .then(() => userUtils.removeAll(app))
+        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
         .then(() => {
           done()
         })

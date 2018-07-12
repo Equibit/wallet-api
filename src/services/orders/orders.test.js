@@ -80,6 +80,18 @@ function runTests (feathersClient) {
       return userUtils.removeAll(app)
     })
 
+    beforeEach(function (done) {
+      userUtils.removeAll(app)
+      .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
+      .then(() => done())
+    })
+
+    afterEach(function (done) {
+      userUtils.removeAll(app)
+      .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
+      .then(() => done())
+    })
+
     describe('Client Without Auth', function () {
       // 'find', 'get' don't require auth - Order Book is public for viewing.
       const methods = ['create', 'update', 'patch', 'remove']
@@ -140,15 +152,18 @@ function runTests (feathersClient) {
 
     describe('Client With Auth', function () {
       beforeEach(function (done) {
-        userUtils.create(app).then(user => {
+        userUtils.create(app)
+        .then(user => {
           this.user = user
           done()
         })
+        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
       })
 
       afterEach(function (done) {
         feathersClient.logout()
           .then(() => serviceOnServer.remove(null, { query: { userId: this.user._id.toString() } }))
+          .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
           .then(() => userUtils.removeAll(app))
           .then(() => done())
       })
