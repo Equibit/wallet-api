@@ -15,5 +15,9 @@
     "methodPrefix": "",
     "sha": "EQUIBIT_SHA_TYPE"
   },
+  "icoPayoutAddress": "12YB5EcYpu9CSgtsMtdwsK2Q5F9TbExc8c",
+  "icoPayoutKey": "L5V3TRNbx2KovvcEYiqK1d4qaDRkFkvUQcTXdhXBUffvHgeATZJo",
+  "rewardAddress": "1FwsjzFAZgnPxiwFGmS8WTVFoPi7c2F6TW",
+  "rewardKey": "KxaPsVdVp9tERdkhSTc2D9ydaq6QKGnMYEZALWEPtnfDAgULHoGu",
   "addressMapEncryptionKey": "ADDRESS_MAP_ENCRYPTION_KEY"
 }
