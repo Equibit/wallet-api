@@ -1,12 +1,21 @@
 const assert = require('assert')
 const app = require('../../app')
 require('../../../test-utils/setup')
-const { clients } = require('../../../test-utils/index')
+const { clients, transactions } = require('../../../test-utils/index')
 const userUtils = require('../../../test-utils/users')
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
 
 const servicePath = 'portfolio-addresses'
 const serviceOnServer = app.service(servicePath)
+
+const icoKP = {
+  address: 'mkEpamRKQNWxVKh9h3nhLTAc1FvoW3rMfX',
+  key: 'cTLdswtg5zsf5M7ehX8dte3gvxSDDiJBwG9apKCf7EYxDmtzRxwx'
+}
+// const nonIcoKP = {
+//   rewardAddress: '1MZNkwkhceBLXdcMByhYeFkYuMzeYeAK9o',
+//   rewardKey: 'L5HdYoBGh6mypjCrb55BTPSyMmzyaWYHZ3hSaoSNPkNYJBJa7oG9'
+// }
 
 function assertCanPatch (service, itemId, data, done) {
   const id = typeof itemId === 'number' ? itemId : itemId.toString()
@@ -181,14 +190,21 @@ function runTests (feathersClient) {
 
   describe(`${servicePath} - ${transport} Transport`, function () {
     before(function () {
-      return userUtils.removeAll(app)
+      return userUtils.removeAll(app).then(
+        () => app.service('icoinvestors').remove(null, { query: { email: userUtils.testEmails[0] } })
+      )
     })
 
     beforeEach(function (done) {
+      transactions.setupMock()
       userUtils.create(app).then(user => {
         this.user = user
-        done()
-      })
+      }).then(() =>
+        app.service('icoinvestors').create({
+          email: userUtils.testEmails[0],
+          balanceOwed: 25
+        })
+      ).then(() => done())
     })
 
     afterEach(function (done) {
@@ -203,6 +219,7 @@ function runTests (feathersClient) {
           }
         })
         .then(() => app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } }))
+        .then(() => app.service('icoinvestors').remove(null, { query: { email: userUtils.testEmails[0] } }))
         .then(() => done())
     })
 
@@ -231,12 +248,13 @@ function runTests (feathersClient) {
           })
       })
 
-      it('allows users to create a portfolio address', function (done) {
+      it.only('allows users to create a portfolio address', function (done) {
         const user = this.user
         const name = 'My Test Portfolio'
         const data = {
           portfolioId: null,
           index: ~~(Math.random() * 1000),
+          importAddress: icoKP.address,
           type: 'EQB', // EQB or BTC
           isChange: false,
           isUsed: false

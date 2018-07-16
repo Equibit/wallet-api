@@ -28,7 +28,7 @@
     "questionaire": "node src/questionaire.js",
     "qa": "npm run release:qa:patch",
     "release:qa:patch": "npm version patch && make release-qa",
-    "keygen": "node src/keygen",
+    "keygen": "node src/keygen"
   },
   "standard": {
     "env": [

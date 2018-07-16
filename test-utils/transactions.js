@@ -42,7 +42,6 @@ const decodedTxn = {
 const listunspentFixtureData = require('../src/services/listunspent/fixtures.json')
 const handleListUnspent = function handleListUnspent (request) {
   const data = JSON.parse(request.data)
-
   if (data.method !== 'listunspent') {
     return undefined
   }

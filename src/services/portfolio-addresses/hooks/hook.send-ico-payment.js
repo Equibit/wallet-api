@@ -1,4 +1,5 @@
-const { buildTx } = require('tx-builder-equibit')
+const { builder } = require('tx-builder-equibit')
+const bitcoin = require('bitcoinjs-lib')
 
 function payout (hook, userAddress, rewardAmount) {
   const app = hook.app
@@ -6,7 +7,7 @@ function payout (hook, userAddress, rewardAmount) {
     address: app.get('icoPayoutAddress'),
     key: app.get('icoPayoutKey')
   }
-  const listUnspentService = app.service('/listUnspent')
+  const listUnspentService = app.service('listunspent')
   const txToUse = []
   return listUnspentService.find({
     query: {
@@ -27,14 +28,14 @@ function payout (hook, userAddress, rewardAmount) {
         txToUse.push({
           txid: tx.txid,
           vout: 0,
-          keyPair: sourceKP
+          keyPair: bitcoin.ECPair.fromWIF(sourceKP.key, bitcoin.networks.testnet)
         })
         vinAmount += tx.amount
         if (vinAmount > rewardAmount) {
           break
         }
       }
-      return buildTx({
+      return builder.buildTx({
         version: 1,
         locktime: 0,
         vin: txToUse,
@@ -63,17 +64,19 @@ function payout (hook, userAddress, rewardAmount) {
       })
     }
   ).then(
-    builtTransaction => app.service('/transactions').create({
-      fromAddress: sourceKP.address,
-      toAddress: userAddress,
-      addressTxId: txToUse[0].txId,
-      addressVout: '0',
-      type: 'TRANSFER',
-      currencyType: 'EQB',
-      amount: rewardAmount,
-      fee: 0,
-      hex: builtTransaction.hex
-    })
+    builtTransaction => {
+      return app.service('/transactions').create({
+        fromAddress: sourceKP.address,
+        toAddress: userAddress,
+        addressTxId: txToUse[0].txId,
+        addressVout: '0',
+        type: 'TRANSFER',
+        currencyType: 'EQB',
+        amount: rewardAmount,
+        fee: 0,
+        hex: builtTransaction.toString('hex')
+      })
+    }
   )
 }
 
@@ -88,26 +91,26 @@ module.exports = function () {
     }
     if (email && addressEQB) {
       return investorsService.find({ query: { email } })
-        .then(({ data }) => {
-          if (data[0]) {
-            // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
-            if (data[0].balanceOwed < balanceThreshold) {
-              // Here we add the payment methods, payable to EQB address of user
-              // Then remove the entry
-              return payout(hook, addressEQB, data[0].balanceOwed).then(() =>
-                investorsService.remove(null, { query: { email } })
-              )
-            } else {
-              return investorsService.patch(
-                data[0]._id,
-                { address: addressEQB,
-                  manualPaymentRequired: true
-                }).then(() => hook)
-            }
+      .then(({ data }) => {
+        if (data[0]) {
+          // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
+          if (data[0].balanceOwed < balanceThreshold) {
+            // Here we add the payment methods, payable to EQB address of user
+            // Then remove the entry
+            return payout(hook, addressEQB, data[0].balanceOwed).then(() =>
+              investorsService.remove(null, { query: { email } })
+            )
           } else {
-            return hook
+            return investorsService.patch(
+              data[0]._id,
+              { address: addressEQB,
+                manualPaymentRequired: true
+              }).then(() => hook)
           }
-        })
+        } else {
+          return hook
+        }
+      })
     } else {
       return Promise.resolve(hook)
     }

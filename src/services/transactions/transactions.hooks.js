@@ -31,10 +31,10 @@ module.exports = app => {
       get: [],
       create: [
         conditionalRequirements(),
-        iff(
-          isProvider('external'),
+        // iff(
+          // isProvider('external'),
           // turn a transaction hex into transaction details.
-          decodeRawTxn(coreParams),
+        decodeRawTxn(coreParams),
           /*
           Since `fromAddress` and `toAddress` must be sent from the
           client, we must make sure that they both appear in
@@ -44,31 +44,31 @@ module.exports = app => {
           will be made to derive the from `address` from each vin's
           `txid` and `vout` property. The responses will be cached on the hook context for use in formatTxn.
           */
-          validateDecodedTxn(coreParams),
+        validateDecodedTxn(coreParams),
 
           // Record the transaction in the core
-          sendRawTxn(coreParams),
+        sendRawTxn(coreParams),
 
           // Format the transaction to be saved in the wallet-api db
-          formatTxn(),
+        formatTxn(),
 
           // Create the transaction description via the transaction-notes service
-          hook => {
-            return Promise.all([
-              hook.app.service('transaction-notes').create({
-                txId: hook.data.txId,
-                address: hook.data.fromAddress,
-                description: hook.data.description
-              }),
-              hook.app.service('transaction-notes').create({
-                txId: hook.data.txId,
-                address: hook.data.toAddress,
-                description: hook.data.description
-              })
-            ]).then(() => hook)
-          },
-          discard('description')
-        )
+        hook => {
+          return Promise.all([
+            hook.app.service('transaction-notes').create({
+              txId: hook.data.txId,
+              address: hook.data.fromAddress,
+              description: hook.data.description
+            }),
+            hook.app.service('transaction-notes').create({
+              txId: hook.data.txId,
+              address: hook.data.toAddress,
+              description: hook.data.description
+            })
+          ]).then(() => hook)
+        },
+        discard('description')
+        // )
       ],
       update: [
         mapUpdateToPatch()
