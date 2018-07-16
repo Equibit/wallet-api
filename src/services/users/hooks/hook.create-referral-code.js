@@ -17,6 +17,7 @@ module.exports = function (options) {
       // Check if generated string is already in collection
     referralCodesService.find({ query: { referralCode: generatedCode } })
       .then(res => {
+        // console.log(res.data)
         if (res.data.referralCode === generatedCode) {
           generatedCode = randomBytes(10).toString('hex')
         }

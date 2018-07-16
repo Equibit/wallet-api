@@ -48,7 +48,6 @@ function runTests (feathersClient) {
     beforeEach(function (done) {
       txnUtils.setupMock()
       feathersClient.logout()
-        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
         .then(() => app.service('/users').create({ email: testEmails[0] }))
         .then(() => app.service('/users').create({ email: testEmails[1] }))
         .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
@@ -68,7 +67,6 @@ function runTests (feathersClient) {
       txnUtils.resetMock()
       // Remove all users after tests run.
       feathersClient.logout()
-        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: testEmails } } }))
         .then(() => userUtils.removeAll(app))
         .then(() => txnUtils.removeAll(app))
         .then(() => app.service('transaction-notes').remove(null, { query: { txId: { $in: [
