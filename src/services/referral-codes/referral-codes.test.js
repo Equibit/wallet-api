@@ -25,6 +25,7 @@ function runTests (feathersClient) {
       feathersClient.logout()
         .then(() => app.service('/users').create({ email: testEmails[0] }))
         .then(() => app.service('/users').create({ email: testEmails[1] }))
+        .then(() => app.service('/users').create({ email: testEmails[2] }))
         .then(user => app.service('/users').find({ query: { email: { $in: testEmails } } }))
         .then(users => {
           users = users.data || users

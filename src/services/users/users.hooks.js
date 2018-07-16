@@ -75,7 +75,7 @@ module.exports = function (app) {
           generateSalt({ randomBytes }),
           hashPassword({ pbkdf2, passwordField: 'tempPassword' })
         ),
-        createReferralCode({ referralCode: 'tempCode' })
+        createReferralCode(0)
       ],
       update: [mapUpdateToPatch()],
       patch: [
