@@ -30,6 +30,8 @@ const healthCheck = require('./health-check/health-check.service.js')
 
 const bitMessage = require('./bit-message/bit-message.service.js')
 
+const icoinvestors = require('./icoinvestors/icoinvestors.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -44,6 +46,7 @@ module.exports = function () {
   app.configure(proxycore)
   app.configure(importAddress)
   app.configure(importmulti)
+  app.configure(icoinvestors)
   app.configure(watchlist)
   app.configure(listunspent)
   app.configure(transactions)
