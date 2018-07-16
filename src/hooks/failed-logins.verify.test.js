@@ -11,13 +11,11 @@ describe('Hook: Failed Logins', function (done) {
           this.user = user
           done()
         })
-      .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
       })
   })
 
   afterEach(function (done) {
     userUtils.removeAll(app)
-    .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
     .then(() => done())
   })
 

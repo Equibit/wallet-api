@@ -23,7 +23,6 @@ function runTests (feathersClient) {
           this.user = users.data[0]
           done()
         })
-        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
         .catch(error => {
           console.log(error)
         })
@@ -33,7 +32,6 @@ function runTests (feathersClient) {
       // Remove all users and forgot-password after tests run.
       feathersClient.logout()
         .then(() => userUtils.removeAll(app))
-        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
         .then(() => {
           done()
         })

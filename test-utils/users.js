@@ -15,6 +15,7 @@ exports.create = function createUser (app, userIndex) {
 
 exports.removeAll = function remove (app) {
   return app.service('/users').remove(null, { query: { email: { $in: exports.testEmails } } })
+          .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: exports.testEmails } } }))
 }
 
 // Reminder: call feathersClient.logout after your test is over.

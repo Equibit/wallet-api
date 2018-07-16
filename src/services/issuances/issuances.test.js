@@ -23,13 +23,11 @@ describe(`${servicePath} Service`, function () {
           this.user = user
           done()
         })
-        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
       })
 
       afterEach(function (done) {
         feathersClient.logout()
           .then(() => serviceOnServer.remove(null, { query: { userId: '000000000000000000000000' } }))
-          .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
           .then(() => userUtils.removeAll(app))
           .then(() => txUtils.removeAll(app))
           .then(() => done())

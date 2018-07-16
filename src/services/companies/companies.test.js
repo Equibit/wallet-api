@@ -99,12 +99,10 @@ function runTests (feathersClient) {
                 this.user = user
               })
           })
-          .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
       })
 
       after(function () {
         return feathersClient.logout()
-        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
       })
       // describe('Grants Access to the Authenticated User', function () {})
       // describe('Protects Other Users\' Data', function () {})

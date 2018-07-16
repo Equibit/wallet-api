@@ -28,14 +28,12 @@ function runTests (feathersClient) {
         this.user = user
         done()
       })
-      .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
     })
 
     afterEach(function (done) {
       feathersClient.logout()
         .then(() => userUtils.removeAll(app))
         .then(() => app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } }))
-        .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
         .then(() => done())
     })
 

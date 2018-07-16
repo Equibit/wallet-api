@@ -7,7 +7,6 @@ const crypto = require('crypto')
 describe('Hook: Users : Enforce Past Password Policy', function (done) {
   beforeEach(function (done) {
     userUtils.create(app)
-    .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
     .then(user => {
       this.user = user
       done()
@@ -16,7 +15,6 @@ describe('Hook: Users : Enforce Past Password Policy', function (done) {
 
   afterEach(function (done) {
     userUtils.removeAll(app)
-    .then(() => app.service('/referral-codes').remove(null, { query: { userEmail: { $in: userUtils.testEmails } } }))
     .then(() => done())
   })
 
