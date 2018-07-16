@@ -11,7 +11,6 @@ module.exports = function (app) {
     // userEmail used for easy deletion after tests
     userEmail: { type: String, unique: true },
     referralCode: { type: String, unique: true },
-    timesCodeUsed: { type: Number, default: 0 },
     createdAt: { type: Date, default: Date.now }
   }, {
     timestamps: true
