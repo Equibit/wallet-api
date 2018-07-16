@@ -1,7 +1,6 @@
-const { randomBytes } = require('crypto')
 
 // Create a unique referral code when user is created
-module.exports = function (tail) {
+module.exports = function () {
   return hook => {
     const app = hook.app
     const referralCodesService = app.service('referral-codes')
@@ -18,13 +17,16 @@ module.exports = function (tail) {
         return hook
       })
       .then(results => {
-        // Use a random string as a referral code, tail resets to 0 when server is restarted
-        let generatedCode = randomBytes(5).toString('hex') + randomBytes(5).toString('hex') + tail
+        let tail = 18
         if (results.params.existingUser) {
+          let email = results.params.existingUser.email
+        // Take user's unique email username and append a number at the end as a code
+          let uniqueCode = email.substring(0, email.indexOf('@')).toUpperCase() + tail
+
           const referralCode = {
             userId: results.params.existingUser._id,
-            userEmail: results.params.existingUser.email,
-            referralCode: generatedCode
+            userEmail: email,
+            referralCode: uniqueCode
           }
           tail++
           referralCodesService.create(referralCode).then(referralCode => {
