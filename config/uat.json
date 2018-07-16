@@ -15,9 +15,9 @@
     "methodPrefix": "",
     "sha": "EQUIBIT_SHA_TYPE"
   },
-  "icoPayoutAddress": "12YB5EcYpu9CSgtsMtdwsK2Q5F9TbExc8c",
-  "icoPayoutKey": "L5V3TRNbx2KovvcEYiqK1d4qaDRkFkvUQcTXdhXBUffvHgeATZJo",
-  "rewardAddress": "1FwsjzFAZgnPxiwFGmS8WTVFoPi7c2F6TW",
-  "rewardKey": "KxaPsVdVp9tERdkhSTc2D9ydaq6QKGnMYEZALWEPtnfDAgULHoGu",
+  "icoPayoutAddress": "mkMrT5BCZxPjS9ryZ3mKnNr4wkD7EPLpwc",
+  "icoPayoutKey": "cVWgDAEZ7YjaGgaM2jnvMvJyxmT85N89J6aoC62ADNZe4d17tDQo",
+  "rewardAddress": "mvPpDsAxgwjPPcHsSwWhQq9nF3zUqLgS7C",
+  "rewardKey": "cPjj2u2EaSiBvtNFeoNMtybbVtXfKjJ7pTtoJPCB4E1KXo8t7K9n",
   "addressMapEncryptionKey": "ADDRESS_MAP_ENCRYPTION_KEY"
 }
