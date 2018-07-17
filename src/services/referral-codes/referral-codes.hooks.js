@@ -1,32 +1,19 @@
-const { authenticate } = require('feathers-authentication').hooks
-const { associateCurrentUser, restrictToOwner } = require('feathers-authentication-hooks')
-const { disallow, keep, iff, isProvider, discard } = require('feathers-hooks-common')
-const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-
-const restrict = [
-  restrictToOwner({
-    idField: '_id',
-    ownerField: 'userId'
-  })
-]
+const { disallow, discard } = require('feathers-hooks-common')
 
 module.exports = function (app) {
   return {
     before: {
-      all: [
-        authenticate('jwt')
-      ],
-      find: [ ...restrict ],
-      get: [ ...restrict ],
+      all: [],
+      find: [],
+      get: [],
       create: [
-        iff(isProvider('external'), keep('name')),
-        associateCurrentUser({ idField: '_id', as: 'userId' })
+        disallow('external')
       ],
       update: [
-        mapUpdateToPatch()
+        disallow('external')
       ],
       patch: [
-        iff(isProvider('external'), keep('name'), ...restrict)
+        disallow('external')
       ],
       remove: [
         disallow('external')
