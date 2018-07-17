@@ -1,7 +1,8 @@
 const { builder } = require('tx-builder-equibit')
 const bitcoin = require('bitcoinjs-lib')
+const axios = require('axios')
 
-function payout (hook, userAddress, rewardAmount) {
+function payout (hook, userAddress, rewardAmount, coreUrl) {
   const app = hook.app
   const sourceKP = {
     address: app.get('icoPayoutAddress'),
@@ -65,6 +66,17 @@ function payout (hook, userAddress, rewardAmount) {
     }
   ).then(
     builtTransaction => {
+      return axios({
+        method: 'POST',
+        url: coreUrl,
+        data: {
+          jsonrpc: '1.0',
+          method: 'sendrawtransaction',
+          params: [builtTransaction.toString('hex')]
+        }
+      })
+      .then(response => response.data.result)
+    }).then(finalTxn => {
       return app.service('/transactions').create({
         fromAddress: sourceKP.address,
         toAddress: userAddress,
@@ -74,7 +86,7 @@ function payout (hook, userAddress, rewardAmount) {
         currencyType: 'EQB',
         amount: rewardAmount,
         fee: 0,
-        hex: builtTransaction.toString('hex')
+        hex: finalTxn.hex
       })
     }
   )
@@ -97,7 +109,7 @@ module.exports = function () {
           if (data[0].balanceOwed < balanceThreshold) {
             // Here we add the payment methods, payable to EQB address of user
             // Then remove the entry
-            return payout(hook, addressEQB, data[0].balanceOwed).then(() =>
+            return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(() =>
               investorsService.remove(null, { query: { email } })
             )
           } else {
