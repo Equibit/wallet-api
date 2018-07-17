@@ -2,7 +2,8 @@ const { builder } = require('tx-builder-equibit')
 const bitcoin = require('bitcoinjs-lib')
 const axios = require('axios')
 
-function payout (hook, userAddress, rewardAmount, coreUrl) {
+function payout (hook, userAddress, rewardAmount, config) {
+  console.log('D')
   const app = hook.app
   const sourceKP = {
     address: app.get('icoPayoutAddress'),
@@ -18,6 +19,7 @@ function payout (hook, userAddress, rewardAmount, coreUrl) {
     }
   }).then(
     unspent => {
+      console.log('E')
       const utxo = unspent.EQB.txouts
       const total = unspent.EQB.summary.total
       if (total < rewardAmount) {
@@ -36,7 +38,8 @@ function payout (hook, userAddress, rewardAmount, coreUrl) {
           break
         }
       }
-      return builder.buildTx({
+      console.log('F')
+      const tx = builder.buildTx({
         version: 1,
         locktime: 0,
         vin: txToUse,
@@ -63,20 +66,32 @@ function payout (hook, userAddress, rewardAmount, coreUrl) {
           }
         ]
       })
+      console.log(tx)
+      txToUse.forEach(({ keyPair }, index) => tx.sign(index, keyPair))
+      return tx
     }
   ).then(
     builtTransaction => {
+      console.log('G')
       return axios({
         method: 'POST',
-        url: coreUrl,
+        url: config.url,
         data: {
           jsonrpc: '1.0',
           method: 'sendrawtransaction',
           params: [builtTransaction.toString('hex')]
+        },
+        auth: {
+          username: config.username,
+          password: config.password
         }
-      })
+      }).then(response => {
+        console.log(response)
+        return response
+      }, err => console.log(err))
       .then(response => response.data.result)
     }).then(finalTxn => {
+      console.log('H')
       return app.service('/transactions').create({
         fromAddress: sourceKP.address,
         toAddress: userAddress,
@@ -95,20 +110,23 @@ function payout (hook, userAddress, rewardAmount, coreUrl) {
 module.exports = function () {
   return hook => {
     const investorsService = hook.app.service('icoinvestors')
-    const balanceThreshold = 100
+    const balanceThreshold = 100 * 100000000
     let addressEQB
     const email = (hook.params.user && hook.params.user.email) || hook.data.email
     if (hook.data.type === 'EQB') {
       addressEQB = hook.data.importAddress
     }
     if (email && addressEQB) {
+      console.log('A')
       return investorsService.find({ query: { email } })
       .then(({ data }) => {
+        console.log('B')
         if (data[0]) {
           // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
           if (data[0].balanceOwed < balanceThreshold) {
             // Here we add the payment methods, payable to EQB address of user
             // Then remove the entry
+            console.log('C')
             return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(() =>
               investorsService.remove(null, { query: { email } })
             )

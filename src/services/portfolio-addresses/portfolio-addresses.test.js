@@ -248,7 +248,7 @@ function runTests (feathersClient) {
           })
       })
 
-      it.only('allows users to create a portfolio address', function (done) {
+      it('allows users to create a portfolio address', function (done) {
         const user = this.user
         const name = 'My Test Portfolio'
         const data = {

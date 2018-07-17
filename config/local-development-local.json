@@ -14,10 +14,10 @@
     "password": "equibit"
   },
   "addressMapEncryptionKey": "10789b383c9b6c853f605e303f2a80ef",
-  "icoPayoutAddress": "12uLPYM2DgSJXQRTbv32LUYWw2M4ZhNJZZ",
-  "icoPayoutKey": "L3ZQPq9hYNkeC3d6Q28PX7APZ62G2Y1ha2bnP3EcH17u2Re14yqq",
-  "rewardAddress": "13BNVQhQs4ixR4URavWpMyg6rttFyQFr8B",
-  "rewardKey": "KwGtQJaEhyWNbwkUY16gwyLjcYG4Qpxu4aLFPTqgg35d3jyu8A29",
+  "icoPayoutAddress": "mxr83jMYuekw1vqRKwmepe8HEa95wsAB9U",
+  "icoPayoutKey": "cTDizokb2Gee4jcteTMPzsDuRn3r4cDe7FjVASftSSg28faJqMfy",
+  "rewardAddress": "mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj",
+  "rewardKey": "cQE6FoB1YyQNRXVjBWn5Bes3EkRRWkCkybf83BxisTReQVBWANy8",
   "bitcoinAverage": {
     "key": "YmU3NzJhYmJmMmI2NDZiMzhlN2EzZDA1MzBhZGQ4NDM",
     "secret": "ZWRkMTgyZmIyZTAyNGQyYjkwNzE2N2UwYWRjM2JmNTU1YzA0YjgzNTQ2MjM0NTllYTZmMmQwZDQwNGMwZTlmNQ"
