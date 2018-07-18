@@ -18,6 +18,7 @@ const sendDuplicateSignupEmail = require('./hooks/hook.email.duplicate-signup')
 const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
+const mnemonicHash = require('./hooks/hook.mnemonic-hash')
 
 function findUser (options) {
   return function (hook) {
@@ -147,6 +148,7 @@ module.exports = function (app) {
             hook.user.tempPasswordCreatedAt = undefined
             hook.data.passwordCreatedAt = Date.now()
           },
+          // Note: when password is changed we need to update the encrypted key and mnemonic.
           // On password change, ignore any changes not related to this flow
           keep(
             'password',
@@ -180,12 +182,12 @@ module.exports = function (app) {
             }),
             iff(
               hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
-              sendEmailVerificationCode({
+              hook => sendEmailVerificationCode({
                 From: outboundEmail,
                 TemplateId: emailTemplates.newEmailVerification,
                 templateCodeField: 'emailVerificationCode',
                 dataCodeField: 'emailVerificationCodePlain'
-              })
+              })(hook)
             ),
             hook => {
               delete hook.data.emailVerificationCodePlain
@@ -216,13 +218,13 @@ module.exports = function (app) {
             createTemporaryPassword({ passwordField: 'twoFactorCode', plainPasswordField: 'twoFactorCodePlain' }),
             iff(
               hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
-              sendEmailVerificationCode({
+              hook => sendEmailVerificationCode({
                 From: outboundEmail,
                 TemplateId: emailTemplates.twoFactorAuthentication,
                 emailAddressFromUserRecord: true,
                 templateCodeField: 'twoFactorCode',
                 dataCodeField: 'twoFactorCodePlain'
-              })
+              })(hook)
             ),
             hook => { hook.data.twoFactorValidatedSession = false; return hook },
             keep('twoFactorValidatedSession', 'twoFactorCode')
@@ -253,7 +255,15 @@ module.exports = function (app) {
             )
           )
         ),
-        hook => { hook.data.updatedAt = Date.now() }
+        hook => { hook.data.updatedAt = Date.now() },
+
+        // The `mnemonicHash` value can be passed either for saving to db or for verification.
+        // - Allow to set mnemonicHash only when encrypted key and mnemonic are generated for the 1st time
+        // - Verify mnemonicHash and immediately return the result of verification.
+        iff(
+          hook => (hook.data && hook.data.mnemonicHash),
+          mnemonicHash()
+        )
       ],
       remove: [
         disallow('external')
@@ -272,6 +282,7 @@ module.exports = function (app) {
             'pastPasswordHashes',
             'encryptedKey',
             'encryptedMnemonic',
+            'mnemonicHash',
             'twoFactorCode',
             'emailVerificationCode'
           ),
@@ -290,16 +301,16 @@ module.exports = function (app) {
           hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
           iff(
             hook => hook.params.existingUser,
-            sendDuplicateSignupEmail({
+            hook => sendDuplicateSignupEmail({
               From: outboundEmail,
               TemplateId: emailTemplates.duplicateSignup
-            })
+            })(hook)
           ).else(
-            sendWelcomeEmail({
+            hook => sendWelcomeEmail({
               From: outboundEmail,
               TemplateId: emailTemplates.welcome,
               tempPasswordField: 'tempPasswordPlain'
-            })
+            })(hook)
           )
         ),
         // Set the response to just the email, so there's no way for a malicious user
