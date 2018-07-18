@@ -66,5 +66,4 @@ module.exports = function () {
   app.configure(bitMessage)
   app.configure(questions)
   app.configure(questionaires)
-  app.configure(icoinvestors)
 }
