@@ -4,13 +4,14 @@
 // for more of what you can do here.
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
+  const { ObjectId } = mongooseClient.Schema.Types
   const { Schema } = mongooseClient
   const referralCodes = new Schema({
-    referralCode: { type: String, required: true, unique: true },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-    status: { type: String, enum: ['active', 'disabled'] },
-    description: { type: String }
+    userId: { type: ObjectId, required: true, unique: true },
+    // userEmail used for easy deletion after tests
+    userEmail: { type: String, unique: true },
+    referralCode: { type: String, unique: true },
+    createdAt: { type: Date, default: Date.now }
   }, {
     timestamps: true
   })

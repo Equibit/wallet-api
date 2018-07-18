@@ -27,8 +27,7 @@
     "mocha": "nyc mocha -u tdd --timeout 999999 --colors \"./+(src|test|test-utils)/**/*.test.js\" --recursive",
     "questionaire": "node src/questionaire.js",
     "qa": "npm run release:qa:patch",
-    "release:qa:patch": "npm version patch && make release-qa",
-    "add-referral-code": "node src/add-referral-code.js"
+    "release:qa:patch": "npm version patch && make release-qa"
   },
   "standard": {
     "env": [
