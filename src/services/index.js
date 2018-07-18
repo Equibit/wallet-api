@@ -35,6 +35,9 @@ const questions = require('./questions/questions.service.js')
 const questionaires = require('./questionaires/questionaires.service.js')
 const icoinvestors = require('./icoinvestors/icoinvestors.service.js')
 
+const userAnswers = require('./user-answers/user-answers.service.js')
+const userQuestionaire = require('./user-questionaire/user-questionaire.service.js')
+
 module.exports = function () {
   const app = this
   app.configure(users)
@@ -66,4 +69,6 @@ module.exports = function () {
   app.configure(bitMessage)
   app.configure(questions)
   app.configure(questionaires)
+  app.configure(userAnswers)
+  app.configure(userQuestionaire)
 }
