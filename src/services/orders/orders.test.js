@@ -80,16 +80,6 @@ function runTests (feathersClient) {
       return userUtils.removeAll(app)
     })
 
-    beforeEach(function (done) {
-      userUtils.removeAll(app)
-      .then(() => done())
-    })
-
-    afterEach(function (done) {
-      userUtils.removeAll(app)
-      .then(() => done())
-    })
-
     describe('Client Without Auth', function () {
       // 'find', 'get' don't require auth - Order Book is public for viewing.
       const methods = ['create', 'update', 'patch', 'remove']
@@ -150,8 +140,7 @@ function runTests (feathersClient) {
 
     describe('Client With Auth', function () {
       beforeEach(function (done) {
-        userUtils.create(app)
-        .then(user => {
+        userUtils.create(app).then(user => {
           this.user = user
           done()
         })

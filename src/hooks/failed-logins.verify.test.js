@@ -15,8 +15,7 @@ describe('Hook: Failed Logins', function (done) {
   })
 
   afterEach(function (done) {
-    userUtils.removeAll(app)
-    .then(() => done())
+    userUtils.removeAll(app).then(() => done())
   })
 
   it(`sets the notifyFailedLogins flag after 3 attempts, by default`, function (done) {

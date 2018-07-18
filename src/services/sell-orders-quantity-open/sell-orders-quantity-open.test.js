@@ -69,8 +69,7 @@ function runTests (feathersClient) {
     })
 
     beforeEach(function (done) {
-      userUtils.create(app)
-      .then(user => {
+      userUtils.create(app).then(user => {
         this.user = user
         done()
       })

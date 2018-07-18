@@ -18,7 +18,6 @@ const sendDuplicateSignupEmail = require('./hooks/hook.email.duplicate-signup')
 const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const createReferralCode = require('./hooks/hook.create-referral-code')
 
 function findUser (options) {
   return function (hook) {
@@ -74,8 +73,7 @@ module.exports = function (app) {
           }),
           generateSalt({ randomBytes }),
           hashPassword({ pbkdf2, passwordField: 'tempPassword' })
-        ),
-        createReferralCode()
+        )
       ],
       update: [mapUpdateToPatch()],
       patch: [

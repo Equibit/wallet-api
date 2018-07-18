@@ -18,8 +18,7 @@ describe(`${servicePath} Service`, function () {
 
     describe(`${servicePath} service -- ${transport}`, function () {
       beforeEach(function (done) {
-        userUtils.create(app)
-        .then(user => {
+        userUtils.create(app).then(user => {
           this.user = user
           done()
         })

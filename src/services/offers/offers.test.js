@@ -209,8 +209,12 @@ function runTests (feathersClient) {
           })
         }).then(order => {
           this.order = order
+<<<<<<< HEAD
         })
         .then(() =>
+=======
+        }).then(() =>
+>>>>>>> parent of 04fa28f... Added referral-codes service. Updated test files to remove test referral entries into collections.
           userUtils.create(app, 0).then(user => {
             this.user = user
             done()
