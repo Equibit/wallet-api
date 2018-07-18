@@ -56,7 +56,7 @@ function payout (hook, userAddress, rewardAmount, config) {
             },
             {
               address: sourceKP.address,
-              value: vinAmount - rewardAmount - fee,
+              value: vinAmount - (rewardAmount + fee),
               equibit: {
                 payment_currency: 0,
                 payment_tx_id: '',
@@ -74,25 +74,20 @@ function payout (hook, userAddress, rewardAmount, config) {
       return tx
     }
   ).then(
-    builtTransaction => {
-      return axios({
-        method: 'POST',
-        url: config.url,
-        data: {
-          jsonrpc: '1.0',
-          method: 'sendrawtransaction',
-          params: [builtTransaction.toString('hex')]
-        },
-        auth: {
-          username: config.username,
-          password: config.password
-        }
-      }).then(response => {
-        return response
-      })
-      .then(response => response.data.result)
-    }).then(finalTxn => {
-      return app.service('/transactions').create({
+    builtTransaction => axios({
+      method: 'POST',
+      url: config.url,
+      data: {
+        jsonrpc: '1.0',
+        method: 'sendrawtransaction',
+        params: [builtTransaction.toString('hex')]
+      },
+      auth: {
+        username: config.username,
+        password: config.password
+      }
+    }).then(
+      response => app.service('/transactions').create({
         fromAddress: sourceKP.address,
         toAddress: userAddress,
         addressTxId: txToUse[0].txId,
@@ -100,10 +95,10 @@ function payout (hook, userAddress, rewardAmount, config) {
         type: 'TRANSFER',
         currencyType: 'EQB',
         amount: rewardAmount,
-        fee: 0,
-        hex: finalTxn.hex
+        fee: fee,
+        hex: response.data.result.hex
       })
-    }
+    )
   )
 }
 
@@ -124,8 +119,14 @@ module.exports = function () {
           if (data[0].balanceOwed < balanceThreshold) {
             // Here we add the payment methods, payable to EQB address of user
             // Then remove the entry
-            return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(() =>
-              investorsService.remove(null, { query: { email } })
+            return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(
+              () => investorsService.remove(null, { query: { email } }),
+              // in the case of a failed payment, flag the record as needing to be manually handled
+              () => investorsService.patch(
+                data[0]._id,
+                { address: addressEQB,
+                  manualPaymentRequired: true
+                }).then(() => hook)
             )
           } else {
             return investorsService.patch(
