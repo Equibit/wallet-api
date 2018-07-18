@@ -30,6 +30,9 @@ const healthCheck = require('./health-check/health-check.service.js')
 
 const bitMessage = require('./bit-message/bit-message.service.js')
 
+const questions = require('./questions/questions.service.js')
+
+const questionaires = require('./questionaires/questionaires.service.js')
 const icoinvestors = require('./icoinvestors/icoinvestors.service.js')
 
 module.exports = function () {
@@ -61,4 +64,6 @@ module.exports = function () {
   app.configure(transactionNotes)
   app.configure(healthCheck)
   app.configure(bitMessage)
+  app.configure(questions)
+  app.configure(questionaires)
 }
