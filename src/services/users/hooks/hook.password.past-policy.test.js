@@ -6,24 +6,14 @@ const crypto = require('crypto')
 
 describe('Hook : Users : Enforce Past Password Policy', function (done) {
   beforeEach(function (done) {
-<<<<<<< HEAD
-    userUtils.create(app)
-    .then(user => {
-=======
     userUtils.create(app).then(user => {
->>>>>>> parent of 04fa28f... Added referral-codes service. Updated test files to remove test referral entries into collections.
       this.user = user
       done()
     })
   })
 
   afterEach(function (done) {
-<<<<<<< HEAD
-    userUtils.removeAll(app)
-    .then(() => done())
-=======
     userUtils.removeAll(app).then(() => done())
->>>>>>> parent of 04fa28f... Added referral-codes service. Updated test files to remove test referral entries into collections.
   })
 
   it(`throws an error if !hook.data.password`, function (done) {
