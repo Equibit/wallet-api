@@ -27,7 +27,8 @@
     "mocha": "nyc mocha -u tdd --timeout 999999 --colors \"./+(src|test|test-utils)/**/*.test.js\" --recursive",
     "questionaire": "node src/questionaire.js",
     "qa": "npm run release:qa:patch",
-    "release:qa:patch": "npm version patch && make release-qa"
+    "release:qa:patch": "npm version patch && make release-qa",
+    "keygen": "node src/keygen"
   },
   "standard": {
     "env": [
@@ -69,6 +70,8 @@
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "serve-favicon": "^2.4.3",
+    "tx-builder": "^0.15.0",
+    "tx-builder-equibit": "github:equibit/tx-builder-equibit",
     "ua-parser": "^0.3.5",
     "winston": "^2.3.1"
   },
