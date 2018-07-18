@@ -86,6 +86,7 @@ module.exports = function () {
             delete hook.result.user.pastPasswordHashes
             delete hook.result.user.twoFactorCode
             delete hook.result.user.emailVerificationCode
+            delete hook.result.user.mnemonicHash
             return hook
           }
         ),
