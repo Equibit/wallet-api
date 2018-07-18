@@ -1,5 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
-const { discard, iff, isProvider, stashBefore } = require('feathers-hooks-common')
+const { associateCurrentUser } = require('feathers-authentication-hooks')
+const { discard, keep, iff, isProvider, stashBefore, unless } = require('feathers-hooks-common')
 const idRequired = require('../../hooks/hook.id-required')
 const getEventAddress = require('../../hooks/get-event-address')
 const createNotification = require('../../hooks/create-notification')
@@ -175,16 +176,53 @@ module.exports = function (app) {
     )
   ]
 
+  function removeOtherId (id, offer) {
+    if (offer && offer.userId) {
+      if (!offer.userId.equals(id)) {
+        offer.userId = undefined
+      }
+    }
+  }
+
+  function orderOwnedByUser (userId, offerId) {
+    const offersService = app.service('offers')
+    return offersService.find({ query: { _id: offerId } })
+      .then(response => {
+        const ordersService = app.service('orders')
+        return ordersService.find({ query: { _id: response.data[0].orderId } })
+      })
+      .then(response => response.data[0].userId && response.data[0].userId.equals(userId))
+  }
+
+  function offerOwnedByUser (userId, offerId) {
+    const offersService = app.service('offers')
+    return offersService.find({ query: { _id: offerId } })
+      .then(response => response.data[0].userId && response.data[0].userId.equals(userId))
+  }
+
   return {
     before: {
       all: [
-        authenticate('jwt')
+        unless(hook => hook.method === 'find' || hook.method === 'get', authenticate('jwt'))
       ],
       find: [],
       get: [],
       create: [
         iff(
           isProvider('external'),
+          keep(
+            'orderId',
+            'type',
+            'assetType',
+            'quantity',
+            'btcAddress',
+            'eqbAddress',
+            'description',
+            'timelock',
+            'hashlock',
+            'price'
+          ),
+          associateCurrentUser({ idField: '_id', as: 'userId' }),
           statusOnCreateIsOPEN(),
           // disabling this for now, backend cannot track or enforce this if trades happen outside of the system
           // must trust the utxo from the front end user.
@@ -248,6 +286,14 @@ module.exports = function (app) {
         stashBefore(),
         iff(
           isProvider('external'),
+          iff(
+            hook => orderOwnedByUser(hook.params.user._id, hook.id),
+            keep('isAccepted', 'htlcTxId2', 'htlcTxId4', 'htlcStep', 'before', 'status')
+          ),
+          iff(
+            hook => offerOwnedByUser(hook.params.user._id, hook.id),
+            keep('description', 'status', 'before', 'htlcStep', 'htlcTxId1', 'htlcTxId3')
+          ),
           idRequired(),
           blockOfferAcceptance(app),
           discard(
@@ -271,8 +317,20 @@ module.exports = function (app) {
       all: [
         discard('__v')
       ],
-      find: [],
-      get: [],
+      find: [
+        iff(
+          isProvider('external'),
+          hook => hook.result.data.forEach(offer => {
+            removeOtherId(hook.params.user ? hook.params.user._id : undefined, offer)
+          })
+        )
+      ],
+      get: [
+        iff(
+          isProvider('external'),
+          hook => removeOtherId(hook.params.user ? hook.params.user._id : undefined, hook.result.data)
+        )
+      ],
       create: [
         updateTransaction({
           txIdPath: 'result.htlcTxId1',

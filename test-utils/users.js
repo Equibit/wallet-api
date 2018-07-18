@@ -3,9 +3,10 @@ const crypto = require('crypto')
 
 const signed = makeSigned(crypto)
 
-exports.create = function createUser (app) {
-  return app.service('/users').create({ email: exports.testEmails[0] })
-    .then(user => app.service('/users').find({ query: { email: exports.testEmails[0] } }))
+exports.create = function createUser (app, userIndex) {
+  const index = userIndex || 0
+  return app.service('/users').create({ email: exports.testEmails[index] })
+    .then(user => app.service('/users').find({ query: { email: exports.testEmails[index] } }))
     .then(users => {
       users = users.data || users
       return users[0]

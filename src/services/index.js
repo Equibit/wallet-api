@@ -33,6 +33,7 @@ const bitMessage = require('./bit-message/bit-message.service.js')
 const questions = require('./questions/questions.service.js')
 
 const questionaires = require('./questionaires/questionaires.service.js')
+const icoinvestors = require('./icoinvestors/icoinvestors.service.js')
 
 module.exports = function () {
   const app = this
@@ -48,6 +49,7 @@ module.exports = function () {
   app.configure(proxycore)
   app.configure(importAddress)
   app.configure(importmulti)
+  app.configure(icoinvestors)
   app.configure(watchlist)
   app.configure(listunspent)
   app.configure(transactions)

@@ -48,10 +48,11 @@ module.exports = function () {
           hook => hook.params.user,
           createTemporaryPassword({
             hashedPasswordField: 'tempPassword',
-            plainPasswordField: 'tempPasswordPlain'
+            plainPasswordField: 'tempPasswordPlain',
+            timeStampField: 'tempPasswordCreatedAt'
           }),
           retrieveSalt(),
-          hashPassword({ pbkdf2, passwordField: 'tempPassword', timeStampField: 'tempPasswordCreatedAt' })
+          hashPassword({ pbkdf2, passwordField: 'tempPassword' })
         ).else(
           // Sets hook.result to prevent the db request.
           normalizeResponse()

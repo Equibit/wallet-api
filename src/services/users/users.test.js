@@ -23,6 +23,7 @@ function runTests (feathersClient) {
       'emailVerified',
       'twoFactorValidatedSession',
       'passwordCreatedAt',
+      'tempPasswordCreatedAt',
       'provisionalSalt',
       'hasRecordedMnemonic',
       'autoLogoutTime'

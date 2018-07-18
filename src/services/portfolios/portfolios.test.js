@@ -32,7 +32,7 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       feathersClient.logout()
         .then(() => userUtils.removeAll(app))
-        .then(() => app.service('portfolios').remove(null, {}))
+        .then(() => app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } }))
         .then(() => done())
     })
 
@@ -71,7 +71,7 @@ function runTests (feathersClient) {
     describe('With Auth', function () {
       beforeEach(function (done) {
         // Remove all portfolios before each test.
-        app.service('portfolios').remove(null, {})
+        app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } })
           .then(response => {
             done()
           })
@@ -79,7 +79,7 @@ function runTests (feathersClient) {
 
       it('allows users to create a portfolio', function (done) {
         const user = this.user
-        const name = 'My Portfolio'
+        const name = 'My Test Portfolio'
 
         userUtils.authenticateTemp(app, feathersClient, user)
           .then(response => feathersClient.service('portfolios').create({ name }))
@@ -117,7 +117,7 @@ function runTests (feathersClient) {
 
       it('returns an error when attempting to manually edit the portfolio balance', function (done) {
         const user = this.user
-        const name = 'My Portfolio'
+        const name = 'My Test Portfolio'
 
         userUtils.authenticateTemp(app, feathersClient, user)
           .then(response => feathersClient.service('portfolios').create({
@@ -160,7 +160,7 @@ function runTests (feathersClient) {
 
         userUtils.authenticate(app, feathersClient, user)
           .then(response => feathersClient.service('portfolios').create({
-            name: 'my portfolio'
+            name: 'My Test Portfolio'
           }))
           .then(res => {
             const portfolios = res.data

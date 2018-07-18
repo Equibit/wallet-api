@@ -14,6 +14,7 @@ module.exports = function (app) {
   return function blockOfferAcceptance (context) {
     const { data, id, params } = context
     const query = params.query || {}
+    const signedInUserId = params.user._id
     const offerId = id || query._id
     const offersService = app.service('offers')
 
@@ -53,6 +54,9 @@ module.exports = function (app) {
                 const offerQuantity = data.quantity || currentOffer.quantity || 0
                 const maxOfferQuantity = order.quantity - buyOfferTotal
 
+                if (!order.userId.equals(signedInUserId)) {
+                  return Promise.reject(new errors.BadRequest('Cannot accept offer for order you did not place.'))
+                }
                 if (offerQuantity > maxOfferQuantity) {
                   return Promise.reject(new errors.BadRequest('Offer quantity exceeds maximum available.'))
                 }

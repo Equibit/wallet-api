@@ -45,8 +45,9 @@ describe(`${servicePath} Service`, function () {
       assert.ok(serviceOnServer, 'Registered the service')
     })
 
-    before(function () {
-      return serviceOnServer.remove(null, {})
+    after(function () {
+      // Remove all created test portfolio addresses
+      return serviceOnServer.remove(null, { query: { portfolioId: '5a3d5de27f4c2a5832bdf420' } })
     })
 
     describe.skip('Find', function () {})
@@ -158,7 +159,7 @@ describe(`${servicePath} Service`, function () {
       it('allows deleting portfolio address', function (done) {
         serviceOnServer.find({})
           .then(response => {
-            const someId = response.data[0]._id.toString()
+            const someId = response.data[response.data.length - 1]._id.toString()
             assert(someId, 'could find an id for testing further.')
 
             serviceOnServer.remove(someId)
@@ -193,8 +194,15 @@ function runTests (feathersClient) {
     afterEach(function (done) {
       feathersClient.logout()
         .then(() => userUtils.removeAll(app))
-        .then(() => app.service('portfolio-addresses').remove(null, {}))
-        .then(() => app.service('portfolios').remove(null, {}))
+        .then(() => app.service('portfolios').find({ query: { name: 'My Test Portfolio' } }))
+        .then(response => {
+          if (response.total !== 0) {
+            const existingId = response.data[0]._id.toString()
+
+            app.service('portfolio-addresses').remove(null, { query: { portfolioId: existingId } })
+          }
+        })
+        .then(() => app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } }))
         .then(() => done())
     })
 
@@ -217,7 +225,7 @@ function runTests (feathersClient) {
     describe('With Auth', function () {
       beforeEach(function (done) {
         // Remove all portfolios before each test.
-        app.service('portfolios').remove(null, {})
+        app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } })
           .then(response => {
             done()
           })
@@ -225,7 +233,7 @@ function runTests (feathersClient) {
 
       it('allows users to create a portfolio address', function (done) {
         const user = this.user
-        const name = 'My Portfolio'
+        const name = 'My Test Portfolio'
         const data = {
           portfolioId: null,
           index: ~~(Math.random() * 1000),
@@ -281,7 +289,7 @@ function runTests (feathersClient) {
         fields.forEach(field => {
           it(field, function (done) {
             const user = this.user
-            const name = 'My Portfolio'
+            const name = 'My Test Portfolio'
             const data = {
               portfolioId: null,
               index: ~~(Math.random() * 1000),
@@ -316,7 +324,7 @@ function runTests (feathersClient) {
         fields.forEach(field => {
           it(field, function (done) {
             const user = this.user
-            const name = 'My Portfolio'
+            const name = 'My Test Portfolio'
             const data = {
               portfolioId: null,
               index: ~~(Math.random() * 1000),
