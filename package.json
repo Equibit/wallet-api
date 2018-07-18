@@ -25,7 +25,7 @@
     "lint": "standard --fix",
     "start": "node src/",
     "mocha": "nyc mocha -u tdd --timeout 999999 --colors \"./+(src|test|test-utils)/**/*.test.js\" --recursive",
-    "questionaire": "node src/questionaire.js"
+    "questionaire": "node src/questionaire.js",
     "qa": "npm run release:qa:patch",
     "release:qa:patch": "npm version patch && make release-qa"
   },
