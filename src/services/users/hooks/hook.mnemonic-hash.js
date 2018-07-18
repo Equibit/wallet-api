@@ -10,16 +10,13 @@ module.exports = function (options = {}) {
   options = Object.assign({}, defaults, options)
 
   return iff(
-    // Verification:
-    hook => (hook.data && hook.user.mnemonicHash),
+    // Verification (if user already recorded the hash and if only mnemonicHash is passed with data):
+    hook => (hook.data && hook.user.mnemonicHash && (!hook.data.encryptedMnemonic && !hook.data.encryptedKey)),
     hook => {
-      if (hook.data.mnemonicHash === hook.user.mnemonicHash) {
-        hook.result = {
-          status: 0,
-          message: 'Mnemonic was verified'
-        }
-      } else {
-        throw new errors.BadRequest('Mnemonic is incorrect!')
+      const isMnemonicCorrect = hook.data.mnemonicHash === hook.user.mnemonicHash
+      hook.result = {
+        status: isMnemonicCorrect ? 0 : 1,
+        message: isMnemonicCorrect ? 'Mnemonic was verified' : 'Mnemonic verification failed'
       }
       return hook
     }

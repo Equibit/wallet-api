@@ -182,12 +182,12 @@ module.exports = function (app) {
             }),
             iff(
               hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
-              hook => sendEmailVerificationCode({
+              sendEmailVerificationCode({
                 From: outboundEmail,
                 TemplateId: emailTemplates.newEmailVerification,
                 templateCodeField: 'emailVerificationCode',
                 dataCodeField: 'emailVerificationCodePlain'
-              })(hook)
+              })
             ),
             hook => {
               delete hook.data.emailVerificationCodePlain
@@ -218,13 +218,13 @@ module.exports = function (app) {
             createTemporaryPassword({ passwordField: 'twoFactorCode', plainPasswordField: 'twoFactorCodePlain' }),
             iff(
               hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
-              hook => sendEmailVerificationCode({
+              sendEmailVerificationCode({
                 From: outboundEmail,
                 TemplateId: emailTemplates.twoFactorAuthentication,
                 emailAddressFromUserRecord: true,
                 templateCodeField: 'twoFactorCode',
                 dataCodeField: 'twoFactorCodePlain'
-              })(hook)
+              })
             ),
             hook => { hook.data.twoFactorValidatedSession = false; return hook },
             keep('twoFactorValidatedSession', 'twoFactorCode')
@@ -301,16 +301,16 @@ module.exports = function (app) {
           hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
           iff(
             hook => hook.params.existingUser,
-            hook => sendDuplicateSignupEmail({
+            sendDuplicateSignupEmail({
               From: outboundEmail,
               TemplateId: emailTemplates.duplicateSignup
-            })(hook)
+            })
           ).else(
-            hook => sendWelcomeEmail({
+            sendWelcomeEmail({
               From: outboundEmail,
               TemplateId: emailTemplates.welcome,
               tempPasswordField: 'tempPasswordPlain'
-            })(hook)
+            })
           )
         ),
         // Set the response to just the email, so there's no way for a malicious user
