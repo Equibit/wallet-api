@@ -34,23 +34,13 @@ describe('Users Service Tests - hook mnemonicHash', () => {
     assert.equal(hookBefore.result.message, 'Mnemonic was verified')
   })
 
-  it('throws BadRequest on a wrong mnemonic', () => {
+  it('does not verify a wrong mnemonic', async () => {
     hookBefore.user = {mnemonicHash: 'abcdef'}
     hookBefore.data = {mnemonicHash: '123'}
+    hookBefore = await mnemonicHash()(hookBefore)
 
-    return mnemonicHash()(hookBefore)
-      .then(() => {
-        assert.ok(false, 'Should throw an error instead')
-      })
-      .catch(err => {
-        assert.equal(err.name, 'BadRequest')
-        assert.equal(err.message, 'Mnemonic is incorrect!')
-      })
-
-    // todo: replace the above with `assert.rejects` when we get node v10.
-    // assert.throws(async () => {
-    //   await mnemonicHash()(hookBefore)
-    // }, {message: 'Mnemonic is incorrect!'}) //,
+    assert.equal(hookBefore.result.status, 1)
+    assert.equal(hookBefore.result.message, 'Mnemonic verification failed')
   })
 
   it('throws on mnemonicHash w/o encrypted props when mnemoncHash is not in DB', () => {
@@ -66,5 +56,10 @@ describe('Users Service Tests - hook mnemonicHash', () => {
         assert.equal(err.name, 'BadRequest')
         assert.equal(err.message, 'You cannot update mnemonic hash!')
       })
+
+    // todo: replace the above with `assert.rejects` when we get node v10.
+    // assert.throws(async () => {
+    //   await mnemonicHash()(hookBefore)
+    // }, {message: 'You cannot update mnemonic hash!'}) //,
   })
 })
