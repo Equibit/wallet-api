@@ -12,6 +12,7 @@ function payout (hook, userAddress, rewardAmount, config) {
   }
   const listUnspentService = app.service('listunspent')
   const txToUse = []
+  let hexVal
   return listUnspentService.find({
     query: {
       eqb: [sourceKP.address],
@@ -74,30 +75,40 @@ function payout (hook, userAddress, rewardAmount, config) {
       return tx
     }
   ).then(
-    builtTransaction => axios({
+    built => {
+      hexVal = built.toString('hex')
+    }
+  ).then(
+    () => axios({
       method: 'POST',
       url: config.url,
       data: {
         jsonrpc: '1.0',
         method: 'sendrawtransaction',
-        params: [builtTransaction.toString('hex')]
+        params: [hexVal]
       },
       auth: {
         username: config.username,
         password: config.password
       }
     }).then(
-      response => app.service('/transactions').create({
-        fromAddress: sourceKP.address,
-        toAddress: userAddress,
-        addressTxId: txToUse[0].txId,
-        addressVout: '0',
-        type: 'TRANSFER',
-        currencyType: 'EQB',
-        amount: rewardAmount,
-        fee: fee,
-        hex: response.data.result.hex
-      })
+      response => {
+        console.log('A')
+        console.log(response.data.result)
+        console.log('C')
+        app.service('/transactions').create({
+          fromAddress: sourceKP.address,
+          toAddress: userAddress,
+          addressTxId: txToUse[0].txId,
+          addressVout: '0',
+          type: 'TRANSFER',
+          currencyType: 'EQB',
+          amount: rewardAmount,
+          fee: fee,
+          txid: response.data.result,
+          hex: hexVal
+        })
+      }
     )
   )
 }
@@ -126,8 +137,8 @@ module.exports = function () {
                 data[0]._id,
                 { address: addressEQB,
                   manualPaymentRequired: true
-                }).then(() => hook)
-            )
+                })
+            ).then(() => hook)
           } else {
             return investorsService.patch(
               data[0]._id,
@@ -140,7 +151,7 @@ module.exports = function () {
         }
       })
     } else {
-      return Promise.resolve(hook)
+      return hook
     }
   }
 }
