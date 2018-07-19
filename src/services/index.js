@@ -35,6 +35,7 @@ const questions = require('./questions/questions.service.js')
 const questionaires = require('./questionaires/questionaires.service.js')
 const icoinvestors = require('./icoinvestors/icoinvestors.service.js')
 const referralCodes = require('./referral-codes/referral-codes.service.js')
+const referralInfo = require('./referral-info/referral-info.service.js')
 
 module.exports = function () {
   const app = this
@@ -68,4 +69,5 @@ module.exports = function () {
   app.configure(questions)
   app.configure(questionaires)
   app.configure(referralCodes)
+  app.configure(referralInfo)
 }

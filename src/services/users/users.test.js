@@ -344,5 +344,36 @@ function runTests (feathersClient) {
           done()
         })
     })
+
+    it('Updates the referral info table when a new user is created', function (done) {
+      const code = 'abc123'
+      const email = 'referraluser@test.com'
+      app.service('/referral-codes').create({ referralCode: code })
+      .then(() => app.service('/users').create({ email: 'referraluser@test.com', referral: code }))
+      .then(() => app.service('/referral-info').find({ query: { referralCode: code } }))
+      .then(res => {
+        const info = res.data[0]
+        const testDate = new Date(info.timeCreated)
+        const actualDate = new Date()
+        assert.equal(info.referralCode, code)
+        assert.equal(info.email, email)
+        assert.equal(actualDate.getFullYear(), testDate.getFullYear())
+        assert.equal(actualDate.getMonth(), testDate.getMonth())
+        assert.equal(actualDate.getDate(), testDate.getDate())
+        assert.equal(actualDate.getDay(), testDate.getDay())
+        assert.equal(actualDate.getHours(), testDate.getHours())
+        assert.equal(actualDate.getMinutes(), testDate.getMinutes())
+        assert.equal(actualDate.getSeconds(), testDate.getSeconds())
+      })
+      .then(() => app.service('/referral-codes').remove(null, { query: { referralCode: code } }))
+      .then(() => {
+        app.service('/referral-info').remove(null, { query: { referralCode: code } })
+        done()
+      })
+      .catch(error => {
+        assert(false, error.message)
+        done()
+      })
+    })
   })
 }
