@@ -18,7 +18,6 @@ const sendDuplicateSignupEmail = require('./hooks/hook.email.duplicate-signup')
 const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const checkReferralCode = require('./hooks/hook.check-referral-code')
 const createReferralInfo = require('./hooks/hook.create-referral-info')
 
 function findUser (options) {
@@ -311,7 +310,7 @@ module.exports = function (app) {
         },
         iff(
           hook => 'referral' in hook.data,
-          checkReferralCode(),
+          // checkReferralCode(),
           createReferralInfo()
         )
       ],

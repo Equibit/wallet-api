@@ -348,18 +348,21 @@ function runTests (feathersClient) {
     it('Updates the referral info table when a new user is created', function (done) {
       const code = 'abc123'
       const email = 'referraluser@test.com'
+      let id = null
       app.service('/referral-codes').create({ referralCode: code })
-      .then(() => app.service('/users').create({ email: email, referral: code }))
-      .then(() => app.service('/referral-info').find({ query: { referralCode: code } }))
+      .then(res => {
+        id = res._id
+        return app.service('/users').create({ email: email, referral: code })
+      })
+      .then(res => app.service('/referral-info').find({ query: { referralCodeId: id } }))
       .then(res => {
         const info = res.data[0]
-        assert.equal(info.referralCode, code)
         assert.equal(info.email, email)
       })
       .then(() => app.service('/users').remove(null, { query: { email: email } }))
       .then(() => app.service('/referral-codes').remove(null, { query: { referralCode: code } }))
       .then(() => {
-        app.service('/referral-info').remove(null, { query: { referralCode: code } })
+        app.service('/referral-info').remove(null, { query: { referralCodeId: id } })
         done()
       })
       .catch(error => {

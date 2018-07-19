@@ -5,8 +5,9 @@
 module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const { Schema } = mongooseClient
+  const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const referralInfo = new Schema({
-    referralCode: { type: String, required: true },
+    referralCodeId: { type: ObjectId, required: true },
     timeCreated: { type: Date, required: true },
     email: { type: String }
   }, {
