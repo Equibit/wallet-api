@@ -25,8 +25,8 @@ module.exports = function (options = {}) {
     iff(
       // Throw an error if its not the 1st time or if one of the encrypted values are missing in data:
       hook => {
-        return hook.user.encryptedMnemonic
-          || !(hook.data.encryptedKey && hook.data.encryptedMnemonic && hook.data.mnemonicHash)
+        return hook.user.encryptedMnemonic ||
+          !(hook.data.encryptedKey && hook.data.encryptedMnemonic && hook.data.mnemonicHash)
       },
       hook => {
         // console.log(`*** ERROR: Cannot update mnemonic due to:

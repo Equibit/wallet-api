@@ -10,7 +10,7 @@ describe('Users Service Tests - hook mnemonicHash', () => {
       method: 'patch',
       params: {provider: 'rest'},
       data: {},
-      user: {},
+      user: {}
     }
   })
 

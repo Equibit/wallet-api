@@ -357,7 +357,6 @@ function runTests (feathersClient) {
           })
         })
         .then(user => {
-
           Object.keys(user).forEach(field => {
             assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
           })
