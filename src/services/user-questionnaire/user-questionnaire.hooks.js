@@ -22,7 +22,7 @@ module.exports = function (app) {
       patch: [
         preventChanges(true, 'questionaireId', 'rewarded'),
         context => {
-          return app.service('user-questionaire').get(context.id)
+          return app.service('user-questionnaire').get(context.id)
           .then(questionare => {
             if (questionare.completed && !context.data.completed) {
               return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionaire that is already completed!"))
@@ -35,7 +35,7 @@ module.exports = function (app) {
             // Make sure started field is false when completed
             context.data.started = false
             // Validate that you completed all the questions
-            return app.service('user-answers').find({query: { userQuestionaireId: context.id }})
+            return app.service('user-answers').find({query: { userQuestionnaireId: context.id }})
               .then(result => {
                 const answers = result.data[0].answers
                 if (answers.some(ans => ans === null)) {

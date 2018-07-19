@@ -1,5 +1,5 @@
 const validateAnswers = require('./hooks/hooks.validate-answers')
-const questionaireExists = require('./hooks/hooks.questionaire-exists')
+const questionnaireExists = require('./hooks/hooks.questionnaire-exists')
 const { preventChanges } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
@@ -11,12 +11,12 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [
-        questionaireExists(app),
+        questionnaireExists(app),
         validateAnswers(app)
       ],
       update: [mapUpdateToPatch()],
       patch: [
-        preventChanges(true, 'userQuestionaireId'),
+        preventChanges(true, 'userQuestionnaireId'),
         validateAnswers(app)
       ],
       remove: []

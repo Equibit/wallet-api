@@ -8,7 +8,7 @@ utils.clients.forEach(client => {
 })
 
 const skel = {
-  userQuestionaire: {
+  userQuestionnaire: {
     started: false,
     completed: false,
     rewarded: false
@@ -60,14 +60,14 @@ const skel = {
 
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
-  const userQuestionaireService = app.service('user-questionaire')
+  const userQuestionnaireService = app.service('user-questionnaire')
   const serviceOnClient = feathersClient.service('user-answers')
   const questionaireService = app.service('questionaires')
   const questionsService = app.service('questions')
 
   const validCreate = () => {
     return serviceOnClient.create({
-      userQuestionaireId: this.userQuestionaire._id.toString(),
+      userQuestionnaireId: this.userQuestionnaire._id.toString(),
       answers: [
         skel.questions[0].answerOptions[0],
         skel.questions[1].answerOptions[0],
@@ -78,7 +78,7 @@ function runTests (feathersClient) {
 
   const invalidCheck = (invalidAnswers, done) => {
     return serviceOnClient.create({
-      userQuestionaireId: this.userQuestionaire._id.toString(),
+      userQuestionnaireId: this.userQuestionnaire._id.toString(),
       answers: invalidAnswers
     })
       .then(() => done('Should not accept invalid answers'))
@@ -126,22 +126,22 @@ function runTests (feathersClient) {
         return userUtils.authenticateTemp(app, feathersClient, this.user)
       })
       .then(() => {
-        const userQuestionaire = Object.assign({}, skel.userQuestionaire, {
+        const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
           questionaireId: this.questionaire._id.toString(),
           userId: this.user._id.toString()
         })
-        return userQuestionaireService.create(userQuestionaire)
+        return userQuestionnaireService.create(userQuestionnaire)
       })
-      .then((userQuestionaire) => {
-        this.userQuestionaire = userQuestionaire
+      .then((userQuestionnaire) => {
+        this.userQuestionnaire = userQuestionnaire
         done()
       })
     })
 
     afterEach((done) => {
       feathersClient.logout()
-        .then(() => userQuestionaireService.remove(null, { query: { userId: this.user._id.toString() } }))
-        .then(result => app.service('user-answers').remove(null, { query: { userQuestionaireId: result[0]._id.toString() } }))
+        .then(() => userQuestionnaireService.remove(null, { query: { userId: this.user._id.toString() } }))
+        .then(result => app.service('user-answers').remove(null, { query: { userQuestionnaireId: result[0]._id.toString() } }))
         .then(() => userUtils.removeAll(app))
         .then(() => done())
         .catch(err => {
@@ -203,7 +203,7 @@ function runTests (feathersClient) {
       describe('Valid answers', () => {
         it('Should accept answers that are null', (done) => {
           serviceOnClient.create({
-            userQuestionaireId: this.userQuestionaire._id.toString(),
+            userQuestionnaireId: this.userQuestionnaire._id.toString(),
             answers: [null, null, null]
           })
           .then(userAnswers => {
@@ -268,16 +268,16 @@ function runTests (feathersClient) {
         })
       })
 
-      describe('userQuestionaireId, ', () => {
-        it('Should not modify userQuestionaireId field ', (done) => {
+      describe('userQuestionnaireId, ', () => {
+        it('Should not modify userQuestionnaireId field ', (done) => {
           validCreate()
             .then(userAnswers => {
-              return serviceOnClient.patch(userAnswers._id.toString(), {userQuestionaireId: 'abc'})
+              return serviceOnClient.patch(userAnswers._id.toString(), {userQuestionnaireId: 'abc'})
             })
-            .then(() => done('Should not patch userQuestionaireId'))
+            .then(() => done('Should not patch userQuestionnaireId'))
             .catch(err => {
               try {
-                assert.equal(err.message, 'Field userQuestionaireId may not be patched. (preventChanges)', err.message)
+                assert.equal(err.message, 'Field userQuestionnaireId may not be patched. (preventChanges)', err.message)
                 done()
               } catch (err) {
                 done(err)

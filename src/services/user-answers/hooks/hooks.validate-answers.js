@@ -2,15 +2,15 @@ const errors = require('feathers-errors')
 
 module.exports = function (app) {
   return function (context) {
-    let userQuestionaire = null
+    let userQuestionnaire = null
     if (context.method === 'patch') {
-      userQuestionaire = app.service('user-answers').get(context.id.toString())
-      .then(answers => app.service('user-questionaire').get(answers.userQuestionaireId))
+      userQuestionnaire = app.service('user-answers').get(context.id.toString())
+      .then(answers => app.service('user-questionnaire').get(answers.userQuestionnaireId))
     } else {
-      userQuestionaire = app.service('user-questionaire').get(context.data.userQuestionaireId)
+      userQuestionnaire = app.service('user-questionnaire').get(context.data.userQuestionnaireId)
     }
 
-    return userQuestionaire
+    return userQuestionnaire
     .then(data => app.service('questions').find({ query: data.questionareId }))
     .then(result => {
       const answers = context.data.answers

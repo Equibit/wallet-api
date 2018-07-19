@@ -8,7 +8,7 @@ utils.clients.forEach(client => {
 })
 
 const skel = {
-  userQuestionaire: {
+  userQuestionnaire: {
     started: false,
     completed: false,
     rewarded: false
@@ -60,7 +60,7 @@ const skel = {
 
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
-  const serviceOnClient = feathersClient.service('user-questionaire')
+  const serviceOnClient = feathersClient.service('user-questionnaire')
   const userAnswersService = app.service('user-answers')
   const questionaireService = app.service('questionaires')
   const questionsService = app.service('questions')
@@ -83,22 +83,22 @@ function runTests (feathersClient) {
         return userUtils.authenticateTemp(app, feathersClient, this.user)
       })
       .then(() => {
-        const userQuestionaire = Object.assign({}, skel.userQuestionaire, {
+        const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
           questionaireId: this.questionaire._id.toString(),
           userId: this.user._id.toString()
         })
-        return serviceOnClient.create(userQuestionaire)
+        return serviceOnClient.create(userQuestionnaire)
       })
-      .then(userQuestionaire => {
-        this.userQuestionaire = userQuestionaire
+      .then(userQuestionnaire => {
+        this.userQuestionnaire = userQuestionnaire
         done()
       })
     })
 
     afterEach((done) => {
       feathersClient.logout()
-        .then(() => app.service('user-questionaire').remove(null, { query: { userId: this.user._id.toString() } }))
-        .then(() => userAnswersService.remove(null, { query: { userQuestionaireId: this.userQuestionaire._id.toString() } }))
+        .then(() => app.service('user-questionnaire').remove(null, { query: { userId: this.user._id.toString() } }))
+        .then(() => userAnswersService.remove(null, { query: { userQuestionnaireId: this.userQuestionnaire._id.toString() } }))
         .then(() => userUtils.removeAll(app))
         .then(() => done())
     })
@@ -109,8 +109,8 @@ function runTests (feathersClient) {
     })
 
     it("Can't change the questionaireId", (done) => {
-      this.userQuestionaire.questionaireId = 'ABC123'
-      serviceOnClient.patch(this.userQuestionaire._id, this.userQuestionaire)
+      this.userQuestionnaire.questionaireId = 'ABC123'
+      serviceOnClient.patch(this.userQuestionnaire._id, this.userQuestionnaire)
         .then(() => done('Should not be able to change questionaireId'))
         .catch(err => {
           try {
@@ -124,15 +124,15 @@ function runTests (feathersClient) {
 
     it("Can't change the completed field from true to false", (done) => {
       userAnswersService.create({
-        userQuestionaireId: this.userQuestionaire._id.toString(),
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
           skel.questions[0].answerOptions[0],
           skel.questions[1].answerOptions[0],
           [skel.questions[2].answerOptions[0]]
         ]
       })
-        .then(() => serviceOnClient.patch(this.userQuestionaire._id.toString(), { completed: true }))
-        .then(() => serviceOnClient.patch(this.userQuestionaire._id.toString(), { completed: false }))
+        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { completed: true }))
+        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { completed: false }))
         .then(() => done('Should not be able to change completed field'))
         .catch(err => {
           try {
@@ -146,14 +146,14 @@ function runTests (feathersClient) {
 
     it("Can't set completed field to true when not all questions are completed", (done) => {
       userAnswersService.create({
-        userQuestionaireId: this.userQuestionaire._id.toString(),
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
           skel.questions[0].answerOptions[0],
           null,
           null
         ]
       })
-      .then(() => serviceOnClient.patch(this.userQuestionaire._id.toString(), { completed: true }))
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { completed: true }))
       .then(() => done('Should not be able to change completed field to true!'))
       .catch(err => {
         try {

@@ -36,7 +36,7 @@ const questionaires = require('./questionaires/questionaires.service.js')
 const icoinvestors = require('./icoinvestors/icoinvestors.service.js')
 
 const userAnswers = require('./user-answers/user-answers.service.js')
-const userQuestionaire = require('./user-questionaire/user-questionaire.service.js')
+const userQuestionnaire = require('./user-questionnaire/user-questionnaire.service.js')
 
 module.exports = function () {
   const app = this
@@ -70,5 +70,5 @@ module.exports = function () {
   app.configure(questions)
   app.configure(questionaires)
   app.configure(userAnswers)
-  app.configure(userQuestionaire)
+  app.configure(userQuestionnaire)
 }
