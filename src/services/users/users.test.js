@@ -369,8 +369,9 @@ function runTests (feathersClient) {
         assert(false, error.message)
         done()
       })
+    })
 
-      it('allows to set mnemonicHash only for the new user', function (done) {
+    it('allows to set mnemonicHash only for the new user', function (done) {
       const user = this.user
 
       userUtils.authenticateTemp(app, feathersClient, user)
@@ -382,7 +383,6 @@ function runTests (feathersClient) {
           })
         })
         .then(user => {
-
           Object.keys(user).forEach(field => {
             assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
           })
