@@ -38,8 +38,8 @@ module.exports = function (app) {
         // Notify the order creator.
         return app.service('/orders').get({
           _id: hook.result.orderId
-        }).then(result => {
-          hook.params.order = result
+        }).then(order => {
+          hook.params.order = order
           if (hook.result.status === 'CANCELLED') {
             // assume htlcStep === either 3 or 4
             return app.service('/transactions').find({
@@ -60,14 +60,19 @@ module.exports = function (app) {
           } else {
             if (hook.result.htlcStep === 3) {
               if (hook.result.type === 'BUY') {
-                hook.notificationAddress = result.btcAddress
+                hook.notificationAddress = order.btcAddress
               } else {
-                hook.notificationAddress = result.eqbAddress
+                hook.notificationAddress = order.eqbAddress
               }
             } else {
               // these updates (steps 2 or 4) were made by the order holder.
               // Notify the offer creator
               hook.notificationAddress = hook.result.eqbAddress
+              if (hook.result.isAccepted && order.isFillOrKill) {
+                return app.service('/orders').patch(hook.result.orderId, {
+                  status: 'CLOSED'
+                }).then(() => hook)
+              }
             }
             return hook
           }
