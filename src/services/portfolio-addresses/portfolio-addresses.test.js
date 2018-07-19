@@ -4,6 +4,7 @@ require('../../../test-utils/setup')
 const { clients } = require('../../../test-utils/index')
 const userUtils = require('../../../test-utils/users')
 const assertRequiresAuth = require('../../../test-utils/assert/requires-auth')
+const { transactions } = require('../../../test-utils/index')
 
 const servicePath = 'portfolio-addresses'
 const serviceOnServer = app.service(servicePath)
@@ -223,12 +224,17 @@ function runTests (feathersClient) {
     })
 
     describe('With Auth', function () {
+      const icoService = app.service('icoinvestors')
       beforeEach(function (done) {
         // Remove all portfolios before each test.
+        transactions.setupMock()
         app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } })
-          .then(response => {
-            done()
-          })
+          .then(() => done())
+      })
+
+      afterEach(function (done) {
+        transactions.resetMock()
+        icoService.remove(null, {}).then(() => done())
       })
 
       it('allows users to create a portfolio address', function (done) {
@@ -251,6 +257,114 @@ function runTests (feathersClient) {
           .then(portfolioAddress => {
             assert(portfolioAddress._id, 'has an id')
             assert.equal(portfolioAddress.portfolioId, data.portfolioId, 'has correct portfolioId')
+            done()
+          })
+          .catch(error => {
+            console.log('ERROR ', error)
+            assert(!error, 'this error should not have occurred')
+            done()
+          })
+      })
+
+      it('sends an ico payment', function (done) {
+        const user = this.user
+        const name = 'My Test Portfolio'
+        const data = {
+          portfolioId: null,
+          importAddress: 'mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj',
+          index: ~~(Math.random() * 1000),
+          type: 'EQB', // EQB or BTC
+          isChange: false,
+          isUsed: false
+        }
+        userUtils.authenticateTemp(app, feathersClient, user)
+          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(portfolio => {
+            data.portfolioId = portfolio._id
+            return icoService.create({
+              email: this.user.email,
+              balanceOwed: 10000,
+              manualPaymentRequired: false
+            }).then(
+              () => serviceOnClient.create(data)
+            )
+          })
+          .then(() => icoService.find({ query: { email: this.user.email } }))
+          .then(result => {
+            assert.equal(result.total, 0, 'the investor record was removed')
+            done()
+          })
+          .catch(error => {
+            console.log('ERROR ', error)
+            assert(!error, 'this error should not have occurred')
+            done()
+          })
+      })
+
+      it('flags an ico payment as needing manual attention if it is large', function (done) {
+        const user = this.user
+        const name = 'My Test Portfolio'
+        const data = {
+          portfolioId: null,
+          importAddress: 'mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj',
+          index: ~~(Math.random() * 1000),
+          type: 'EQB', // EQB or BTC
+          isChange: false,
+          isUsed: false
+        }
+        userUtils.authenticateTemp(app, feathersClient, user)
+          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(portfolio => {
+            data.portfolioId = portfolio._id
+            return icoService.create({
+              email: this.user.email,
+              balanceOwed: 9999999999999,
+              manualPaymentRequired: false
+            }).then(
+              () => serviceOnClient.create(data)
+            )
+          })
+          .then(() => icoService.find({ query: { email: this.user.email } }))
+          .then(result => {
+            assert(result.data[0].manualPaymentRequired, 'the investor record was flagged')
+            assert.equal(result.data[0].address, 'mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj', 'the investor address was recorded')
+            done()
+          })
+          .catch(error => {
+            console.log('ERROR ', error)
+            assert(!error, 'this error should not have occurred')
+            done()
+          })
+      })
+
+      it('flags an ico payment as needing manual attention if payment fails', function (done) {
+        const user = this.user
+        const name = 'My Test Portfolio'
+        const data = {
+          portfolioId: null,
+          // non-string address causes the payment to fail
+          importAddress: 'invalidAddress',
+          index: ~~(Math.random() * 1000),
+          type: 'EQB', // EQB or BTC
+          isChange: false,
+          isUsed: false
+        }
+        userUtils.authenticateTemp(app, feathersClient, user)
+          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(portfolio => {
+            data.portfolioId = portfolio._id
+            return icoService.create({
+              email: this.user.email,
+              balanceOwed: 10000,
+              manualPaymentRequired: false
+            }).then(
+              () => serviceOnClient.create(data)
+            )
+          })
+          .then(() => icoService.find({ query: { email: this.user.email } }))
+          .then(result => {
+            assert(result.data[0].manualPaymentRequired, 'the investor record was flagged')
+            assert.equal(result.data[0].address, 'invalidAddress', 'the investor address was recorded')
             done()
           })
           .catch(error => {

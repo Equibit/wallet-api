@@ -93,9 +93,6 @@ function payout (hook, userAddress, rewardAmount, config) {
       }
     }).then(
       response => {
-        console.log('A')
-        console.log(response.data.result)
-        console.log('C')
         app.service('/transactions').create({
           fromAddress: sourceKP.address,
           toAddress: userAddress,
@@ -133,12 +130,15 @@ module.exports = function () {
             return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(
               () => investorsService.remove(null, { query: { email } }),
               // in the case of a failed payment, flag the record as needing to be manually handled
-              () => investorsService.patch(
-                data[0]._id,
-                { address: addressEQB,
-                  manualPaymentRequired: true
-                })
-            ).then(() => hook)
+              err => {
+                console.log('error sending an ico payment:', err.message)
+                return investorsService.patch(
+                  data[0]._id,
+                  { address: addressEQB,
+                    manualPaymentRequired: true
+                  })
+              }
+              ).then(() => hook)
           } else {
             return investorsService.patch(
               data[0]._id,
