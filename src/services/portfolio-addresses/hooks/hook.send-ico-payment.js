@@ -120,36 +120,41 @@ module.exports = function () {
       addressEQB = hook.data.importAddress
     }
     if (email && addressEQB) {
-      return investorsService.find({ query: { email } })
-      .then(({ data }) => {
-        if (data[0]) {
-          // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
-          if (data[0].balanceOwed < balanceThreshold) {
-            // Here we add the payment methods, payable to EQB address of user
-            // Then remove the entry
-            return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(
-              () => investorsService.remove(null, { query: { email } }),
-              // in the case of a failed payment, flag the record as needing to be manually handled
-              err => {
-                console.log('error sending an ico payment:', err.message)
-                return investorsService.patch(
-                  data[0]._id,
-                  { address: addressEQB,
-                    manualPaymentRequired: true
-                  })
-              }
-              ).then(() => hook)
-          } else {
-            return investorsService.patch(
-              data[0]._id,
-              { address: addressEQB,
-                manualPaymentRequired: true
-              }).then(() => hook)
+      const random = Math.random()
+      // use patch rather than find to atomically check and set the locked field
+      return investorsService.patch(null, {locked: random}, {query: { locked: 0, email }})
+        .then((data) => {
+          if (data[0]) {
+            if (data[0].locked !== random) {
+              // another instance of this service has the lock
+              return
+            }
+            // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
+            if (data[0].balanceOwed < balanceThreshold) {
+              // Here we add the payment methods, payable to EQB address of user
+              // Then remove the entry
+              return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(
+                () => investorsService.remove(null, { query: { email } }),
+                // in the case of a failed payment, flag the record as needing to be manually handled
+                err => {
+                  console.log('error sending an ico payment:', err.message)
+                  return investorsService.patch(
+                    data[0]._id,
+                    { address: addressEQB,
+                      manualPaymentRequired: true,
+                      locked: 0
+                    })
+                })
+            } else {
+              return investorsService.patch(
+                data[0]._id,
+                { address: addressEQB,
+                  manualPaymentRequired: true,
+                  locked: 0
+                })
+            }
           }
-        } else {
-          return hook
-        }
-      })
+        }).then(() => hook, () => hook)
     } else {
       return hook
     }

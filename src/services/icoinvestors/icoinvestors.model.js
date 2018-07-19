@@ -12,6 +12,8 @@ module.exports = function (app) {
     // Address will be populated by Wallet when new user is created with the same email
     address: { type: String },
     balanceOwed: { type: Number },
+    // if this payment is currently being processed
+    locked: { type: Number, default: 0 },
     manualPaymentRequired: { type: Boolean, default: false }
 
   }, {

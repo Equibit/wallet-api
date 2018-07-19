@@ -301,6 +301,54 @@ function runTests (feathersClient) {
           })
       })
 
+      it('only sends one ico payment', function (done) {
+        const user = this.user
+        const name = 'My Test Portfolio'
+        const data = {
+          portfolioId: null,
+          importAddress: 'mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj',
+          index: ~~(Math.random() * 1000),
+          type: 'EQB', // EQB or BTC
+          isChange: false,
+          isUsed: false
+        }
+        userUtils.authenticateTemp(app, feathersClient, user)
+          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(portfolio => {
+            data.portfolioId = portfolio._id
+            return icoService.create({
+              email: this.user.email,
+              balanceOwed: 10000,
+              manualPaymentRequired: false
+            }).then(
+              () => Promise.all([
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors'),
+                serviceOnClient.create(data).catch(() => 'ignore errors')
+              ])
+            )
+          })
+          .then(() => icoService.find({ query: { email: this.user.email } }))
+          .then(() => {
+            const requests = transactions.history().post.filter(
+              req => req.data.indexOf('"method":"sendrawtransaction"') > -1
+            )
+            assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
+            done()
+          })
+          .catch(error => {
+            console.log('ERROR ', error)
+            assert(!error, 'this error should not have occurred')
+            done()
+          })
+      })
+
       it('flags an ico payment as needing manual attention if it is large', function (done) {
         const user = this.user
         const name = 'My Test Portfolio'
