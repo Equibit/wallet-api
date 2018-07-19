@@ -349,7 +349,7 @@ function runTests (feathersClient) {
       const code = 'abc123'
       const email = 'referraluser@test.com'
       app.service('/referral-codes').create({ referralCode: code })
-      .then(() => app.service('/users').create({ email: 'referraluser@test.com', referral: code }))
+      .then(() => app.service('/users').create({ email: email, referral: code }))
       .then(() => app.service('/referral-info').find({ query: { referralCode: code } }))
       .then(res => {
         const info = res.data[0]
@@ -365,6 +365,7 @@ function runTests (feathersClient) {
         assert.equal(actualDate.getMinutes(), testDate.getMinutes())
         assert.equal(actualDate.getSeconds(), testDate.getSeconds())
       })
+      .then(() => app.service('/users').remove(null, { query: { email: email } }))
       .then(() => app.service('/referral-codes').remove(null, { query: { referralCode: code } }))
       .then(() => {
         app.service('/referral-info').remove(null, { query: { referralCode: code } })
