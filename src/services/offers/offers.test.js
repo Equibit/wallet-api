@@ -380,6 +380,35 @@ function runTests (feathersClient) {
           })
       })
 
+      it('closes a fill or kill offer once it is accepted', function (done) {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          htlcStep: 3,
+          status: 'TRADING',
+          quantity: 0
+        })
+        let createdId
+        ordersServiceOnServer.patch(this.order._id.toString(), {
+          isFillOrKill: true
+        }).then(() =>
+          serviceOnServer.create(createData).then(offer => {
+            createdId = offer._id.toString()
+          })
+        ).then(() =>
+          userUtils.authenticateTemp(app, feathersClient, this.orderUser)
+        ).then(() =>
+          serviceOnClient.patch(createdId, { htlcStep: 4, isAccepted: true })
+        )
+        .then(() =>
+          ordersServiceOnServer.get(this.order._id)
+        )
+        .then(order => {
+          assert.equal(order.status, 'CLOSED')
+        })
+        .then(done, err => done(err))
+      })
+
       // hooks were updated so transactions take care of this
       it.skip('patches the related issuance when CLOSED if offer user is issuer', function (done) {
         const initialSharesIssued = 22

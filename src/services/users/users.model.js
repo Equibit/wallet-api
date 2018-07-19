@@ -26,6 +26,8 @@ module.exports = function (app) {
     isNewUser: { type: Boolean, default: true },
     encryptedKey: { type: String },
     encryptedMnemonic: { type: String },
+    // SHA3_512 hash(email + mnemonic) to verify mnemonic when user uses Forgot Password flow to restore the keys.
+    mnemonicHash: { type: String },
     hasRecordedMnemonic: { type: Boolean, default: false },
     twoFactorCode: { type: String },
     twoFactorValidatedSession: { type: Boolean, default: false },

@@ -344,5 +344,29 @@ function runTests (feathersClient) {
           done()
         })
     })
+
+    it('allows to set mnemonicHash only for the new user', function (done) {
+      const user = this.user
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => {
+          return feathersClient.service('users').patch(user._id, {
+            encryptedKey: '123',
+            encryptedMnemonic: 'abc',
+            mnemonicHash: '456abc'
+          })
+        })
+        .then(user => {
+
+          Object.keys(user).forEach(field => {
+            assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
+          })
+          done()
+        })
+        .catch(error => {
+          assert(false, error.message)
+          done()
+        })
+    })
   })
 }
