@@ -353,17 +353,8 @@ function runTests (feathersClient) {
       .then(() => app.service('/referral-info').find({ query: { referralCode: code } }))
       .then(res => {
         const info = res.data[0]
-        const testDate = new Date(info.timeCreated)
-        const actualDate = new Date()
         assert.equal(info.referralCode, code)
         assert.equal(info.email, email)
-        assert.equal(actualDate.getFullYear(), testDate.getFullYear())
-        assert.equal(actualDate.getMonth(), testDate.getMonth())
-        assert.equal(actualDate.getDate(), testDate.getDate())
-        assert.equal(actualDate.getDay(), testDate.getDay())
-        assert.equal(actualDate.getHours(), testDate.getHours())
-        assert.equal(actualDate.getMinutes(), testDate.getMinutes())
-        assert.equal(actualDate.getSeconds(), testDate.getSeconds())
       })
       .then(() => app.service('/users').remove(null, { query: { email: email } }))
       .then(() => app.service('/referral-codes').remove(null, { query: { referralCode: code } }))
