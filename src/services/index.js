@@ -50,6 +50,7 @@ module.exports = function () {
   app.configure(proxycore)
   app.configure(importAddress)
   app.configure(importmulti)
+  app.configure(icoinvestors)
   app.configure(watchlist)
   app.configure(listunspent)
   app.configure(transactions)
