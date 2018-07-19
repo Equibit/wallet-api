@@ -19,6 +19,7 @@ const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const createReferralInfo = require('./hooks/hook.create-referral-info')
+const mnemonicHash = require('./hooks/hook.mnemonic-hash')
 
 function findUser (options) {
   return function (hook) {
@@ -148,6 +149,7 @@ module.exports = function (app) {
             hook.user.tempPasswordCreatedAt = undefined
             hook.data.passwordCreatedAt = Date.now()
           },
+          // Note: when password is changed we need to update the encrypted key and mnemonic.
           // On password change, ignore any changes not related to this flow
           keep(
             'password',
@@ -254,7 +256,15 @@ module.exports = function (app) {
             )
           )
         ),
-        hook => { hook.data.updatedAt = Date.now() }
+        hook => { hook.data.updatedAt = Date.now() },
+
+        // The `mnemonicHash` value can be passed either for saving to db or for verification.
+        // - Allow to set mnemonicHash only when encrypted key and mnemonic are generated for the 1st time
+        // - Verify mnemonicHash and immediately return the result of verification.
+        iff(
+          hook => (hook.data && hook.data.mnemonicHash),
+          mnemonicHash()
+        )
       ],
       remove: [
         disallow('external')
@@ -273,6 +283,7 @@ module.exports = function (app) {
             'pastPasswordHashes',
             'encryptedKey',
             'encryptedMnemonic',
+            'mnemonicHash',
             'twoFactorCode',
             'emailVerificationCode'
           ),
