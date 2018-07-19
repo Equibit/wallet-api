@@ -203,3 +203,5 @@ exports.removeAll = function remove (app) {
     }
   })
 }
+
+exports.history = () => mock.history
