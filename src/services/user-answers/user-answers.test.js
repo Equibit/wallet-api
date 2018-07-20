@@ -13,8 +13,8 @@ const skel = {
     completed: false,
     rewarded: false
   },
-  questionaire: {
-    description: 'Test questionaire',
+  questionnaire: {
+    description: 'Test questionnaire',
     status: 'active',
     reward: 0.005
   },
@@ -62,7 +62,7 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const userQuestionnaireService = app.service('user-questionnaire')
   const serviceOnClient = feathersClient.service('user-answers')
-  const questionaireService = app.service('questionaires')
+  const questionnaireService = app.service('questionnaires')
   const questionsService = app.service('questions')
 
   const validCreate = () => {
@@ -110,12 +110,12 @@ function runTests (feathersClient) {
 
   describe(`User Answers Tests - ${transport}`, () => {
     before((done) => {
-      // Initialize questionaire and questions
-      questionaireService.create(skel.questionaire)
-        .then(questionaire => {
-          this.questionaire = questionaire
+      // Initialize questionnaire and questions
+      questionnaireService.create(skel.questionnaire)
+        .then(questionnaire => {
+          this.questionnaire = questionnaire
           return Promise.all(skel.questions.map(q =>
-            questionsService.create(Object.assign({}, q, { questionaireId: questionaire._id.toString() }))))
+            questionsService.create(Object.assign({}, q, { questionnaireId: questionnaire._id.toString() }))))
         })
         .then(() => done())
     })
@@ -127,7 +127,7 @@ function runTests (feathersClient) {
       })
       .then(() => {
         const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
-          questionaireId: this.questionaire._id.toString(),
+          questionnaireId: this.questionnaire._id.toString(),
           userId: this.user._id.toString()
         })
         return userQuestionnaireService.create(userQuestionnaire)
@@ -155,7 +155,7 @@ function runTests (feathersClient) {
     })
 
     after((done) => {
-      Promise.all([questionaireService.remove(this.questionaire._id.toString()),
+      Promise.all([questionnaireService.remove(this.questionnaire._id.toString()),
         questionsService.remove(null, {})
       ])
       .then(() => done())

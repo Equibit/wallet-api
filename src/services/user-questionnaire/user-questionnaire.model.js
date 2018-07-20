@@ -7,7 +7,7 @@ module.exports = function (app) {
   const { Schema } = mongooseClient
   const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const userQuestionnaire = new Schema({
-    questionaireId: { type: ObjectId, required: true, unique: true },
+    questionnaireId: { type: ObjectId, required: true, unique: true },
     userId: { type: ObjectId, required: true },
     started: { type: Boolean, default: false, required: true },
     completed: { type: Boolean, default: false, required: true },

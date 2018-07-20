@@ -11,21 +11,21 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [
-        // Check if questionaire exists
+        // Check if questionnaire exists
         context => {
-          return app.service('questionaires').get(context.data.questionaireId)
-          .then(questionare => Promise.resolve(context))
+          return app.service('questionnaires').get(context.data.questionnaireId)
+          .then(questionnaire => Promise.resolve(context))
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
         }
       ],
       update: [mapUpdateToPatch()],
       patch: [
-        preventChanges(true, 'questionaireId', 'rewarded'),
+        preventChanges(true, 'questionnaireId', 'rewarded'),
         context => {
           return app.service('user-questionnaire').get(context.id)
           .then(questionare => {
             if (questionare.completed && !context.data.completed) {
-              return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionaire that is already completed!"))
+              return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionnaire that is already completed!"))
             }
             return Promise.resolve(context)
           })

@@ -32,7 +32,7 @@ const bitMessage = require('./bit-message/bit-message.service.js')
 
 const questions = require('./questions/questions.service.js')
 
-const questionaires = require('./questionaires/questionaires.service.js')
+const questionnaires = require('./questionnaires/questionnaires.service.js')
 const icoinvestors = require('./icoinvestors/icoinvestors.service.js')
 const referralCodes = require('./referral-codes/referral-codes.service.js')
 
@@ -69,7 +69,7 @@ module.exports = function () {
   app.configure(healthCheck)
   app.configure(bitMessage)
   app.configure(questions)
-  app.configure(questionaires)
+  app.configure(questionnaires)
   app.configure(userAnswers)
   app.configure(userQuestionnaire)
   app.configure(referralCodes)
