@@ -321,7 +321,6 @@ module.exports = function (app) {
         },
         iff(
           hook => 'referral' in hook.data,
-          // checkReferralCode(),
           createReferralInfo()
         )
       ],

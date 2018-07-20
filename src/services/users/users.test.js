@@ -345,7 +345,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it('Updates the referral info table when a new user is created', function (done) {
+    it('updates the referral info table when a new user is created', function (done) {
       const code = 'abc123'
       const email = 'referraluser@test.com'
       let id = null
@@ -354,7 +354,7 @@ function runTests (feathersClient) {
         id = res._id
         return app.service('/users').create({ email: email, referral: code })
       })
-      .then(res => app.service('/referral-info').find({ query: { referralCodeId: id } }))
+      .then(() => app.service('/referral-info').find({ query: { referralCodeId: id } }))
       .then(res => {
         const info = res.data[0]
         assert.equal(info.email, email)
@@ -366,9 +366,28 @@ function runTests (feathersClient) {
         done()
       })
       .catch(error => {
-        assert(false, error.message)
-        done()
+        try {
+          assert(false, error.message)
+          done()
+        } catch (error) {
+          done(error)
+        }
       })
+    })
+
+    it('expects an error when creating an user with an invalid code', function (done) {
+      const code = 'wrongcode'
+      const email = 'referraluser@test.com'
+      app.service('/users').create({ email: email, referral: code })
+        .then(() => done('Should not reach here!'))
+        .catch(err => {
+          try {
+            assert.equal(err.message, 'Referral code does not exist!')
+            done()
+          } catch (err) {
+            done(err)
+          }
+        })
     })
 
     it('allows to set mnemonicHash only for the new user', function (done) {

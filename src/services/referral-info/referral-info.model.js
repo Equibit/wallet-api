@@ -8,7 +8,6 @@ module.exports = function (app) {
   const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const referralInfo = new Schema({
     referralCodeId: { type: ObjectId, required: true },
-    timeCreated: { type: Date, required: true },
     email: { type: String }
   }, {
     timestamps: true
