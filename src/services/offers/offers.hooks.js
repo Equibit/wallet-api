@@ -225,6 +225,8 @@ module.exports = function (app) {
             'description',
             'timelock',
             'hashlock',
+            'htlcTxId1',
+            'secretEncrypted',
             'price'
           ),
           associateCurrentUser({ idField: '_id', as: 'userId' }),
