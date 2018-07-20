@@ -27,9 +27,9 @@ function askStatus (description) {
       r1.question('Is the status active (y|n)? ', (status) => {
         status = status.toLowerCase()
         if (status === 'y') {
-          resolve([description, 'active'])
+          resolve([description, true])
         } else if (status === 'n') {
-          resolve([description, 'closed'])
+          resolve([description, false])
         } else {
           console.log('(y|n)')
           waitForUserInput()
@@ -71,7 +71,7 @@ askDescription()
   .then(askReward)
   .then(([description, status, reward]) => {
     r1.close()
-    return Questionnaires.create({description: description, status: status, reward: reward})
+    return Questionnaires.create({description: description, isActive: status, reward: reward})
   })
   .then((questionnaire) => {
     const file = process.argv[process.argv.length - 1]
