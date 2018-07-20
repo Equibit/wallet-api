@@ -375,19 +375,19 @@ function runTests (feathersClient) {
       })
     })
 
-    it('expects an error when creating an user with an invalid code', function (done) {
+    it('expects user to be created without updating referral info', function (done) {
       const code = 'wrongcode'
       const email = 'referraluser@test.com'
       app.service('/users').create({ email: email, referral: code })
-        .then(() => done('Should not reach here!'))
-        .catch(err => {
-          try {
-            assert.equal(err.message, 'Referral code does not exist!')
-            done()
-          } catch (err) {
-            done(err)
-          }
+        .then(user => {
+          assert.equal(user.email, email)
+          return app.service('/referral-codes').find({ query: { code: code } })
         })
+        .then(res => {
+          assert.equal(res.data.length, 0)
+          return app.service('/users').remove(null, { query: { email: email } })
+        })
+        .then(() => done())
     })
 
     it('allows to set mnemonicHash only for the new user', function (done) {
