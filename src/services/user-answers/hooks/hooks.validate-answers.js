@@ -14,7 +14,7 @@ module.exports = function (app) {
     .then(data => app.service('questions').find({ query: data.questionareId }))
     .then(result => {
       const answers = context.data.answers
-      // Validate the length of the array (size < questionnaire numbers)
+      // Validate the length of the array (size === questionnaire numbers)
       if (answers.length !== result.total) {
         return Promise.reject(new errors.BadRequest('Number of answers do not match the number of questions!'))
       }
