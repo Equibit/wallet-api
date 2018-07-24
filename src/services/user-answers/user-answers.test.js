@@ -9,9 +9,7 @@ utils.clients.forEach(client => {
 
 const skel = {
   userQuestionnaire: {
-    started: false,
-    completed: false,
-    rewarded: false
+    status: 'COMPLETED'
   },
   questionnaire: {
     description: 'Test questionnaire',
@@ -190,7 +188,7 @@ function runTests (feathersClient) {
           invalidCheck(invalidAnswers, done)
         })
 
-        it('Should not accept more answers then are required for a multi question', function (done) {
+        it('Should not accept more answers than are required for a multi question', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[0],
             skel.questions[1].answerOptions[0],
@@ -244,7 +242,7 @@ function runTests (feathersClient) {
           invalidPatch(invalidAnswers, done)
         })
 
-        it('Should not accept more answers then are required for a multi question', function (done) {
+        it('Should not accept more answers than are required for a multi question', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[0],
             skel.questions[1].answerOptions[0],

@@ -16,6 +16,10 @@ module.exports = function (app) {
           return app.service('questionnaires').get(context.data.questionnaireId)
           .then(questionnaire => Promise.resolve(context))
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
+        },
+        context => {
+          context.data.status = 'STARTED'
+          return context
         }
       ],
       update: [mapUpdateToPatch()],
@@ -24,16 +28,14 @@ module.exports = function (app) {
         context => {
           return app.service('user-questionnaire').get(context.id)
           .then(questionare => {
-            if (questionare.completed && !context.data.completed) {
+            if (questionare.status === 'COMPLETED' && context.data.status !== 'COMPLETED') {
               return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionnaire that is already completed!"))
             }
             return Promise.resolve(context)
           })
         },
         context => {
-          if (context.data.completed) {
-            // Make sure started field is false when completed
-            context.data.started = false
+          if (context.data.status === 'COMPLETED') {
             // Validate that you completed all the questions
             return app.service('user-answers').find({query: { userQuestionnaireId: context.id }})
               .then(result => {

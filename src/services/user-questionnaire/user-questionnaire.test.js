@@ -9,9 +9,7 @@ utils.clients.forEach(client => {
 
 const skel = {
   userQuestionnaire: {
-    started: false,
-    completed: false,
-    rewarded: false
+    status: 'STARTED'
   },
   questionnaire: {
     description: 'Test questionnaire',
@@ -122,7 +120,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it("Can't change the completed field from true to false", (done) => {
+    it("Can't change the status field from completed to started", (done) => {
       userAnswersService.create({
         userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
@@ -131,9 +129,9 @@ function runTests (feathersClient) {
           [skel.questions[2].answerOptions[0]]
         ]
       })
-        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { completed: true }))
-        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { completed: false }))
-        .then(() => done('Should not be able to change completed field'))
+        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'STARTED' }))
+        .then(() => done('Should not be able to change the status of completed'))
         .catch(err => {
           try {
             assert.equal(err.message, "Can't change the completed status of a questionnaire that is already completed!", err.message)
@@ -144,7 +142,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it("Can't set completed field to true when not all questions are completed", (done) => {
+    it("Can't set the status of completed when not all questions are completed", (done) => {
       userAnswersService.create({
         userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
@@ -153,8 +151,8 @@ function runTests (feathersClient) {
           null
         ]
       })
-      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { completed: true }))
-      .then(() => done('Should not be able to change completed field to true!'))
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(() => done('Should not be able to change the status of completed'))
       .catch(err => {
         try {
           assert.equal(err.message, 'Not all questions are answered!', err.message)

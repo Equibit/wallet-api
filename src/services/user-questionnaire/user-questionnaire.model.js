@@ -9,9 +9,10 @@ module.exports = function (app) {
   const userQuestionnaire = new Schema({
     questionnaireId: { type: ObjectId, required: true, unique: true },
     userId: { type: ObjectId, required: true },
-    started: { type: Boolean, default: false, required: true },
-    completed: { type: Boolean, default: false, required: true },
-    rewarded: { type: Boolean }
+    status: { type: String, enum: ['STARTED', 'COMPLETED', 'REWARDED'], required: true }
+    // started: { type: Boolean, default: false, required: true },
+    // completed: { type: Boolean, default: false, required: true },
+    // rewarded: { type: Boolean }
   }, {
     timestamps: true
   })
