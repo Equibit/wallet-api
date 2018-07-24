@@ -1,0 +1,166 @@
+const assert = require('assert')
+const app = require('../../app')
+const utils = require('../../../test-utils/index')
+const userUtils = utils.users
+
+utils.clients.forEach(client => {
+  runTests(client)
+})
+
+const skel = {
+  userQuestionnaire: {
+    status: 'STARTED'
+  },
+  questionnaire: {
+    description: 'Test questionnaire',
+    status: 'active',
+    reward: 0.005
+  },
+  questions: [
+    {
+      question: 'What best describes your interest in Equibit?',
+      questionType: 'SINGLE',
+      sortIndex: 1,
+      answerOptions: [
+        'I just want the free EQB for completing this questionnaire <strong>[end]</strong>',
+        'I’m interested in both investing and raising money for companies on the blockchain',
+        'I’m only interested in using Equibit Portfolio to invest in companies',
+        'I’m only interested in using Equibit Portfolio to raise money for companies <strong>[Goto Q8]</strong>'
+      ]
+    },
+    {
+      question: 'How likely are you to use Equibit Portfolio to invest in a company?',
+      questionType: 'SINGLE',
+      sortIndex: 2,
+      answerOptions: [
+        'Unlikely <strong>[end]</strong>',
+        'Somewhat likely',
+        'Very likely',
+        'Don’t know',
+        'CUSTOM'
+      ]
+    },
+    {
+      question: 'What types of companies are you most interested investing in?',
+      questionType: 'MULTI',
+      sortIndex: 3,
+      answerOptions: [
+        'Blockchain',
+        'Fintech',
+        'Cannabis',
+        'Any Start-up',
+        'Traditional/Blue chip',
+        'Any',
+        'Don’t know'
+      ]
+    }]
+}
+
+function runTests (feathersClient) {
+  const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
+  const serviceOnClient = feathersClient.service('user-questionnaire')
+  const userAnswersService = app.service('user-answers')
+  const questionnaireService = app.service('questionnaires')
+  const questionsService = app.service('questions')
+
+  describe(`User Questionnaire Tests - ${transport}`, () => {
+    before((done) => {
+      // Initialize questionnaire and questions
+      questionnaireService.create(skel.questionnaire)
+        .then(questionnaire => {
+          this.questionnaire = questionnaire
+          return Promise.all(skel.questions.map(q =>
+            questionsService.create(Object.assign({}, q, { questionnaireId: questionnaire._id }))))
+        })
+        .then(() => done())
+    })
+
+    beforeEach((done) => {
+      userUtils.create(app).then(user => {
+        this.user = user
+        return userUtils.authenticateTemp(app, feathersClient, this.user)
+      })
+      .then(() => {
+        const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
+          questionnaireId: this.questionnaire._id.toString(),
+          userId: this.user._id.toString()
+        })
+        return serviceOnClient.create(userQuestionnaire)
+      })
+      .then(userQuestionnaire => {
+        this.userQuestionnaire = userQuestionnaire
+        done()
+      })
+    })
+
+    afterEach((done) => {
+      feathersClient.logout()
+        .then(() => app.service('user-questionnaire').remove(null, { query: { userId: this.user._id.toString() } }))
+        .then(() => userAnswersService.remove(null, { query: { userQuestionnaireId: this.userQuestionnaire._id.toString() } }))
+        .then(() => userUtils.removeAll(app))
+        .then(() => done())
+    })
+
+    after((done) => {
+      Promise.all([questionnaireService.remove(this.questionnaire._id.toString()), questionsService.remove(null, {})])
+      .then(() => done())
+    })
+
+    it("Can't change the questionnaireId", (done) => {
+      this.userQuestionnaire.questionnaireId = 'ABC123'
+      serviceOnClient.patch(this.userQuestionnaire._id, this.userQuestionnaire)
+        .then(() => done('Should not be able to change questionnaireId'))
+        .catch(err => {
+          try {
+            assert.equal(err.message, 'Field questionnaireId may not be patched. (preventChanges)', err.message)
+            done()
+          } catch (err) {
+            done(err)
+          }
+        })
+    })
+
+    it("Can't change the status field from completed to started", (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[0],
+          skel.questions[1].answerOptions[0],
+          [skel.questions[2].answerOptions[0]]
+        ]
+      })
+        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'STARTED' }))
+        .then(() => done('Should not be able to change the status of completed'))
+        .catch(err => {
+          try {
+            assert.equal(err.message, "Can't change the completed status of a questionnaire that is already completed!", err.message)
+            done()
+          } catch (err) {
+            done(err)
+          }
+        })
+    })
+
+    it("Can't set the status of completed when not all questions are completed", (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[0],
+          null,
+          null
+        ]
+      })
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(() => done('Should not be able to change the status of completed'))
+      .catch(err => {
+        try {
+          assert.equal(err.message, 'Not all questions are answered!', err.message)
+          done()
+        } catch (err) {
+          done(err)
+        }
+      })
+    })
+  })
+}
