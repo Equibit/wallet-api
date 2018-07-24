@@ -15,9 +15,10 @@ module.exports = function (app) {
     .then(result => {
       const answers = context.data.answers
       // Validate the length of the array (size < questionnaire numbers)
-      if (answers.length > result.total) {
-        return Promise.reject(new errors.BadRequest('More answers than available questions!'))
+      if (answers.length !== result.total) {
+        return Promise.reject(new errors.BadRequest('Number of answers do not match the number of questions!'))
       }
+
       // Validate if each answer in the array is an actual answer from the questionnaire
       const areAnswers = result.data.every((solution) => {
         const answer = answers[solution.sortIndex - 1]
