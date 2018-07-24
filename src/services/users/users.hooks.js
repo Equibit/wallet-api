@@ -18,6 +18,7 @@ const sendDuplicateSignupEmail = require('./hooks/hook.email.duplicate-signup')
 const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
+const createReferralInfo = require('./hooks/hook.create-referral-info')
 const mnemonicHash = require('./hooks/hook.mnemonic-hash')
 
 function findUser (options) {
@@ -60,7 +61,7 @@ module.exports = function (app) {
       create: [
         // the only things the user is allowed to choose for their
         // account (on creation)
-        keep('email', 'autoLogoutTime'),
+        keep('email', 'autoLogoutTime', 'referral'),
         lowerCase('email'),
         // Sets `hook.params.existingUser` to the existing user.
         // Also sets hook.result to only contain the passed-in email.
@@ -317,7 +318,11 @@ module.exports = function (app) {
         // to know if this email address is already being used for another account.
         hook => {
           hook.result = { email: hook.data.email }
-        }
+        },
+        iff(
+          hook => 'referral' in hook.data,
+          createReferralInfo()
+        )
       ],
       update: [],
       patch: [],
