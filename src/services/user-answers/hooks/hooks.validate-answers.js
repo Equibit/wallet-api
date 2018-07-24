@@ -24,12 +24,12 @@ module.exports = function (app) {
         const answer = answers[solution.sortIndex - 1]
         if (answer !== null) {
           if (solution.questionType === 'SINGLE' || solution.questionType === 'DROPDOWN') {
-            return solution.answerOptions.includes(answer)
+            return solution.answerOptions.some(sol => sol.answer === answer)
           } else {
             return Array.isArray(answer) &&
                 answer.length > 0 &&
                 answer.length <= solution.answerOptions.length &&
-                answer.every((multiAnswer) => solution.answerOptions.includes(multiAnswer))
+                answer.every((multiAnswer) => solution.answerOptions.some(sol => sol.answer === multiAnswer))
           }
         }
         return true

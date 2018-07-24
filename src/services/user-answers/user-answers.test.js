@@ -20,12 +20,18 @@ const skel = {
     {
       question: 'What best describes your interest in Equibit?',
       questionType: 'SINGLE',
-      sortIndex: '1',
+      sortIndex: 1,
       answerOptions: [
-        'I just want the free EQB for completing this questionnaire <strong>[end]</strong>',
-        'I’m interested in both investing and raising money for companies on the blockchain',
-        'I’m only interested in using Equibit Portfolio to invest in companies',
-        'I’m only interested in using Equibit Portfolio to raise money for companies <strong>[Goto Q8]</strong>'
+        {
+          answer: 'I just want the free EQB for completing this questionnaire <strong>[end]</strong>',
+          finalQuestion: true
+        },
+        { answer: 'I’m interested in both investing and raising money for companies on the blockchain' },
+        { answer: 'I’m only interested in using Equibit Portfolio to invest in companies' },
+        {
+          answer: 'I’m only interested in using Equibit Portfolio to raise money for companies <strong>[Goto Q8]</strong>',
+          skipTo: 8
+        }
       ]
     },
     {
@@ -33,11 +39,13 @@ const skel = {
       questionType: 'SINGLE',
       sortIndex: 2,
       answerOptions: [
-        'Unlikely <strong>[end]</strong>',
-        'Somewhat likely',
-        'Very likely',
-        'Don’t know',
-        'CUSTOM'
+        {
+          answer: 'Unlikely <strong>[end]</strong>',
+          finalQuestion: true
+        },
+        { answer: 'Somewhat likely' },
+        { answer: 'Very likely' },
+        { answer: 'Don’t know' }
       ]
     },
     {
@@ -45,13 +53,16 @@ const skel = {
       questionType: 'MULTI',
       sortIndex: '3',
       answerOptions: [
-        'Blockchain',
-        'Fintech',
-        'Cannabis',
-        'Any Start-up',
-        'Traditional/Blue chip',
-        'Any',
-        'Don’t know'
+        {
+          answer: 'Blockchain',
+          finalQuestion: true
+        },
+        { answer: 'Fintech' },
+        { answer: 'Cannabis' },
+        { answer: 'Any Start-up' },
+        { answer: 'Traditional/Blue chip' },
+        { answer: 'Any' },
+        { answer: "Don't know" }
       ]
     }]
 }
@@ -67,9 +78,9 @@ function runTests (feathersClient) {
     return serviceOnClient.create({
       userQuestionnaireId: this.userQuestionnaire._id.toString(),
       answers: [
-        skel.questions[0].answerOptions[0],
-        skel.questions[1].answerOptions[0],
-      [skel.questions[2].answerOptions[0]]
+        skel.questions[0].answerOptions[0].answer,
+        skel.questions[1].answerOptions[0].answer,
+      [skel.questions[2].answerOptions[0].answer]
       ]
     })
   }
@@ -163,36 +174,36 @@ function runTests (feathersClient) {
       describe('Invalid answers ', () => {
         it('Should not accept answers that are not valid', (done) => {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            'invalid answer',
-            [skel.questions[2].answerOptions[0], skel.questions[2].answerOptions[1]]
+            skel.questions[0].answerOptions[0].answer,
+            'invalidanswer',
+            [skel.questions[2].answerOptions[0].answer, skel.questions[2].answerOptions[1].answer]
           ]
           invalidCheck(invalidAnswers, done)
         })
 
         it('Should not accept invalid answers in multi question array', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            skel.questions[1].answerOptions[0],
-            [skel.questions[2].answerOptions[0], 'invalid answer', 'invalid answer']
+            skel.questions[0].answerOptions[0].answer,
+            skel.questions[1].answerOptions[0].answer,
+            [skel.questions[2].answerOptions[0].answer, 'invalidanswer', 'invalidanswer']
           ]
           invalidCheck(invalidAnswers, done)
         })
 
         it('Should not accept a string for a multi question', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            skel.questions[1].answerOptions[0],
-            'invalid answer'
+            skel.questions[0].answerOptions[0].answer,
+            skel.questions[1].answerOptions[0].answer,
+            'invalidanswer'
           ]
           invalidCheck(invalidAnswers, done)
         })
 
         it('Should not accept more answers than are required for a multi question', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            skel.questions[1].answerOptions[0],
-            [skel.questions[2].answerOptions[0], 'invalid answer', 'invalid answer', 'invalid answer']
+            skel.questions[0].answerOptions[0].answer,
+            skel.questions[1].answerOptions[0].answer,
+            [skel.questions[2].answerOptions[0].answer, 'invalidanswer', 'invalidanswer', 'invalidanswer']
           ]
           invalidCheck(invalidAnswers, done)
         })
@@ -209,6 +220,7 @@ function runTests (feathersClient) {
             assert.ok(userAnswers.answers.every(answer => answer === null))
             done()
           })
+          .catch(done)
         })
       })
     })
@@ -217,36 +229,36 @@ function runTests (feathersClient) {
       describe('Invalid answers ', () => {
         it('Should not accept answers that are not valid', (done) => {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            'invalid answer',
-              [skel.questions[2].answerOptions[0], skel.questions[2].answerOptions[1]]
+            skel.questions[0].answerOptions[0].answer,
+            'invalidanswer',
+              [skel.questions[2].answerOptions[0].answer, skel.questions[2].answerOptions[1].answer]
           ]
           invalidPatch(invalidAnswers, done)
         })
 
         it('Should not accept invalid answers in multi question array', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            skel.questions[1].answerOptions[0],
-              [skel.questions[2].answerOptions[0], 'invalid answer', 'invalid answer']
+            skel.questions[0].answerOptions[0].answer,
+            skel.questions[1].answerOptions[0].answer,
+              [skel.questions[2].answerOptions[0].answer, 'invalidanswer', 'invalidanswer']
           ]
           invalidPatch(invalidAnswers, done)
         })
 
         it('Should not accept a string for a multi question', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            skel.questions[1].answerOptions[0],
-            'invalid answer'
+            skel.questions[0].answerOptions[0].answer,
+            skel.questions[1].answerOptions[0].answer,
+            'invalidanswer'
           ]
           invalidPatch(invalidAnswers, done)
         })
 
         it('Should not accept more answers than are required for a multi question', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0],
-            skel.questions[1].answerOptions[0],
-              [skel.questions[2].answerOptions[0], 'invalid answer', 'invalid answer', 'invalid answer']
+            skel.questions[0].answerOptions[0].answer,
+            skel.questions[1].answerOptions[0].answer,
+              [skel.questions[2].answerOptions[0].answer, 'invalidanswer', 'invalidanswer', 'invalidanswer']
           ]
           invalidPatch(invalidAnswers, done)
         })
@@ -263,6 +275,7 @@ function runTests (feathersClient) {
               assert.ok(userAnswers.answers.every(answer => answer === null))
               done()
             })
+            .catch(done)
         })
       })
 
