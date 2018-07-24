@@ -8,6 +8,7 @@ module.exports = function (app) {
   const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const referralInfo = new Schema({
     referralCodeId: { type: ObjectId, required: true },
+    // User email used with code on account creation
     email: { type: String }
   }, {
     timestamps: true
