@@ -30,7 +30,7 @@ const skel = {
         { answer: 'I’m only interested in using Equibit Portfolio to invest in companies' },
         {
           answer: 'I’m only interested in using Equibit Portfolio to raise money for companies <strong>[Goto Q8]</strong>',
-          skipTo: 8
+          skipTo: 3
         }
       ]
     },
@@ -153,7 +153,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it("Can't set the status of completed when not all questions are completed", (done) => {
+    it("Can't set the status to completed when not all questions are completed", (done) => {
       userAnswersService.create({
         userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
@@ -166,12 +166,64 @@ function runTests (feathersClient) {
       .then(() => done('Should not be able to change the status of completed'))
       .catch(err => {
         try {
-          assert.equal(err.message, 'Not all questions are answered!', err.message)
+          assert.equal(err.message, 'Completed answer array is invalid!', err.message)
           done()
         } catch (err) {
           done(err)
         }
       })
+    })
+
+    it('Can set the status to completed when there are null answers in between skipTo indexes', (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[3].answer,
+          null,
+          [skel.questions[2].answerOptions[1].answer]
+
+        ]
+      })
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
+    })
+
+    it('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[0].answer,
+          null,
+          null
+        ]
+      })
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
+    })
+
+    it('Can set the status to completed when the final answer array is valid', (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[1].answer,
+          skel.questions[1].answerOptions[1].answer,
+          [skel.questions[2].answerOptions[1].answer]
+        ]
+      })
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
     })
   })
 }
