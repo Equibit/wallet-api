@@ -16,7 +16,7 @@ module.exports = function (app) {
       all: [],
       find: [context => {
         return Promise.all(context.result.data.map(questionnaire =>
-          app.service('questions').find({query: {questionnaireId: questionnaire._id.toString()}})
+          app.service('questions').find({query: {questionnaireId: questionnaire._id.toString(), $sort: { sortIndex: 1 }}})
         ))
           .then(result => {
             context.result.data = context.result.data.map((questionnaire, i) => {
@@ -27,7 +27,7 @@ module.exports = function (app) {
           })
       }],
       get: [context => {
-        return app.service('questions').find({query: {questionnaireId: context.id.toString()}})
+        return app.service('questions').find({query: {questionnaireId: context.id.toString(), $sort: { sortIndex: 1 }}})
           .then(result => {
             context.result.questions = result.data
             return Promise.resolve(context)

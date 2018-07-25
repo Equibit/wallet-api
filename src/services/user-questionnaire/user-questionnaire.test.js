@@ -51,7 +51,7 @@ const skel = {
     {
       question: 'What types of companies are you most interested investing in?',
       questionType: 'MULTI',
-      sortIndex: '3',
+      sortIndex: 3,
       answerOptions: [
         {
           answer: 'Blockchain',
@@ -135,9 +135,9 @@ function runTests (feathersClient) {
       userAnswersService.create({
         userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
-          skel.questions[0].answerOptions[0].answer,
-          skel.questions[1].answerOptions[0].answer,
-          [skel.questions[2].answerOptions[0].answer]
+          skel.questions[0].answerOptions[1].answer,
+          skel.questions[1].answerOptions[1].answer,
+          [skel.questions[2].answerOptions[1].answer]
         ]
       })
         .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
@@ -157,7 +157,7 @@ function runTests (feathersClient) {
       userAnswersService.create({
         userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
-          skel.questions[0].answerOptions[0].answer,
+          skel.questions[0].answerOptions[1].answer,
           null,
           null
         ]
