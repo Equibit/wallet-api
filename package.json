@@ -29,7 +29,7 @@
     "qa": "npm run release:qa:patch",
     "release:qa:patch": "npm version patch && make release-qa",
     "add-referral-code": "node src/add-referral-code.js",
-    "cypress": "TESTING=true NODE_ENV=testing npm start"
+    "e2e": "TESTING=true NODE_ENV=testing npm start"
   },
   "standard": {
     "env": [
