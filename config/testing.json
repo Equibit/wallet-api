@@ -15,6 +15,17 @@
       "password": "V5yfZLWJAcQmM0EgUOK8oSCDvqjQ9e8XU6jVUBTXsI8=",
       "methodPrefix": ""
     },
+    "seeder": {
+      "enabled": true,
+      "delete": true,
+      "params": {
+        "internal": true
+      },
+      "services": [{
+        "path": "users",
+        "data": "services/users/users.seed.json"
+      }]
+    },
     "addressMapEncryptionKey": "10789b383c9b6c853f605e303f2a80ef",
     "bitcoinAverage1": {
       "key": "YmU3NzJhYmJmMmI2NDZiMzhlN2EzZDA1MzBhZGQ4NDM",

@@ -54,7 +54,7 @@
     "sha": "SHA256"
   },
   "seeder": {
-    "enabled": true,
+    "enabled": false,
     "delete": true,
     "params": {
       "internal": true
