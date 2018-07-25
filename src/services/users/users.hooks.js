@@ -59,22 +59,27 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [
-        // the only things the user is allowed to choose for their
-        // account (on creation)
-        keep('email', 'autoLogoutTime', 'referral'),
-        lowerCase('email'),
-        // Sets `hook.params.existingUser` to the existing user.
-        // Also sets hook.result to only contain the passed-in email.
-        isExistingUser(),
         iff(
-          hook => !hook.params.existingUser,
-          createTemporaryPassword({
-            passwordField: 'tempPassword',
-            plainPasswordField: 'tempPasswordPlain',
-            timeStampField: 'tempPasswordCreatedAt'
-          }),
-          generateSalt({ randomBytes }),
-          hashPassword({ pbkdf2, passwordField: 'tempPassword' })
+          // for seeding purposes
+          hook => hook.params.internal
+        ).else(
+          // the only things the user is allowed to choose for their
+          // account (on creation)
+          keep('email', 'autoLogoutTime', 'referral'),
+          lowerCase('email'),
+          // Sets `hook.params.existingUser` to the existing user.
+          // Also sets hook.result to only contain the passed-in email.
+          isExistingUser(),
+          iff(
+            hook => !hook.params.existingUser,
+            createTemporaryPassword({
+              passwordField: 'tempPassword',
+              plainPasswordField: 'tempPasswordPlain',
+              timeStampField: 'tempPasswordCreatedAt'
+            }),
+            generateSalt({ randomBytes }),
+            hashPassword({ pbkdf2, passwordField: 'tempPassword' })
+          )
         )
       ],
       update: [mapUpdateToPatch()],
@@ -299,7 +304,7 @@ module.exports = function (app) {
       create: [
         // Only send emails if we're not using a test account.
         iff(
-          hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
+          hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST' && hook.app.get('env') !== 'testing',
           iff(
             hook => hook.params.existingUser,
             sendDuplicateSignupEmail({
