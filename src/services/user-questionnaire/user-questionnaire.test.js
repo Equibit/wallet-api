@@ -22,10 +22,16 @@ const skel = {
       questionType: 'SINGLE',
       sortIndex: 1,
       answerOptions: [
-        'I just want the free EQB for completing this questionnaire <strong>[end]</strong>',
-        'I’m interested in both investing and raising money for companies on the blockchain',
-        'I’m only interested in using Equibit Portfolio to invest in companies',
-        'I’m only interested in using Equibit Portfolio to raise money for companies <strong>[Goto Q8]</strong>'
+        {
+          answer: 'I just want the free EQB for completing this questionnaire <strong>[end]</strong>',
+          finalQuestion: true
+        },
+        { answer: 'I’m interested in both investing and raising money for companies on the blockchain' },
+        { answer: 'I’m only interested in using Equibit Portfolio to invest in companies' },
+        {
+          answer: 'I’m only interested in using Equibit Portfolio to raise money for companies <strong>[Goto Q8]</strong>',
+          skipTo: 3
+        }
       ]
     },
     {
@@ -33,11 +39,13 @@ const skel = {
       questionType: 'SINGLE',
       sortIndex: 2,
       answerOptions: [
-        'Unlikely <strong>[end]</strong>',
-        'Somewhat likely',
-        'Very likely',
-        'Don’t know',
-        'CUSTOM'
+        {
+          answer: 'Unlikely <strong>[end]</strong>',
+          finalQuestion: true
+        },
+        { answer: 'Somewhat likely' },
+        { answer: 'Very likely' },
+        { answer: 'Don’t know' }
       ]
     },
     {
@@ -45,13 +53,16 @@ const skel = {
       questionType: 'MULTI',
       sortIndex: 3,
       answerOptions: [
-        'Blockchain',
-        'Fintech',
-        'Cannabis',
-        'Any Start-up',
-        'Traditional/Blue chip',
-        'Any',
-        'Don’t know'
+        {
+          answer: 'Blockchain',
+          finalQuestion: true
+        },
+        { answer: 'Fintech' },
+        { answer: 'Cannabis' },
+        { answer: 'Any Start-up' },
+        { answer: 'Traditional/Blue chip' },
+        { answer: 'Any' },
+        { answer: "Don't know" }
       ]
     }]
 }
@@ -124,9 +135,9 @@ function runTests (feathersClient) {
       userAnswersService.create({
         userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
-          skel.questions[0].answerOptions[0],
-          skel.questions[1].answerOptions[0],
-          [skel.questions[2].answerOptions[0]]
+          skel.questions[0].answerOptions[1].answer,
+          skel.questions[1].answerOptions[1].answer,
+          [skel.questions[2].answerOptions[1].answer]
         ]
       })
         .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
@@ -142,11 +153,11 @@ function runTests (feathersClient) {
         })
     })
 
-    it("Can't set the status of completed when not all questions are completed", (done) => {
+    it("Can't set the status to completed when not all questions are completed", (done) => {
       userAnswersService.create({
         userQuestionnaireId: this.userQuestionnaire._id.toString(),
         answers: [
-          skel.questions[0].answerOptions[0],
+          skel.questions[0].answerOptions[1].answer,
           null,
           null
         ]
@@ -155,12 +166,64 @@ function runTests (feathersClient) {
       .then(() => done('Should not be able to change the status of completed'))
       .catch(err => {
         try {
-          assert.equal(err.message, 'Not all questions are answered!', err.message)
+          assert.equal(err.message, 'Completed answer array is invalid!', err.message)
           done()
         } catch (err) {
           done(err)
         }
       })
+    })
+
+    it('Can set the status to completed when there are null answers in between skipTo indexes', (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[3].answer,
+          null,
+          [skel.questions[2].answerOptions[1].answer]
+
+        ]
+      })
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
+    })
+
+    it('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[0].answer,
+          null,
+          null
+        ]
+      })
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
+    })
+
+    it('Can set the status to completed when the final answer array is valid', (done) => {
+      userAnswersService.create({
+        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+        answers: [
+          skel.questions[0].answerOptions[1].answer,
+          skel.questions[1].answerOptions[1].answer,
+          [skel.questions[2].answerOptions[1].answer]
+        ]
+      })
+      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
     })
   })
 }

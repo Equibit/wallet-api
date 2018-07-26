@@ -1,8 +1,9 @@
 
 const errors = require('feathers-errors')
-const { preventChanges } = require('feathers-hooks-common')
+const { preventChanges, iff } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
+const completeValidation = require('./hooks/hooks.complete-validate')
 
 module.exports = function (app) {
   return {
@@ -26,7 +27,7 @@ module.exports = function (app) {
       patch: [
         preventChanges(true, 'questionnaireId', 'rewarded'),
         context => {
-          return app.service('user-questionnaire').get(context.id)
+          return context.service.get(context.id)
           .then(questionare => {
             if (questionare.status === 'COMPLETED' && context.data.status !== 'COMPLETED') {
               return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionnaire that is already completed!"))
@@ -34,20 +35,10 @@ module.exports = function (app) {
             return Promise.resolve(context)
           })
         },
-        context => {
-          if (context.data.status === 'COMPLETED') {
-            // Validate that you completed all the questions
-            return app.service('user-answers').find({query: { userQuestionnaireId: context.id }})
-              .then(result => {
-                const answers = result.data[0].answers
-                if (answers.some(ans => ans === null)) {
-                  return Promise.reject(new errors.BadRequest('Not all questions are answered!'))
-                }
-                return Promise.resolve(context)
-              })
-          }
-          return Promise.resolve(context)
-        }
+        iff(
+          context => context.data.status === 'COMPLETED',
+          completeValidation(app)
+        )
       ],
       remove: []
     },
