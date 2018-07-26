@@ -7,12 +7,13 @@ function validateCompleteAnswers (questions, userAnswers) {
   for (let i = 0; i < userAnswers.length; i++) {
     const answerOptions = questions[i].answerOptions
     let userAnswer = userAnswers[i]
-    const option = answerOptions.filter(ans => userAnswer === ans.answer && (ans.finalQuestion || ans.skipTo))
+    const option = answerOptions.filter(ans => userAnswer === ans.answer)
 
     if (option.length === 1) {
       if (option[0].finalQuestion) {
         return userAnswers.slice(i + 1).every(ans => ans === null)
-      } else {
+      }
+      if (option[0].skipTo) {
         if (userAnswers.slice(i + 1, option[0].skipTo - 1).every(ans => ans === null)) {
           i = option[0].skipTo - 1
           userAnswer = userAnswers[i]
