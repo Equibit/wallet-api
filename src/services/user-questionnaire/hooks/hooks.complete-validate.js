@@ -7,15 +7,15 @@ function validateCompleteAnswers (questions, userAnswers) {
   for (let i = 0; i < userAnswers.length; i++) {
     const answerOptions = questions[i].answerOptions
     let userAnswer = userAnswers[i]
-    const option = answerOptions.filter(ans => userAnswer === ans.answer)
+    const option = answerOptions.find(ans => userAnswer === ans.answer)
 
-    if (option.length === 1) {
-      if (option[0].finalQuestion) {
+    if (option) {
+      if (option.finalQuestion) {
         return userAnswers.slice(i + 1).every(ans => ans === null)
       }
-      if (option[0].skipTo) {
+      if (option.skipTo) {
         if (userAnswers.slice(i + 1, option[0].skipTo - 1).every(ans => ans === null)) {
-          i = option[0].skipTo - 1
+          i = option.skipTo - 1
           userAnswer = userAnswers[i]
         } else {
           return false
@@ -34,11 +34,11 @@ module.exports = function (app) {
   return function (context) {
     return context.service.get(context.id)
       .then(userQuestionnaire => Promise.all([
-        app.service('user-answers').find({query: { userQuestionnaireId: context.id }}),
+        Promise.resolve(userQuestionnaire.answers),
         app.service('questionnaires').get(userQuestionnaire.questionnaireId)
       ])
       ).then(res => {
-        const userAnswers = res[0].data[0].answers
+        const userAnswers = res[0]
         const questions = res[1].questions
         if (!validateCompleteAnswers(questions, userAnswers)) {
           return Promise.reject(new errors.BadRequest('Completed answer array is invalid!'))

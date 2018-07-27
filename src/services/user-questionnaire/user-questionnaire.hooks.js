@@ -4,6 +4,7 @@ const { preventChanges, iff } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const completeValidation = require('./hooks/hooks.complete-validate')
+const validateAnswers = require('./hooks/hooks.validate-answers')
 
 module.exports = function (app) {
   return {
@@ -15,7 +16,7 @@ module.exports = function (app) {
         // Check if questionnaire exists
         context => {
           return app.service('questionnaires').get(context.data.questionnaireId)
-          .then(questionnaire => Promise.resolve(context))
+          .then(() => context)
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
         },
         context => {
@@ -26,6 +27,7 @@ module.exports = function (app) {
       update: [mapUpdateToPatch()],
       patch: [
         preventChanges(true, 'questionnaireId', 'rewarded'),
+        validateAnswers(app),
         context => {
           return context.service.get(context.id)
           .then(questionare => {

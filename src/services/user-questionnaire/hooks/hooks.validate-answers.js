@@ -21,13 +21,7 @@ function validateAnswer (index, answer, answers, possibleAnswers) {
 
 module.exports = function (app) {
   return function (context) {
-    let userQuestionnaire = null
-    if (context.method === 'patch') {
-      userQuestionnaire = app.service('user-answers').get(context.id.toString())
-      .then(answers => app.service('user-questionnaire').get(answers.userQuestionnaireId))
-    } else {
-      userQuestionnaire = app.service('user-questionnaire').get(context.data.userQuestionnaireId)
-    }
+    const userQuestionnaire = app.service('user-questionnaire').get(context.data.userQuestionnaireId)
 
     return userQuestionnaire
     .then(data => app.service('questions').find({ query: { questionaireId: data.questionareId, $sort: { sortIndex: 1 } } }))
