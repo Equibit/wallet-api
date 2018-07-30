@@ -375,21 +375,6 @@ function runTests (feathersClient) {
           })
           .catch(done)
       })
-
-      describe('userQuestionnaireId, ', () => {
-        it('Should not modify userQuestionnaireId field ', (done) => {
-          serviceOnClient.patch(this.userQuestionnaire._id, {userQuestionnaireId: 'abc'})
-            .then(() => done('Should not patch userQuestionnaireId'))
-            .catch(err => {
-              try {
-                assert.equal(err.message, 'Field userQuestionnaireId may not be patched. (preventChanges)', err.message)
-                done()
-              } catch (err) {
-                done(err)
-              }
-            })
-        })
-      })
     })
   })
 }
