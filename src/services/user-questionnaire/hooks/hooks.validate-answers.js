@@ -21,16 +21,9 @@ function validateAnswer (index, answer, answers, possibleAnswers) {
 
 module.exports = function (app) {
   return function (context) {
-    let userQuestionnaire = null
-    if (context.method === 'patch') {
-      userQuestionnaire = app.service('user-answers').get(context.id.toString())
-      .then(answers => app.service('user-questionnaire').get(answers.userQuestionnaireId))
-    } else {
-      userQuestionnaire = app.service('user-questionnaire').get(context.data.userQuestionnaireId)
-    }
-
+    const userQuestionnaire = app.service('user-questionnaire').get(context.id)
     return userQuestionnaire
-    .then(data => app.service('questions').find({ query: { questionaireId: data.questionareId, $sort: { sortIndex: 1 } } }))
+    .then(data => app.service('questions').find({ query: { questionnaireId: data.questionnaireId, $sort: { sortIndex: 1 } } }))
     .then(result => {
       const answers = context.data.answers
       // Validate the length of the array (size === questionnaire numbers)
@@ -46,9 +39,9 @@ module.exports = function (app) {
             return validateAnswer(index, answer, answers, solution)
           } else {
             return Array.isArray(answer) &&
-                answer.length > 0 &&
-                answer.length <= solution.answerOptions.length &&
-                answer.every((multiAnswer) => validateAnswer(index, multiAnswer, answers, solution))
+            answer.length > 0 &&
+            answer.length <= solution.answerOptions.length &&
+            answer.every((multiAnswer) => validateAnswer(index, multiAnswer, answers, solution))
           }
         }
         return true

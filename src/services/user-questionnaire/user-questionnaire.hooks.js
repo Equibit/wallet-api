@@ -4,6 +4,8 @@ const { preventChanges, iff } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const completeValidation = require('./hooks/hooks.complete-validate')
+const validateAnswers = require('./hooks/hooks.validate-answers')
+const initialAnswers = require('./hooks/hooks.initial-answers')
 
 module.exports = function (app) {
   return {
@@ -15,21 +17,26 @@ module.exports = function (app) {
         // Check if questionnaire exists
         context => {
           return app.service('questionnaires').get(context.data.questionnaireId)
-          .then(questionnaire => Promise.resolve(context))
+          .then(() => context)
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
         },
         context => {
           context.data.status = 'STARTED'
           return context
-        }
+        },
+        initialAnswers(app)
       ],
       update: [mapUpdateToPatch()],
       patch: [
         preventChanges(true, 'questionnaireId', 'rewarded'),
+        iff(
+          context => context.data.answers,
+          validateAnswers(app)
+        ),
         context => {
           return context.service.get(context.id)
-          .then(questionare => {
-            if (questionare.status === 'COMPLETED' && context.data.status !== 'COMPLETED') {
+          .then(questionnaire => {
+            if (questionnaire.status === 'COMPLETED' && context.data.status !== 'COMPLETED') {
               return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionnaire that is already completed!"))
             }
             return Promise.resolve(context)
