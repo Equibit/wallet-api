@@ -7,10 +7,10 @@ const rewardAddress = rewardPair.getAddress()
 const rewardKey = rewardPair.toWIF()
 console.log(
 `set the following environment variables to enable the server to make automated payments
-{
-  "icoPayoutAddress": "${icoAddress}",
-  "icoPayoutKey": "${icoKey}",
-  "rewardAddress": "${rewardAddress}",
-  "rewardKey": "${rewardKey}",
-}`
+
+  ICO_PAYOUT_ADDRESS: "${icoAddress}"
+  ICO_PAYOUT_KEY: "${icoKey}"
+  REWARD_ADDRESS: "${rewardAddress}"
+  REWARD_KEY: "${rewardKey}"
+`
 )
