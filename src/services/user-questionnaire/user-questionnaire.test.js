@@ -115,7 +115,7 @@ function runTests (feathersClient) {
       .then(() => done())
     })
 
-    it.only("Can't change the questionnaireId", (done) => {
+    it("Can't change the questionnaireId", (done) => {
       this.userQuestionnaire.questionnaireId = 'ABC123'
       serviceOnClient.patch(this.userQuestionnaire._id, this.userQuestionnaire)
         .then(() => done('Should not be able to change questionnaireId'))
@@ -129,7 +129,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it.only("Can't change the status field from completed to started", (done) => {
+    it("Can't change the status field from completed to started", (done) => {
       serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[1].answer,
@@ -150,7 +150,7 @@ function runTests (feathersClient) {
         })
     })
 
-    it.only("Can't set the status to completed when not all questions are completed", (done) => {
+    it("Can't set the status to completed when not all questions are completed", (done) => {
       serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[1].answer,
@@ -170,7 +170,7 @@ function runTests (feathersClient) {
       })
     })
 
-    it.only('Can set the status to completed when there are null answers in between skipTo indexes', (done) => {
+    it('Can set the status to completed when there are null answers in between skipTo indexes', (done) => {
       serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[3].answer,
@@ -187,7 +187,7 @@ function runTests (feathersClient) {
       .catch(done)
     })
 
-    it.only('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
+    it('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
       serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[0].answer,
@@ -208,7 +208,7 @@ function runTests (feathersClient) {
         answers: [
           skel.questions[0].answerOptions[1].answer,
           skel.questions[1].answerOptions[1].answer,
-          skel.questions[2].answerOptions[1].answer
+          [skel.questions[2].answerOptions[1].answer]
         ]
       })
       .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
