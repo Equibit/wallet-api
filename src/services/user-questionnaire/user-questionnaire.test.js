@@ -71,7 +71,6 @@ function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const serviceOnClient = feathersClient.service('user-questionnaire')
   const questionnaireService = app.service('questionnaires')
-  const userAnswersService = app.service('removeme')
   const questionsService = app.service('questions')
 
   describe(`User Questionnaire Tests - ${transport}`, () => {
@@ -107,7 +106,6 @@ function runTests (feathersClient) {
     afterEach((done) => {
       feathersClient.logout()
         .then(() => app.service('user-questionnaire').remove(null, { query: { userId: this.user._id.toString() } }))
-        // .then(() => userAnswersService.remove(null, { query: { userQuestionnaireId: this.userQuestionnaire._id.toString() } }))
         .then(() => userUtils.removeAll(app))
         .then(() => done())
     })
@@ -189,9 +187,8 @@ function runTests (feathersClient) {
       .catch(done)
     })
 
-    it('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
-      userAnswersService.create({
-        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+    it.only('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
+      serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[0].answer,
           null,
@@ -207,12 +204,11 @@ function runTests (feathersClient) {
     })
 
     it('Can set the status to completed when the final answer array is valid', (done) => {
-      userAnswersService.create({
-        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+      serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[1].answer,
           skel.questions[1].answerOptions[1].answer,
-          [skel.questions[2].answerOptions[1].answer]
+          skel.questions[2].answerOptions[1].answer
         ]
       })
       .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))

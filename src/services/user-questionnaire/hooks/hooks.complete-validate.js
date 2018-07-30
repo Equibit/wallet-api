@@ -4,7 +4,6 @@ const errors = require('feathers-errors')
 // Every question after finalQuestion must be null.
 // Every answer between the answer with skipTo and the skipTo index must be null.
 function validateCompleteAnswers (questions, userAnswers) {
-  console.log('userAnswers', userAnswers)
   for (let i = 0; i < userAnswers.length; i++) {
     const answerOptions = questions[i].answerOptions
     let userAnswer = userAnswers[i]
