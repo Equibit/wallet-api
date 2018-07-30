@@ -24,6 +24,7 @@ module.exports = function (app) {
           return app.service('questionnaires').get(context.data.questionnaireId)
           .then(() => context)
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
+<<<<<<< HEAD
         },
         context => {
           context.data.status = 'STARTED'
@@ -39,6 +40,13 @@ module.exports = function (app) {
           context => context.data.answers,
           validateAnswers(app)
         ),
+=======
+        }
+      ],
+      update: [mapUpdateToPatch()],
+      patch: [
+        preventChanges(true, 'questionnaireId'),
+>>>>>>> Update user questionnaire model.
         context => {
           return context.service.get(context.id)
           .then(questionnaire => {
