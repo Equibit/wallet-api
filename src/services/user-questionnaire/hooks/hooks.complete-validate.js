@@ -15,7 +15,7 @@ function validateCompleteAnswers (questions, userAnswers) {
         return userAnswers.slice(i + 1).every(ans => ans === null)
       }
       if (option.skipTo) {
-        if (userAnswers.slice(i + 1, option[0].skipTo - 1).every(ans => ans === null)) {
+        if (userAnswers.slice(i + 1, option.skipTo - 1).every(ans => ans === null)) {
           i = option.skipTo - 1
           userAnswer = userAnswers[i]
         } else {

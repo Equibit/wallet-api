@@ -117,7 +117,7 @@ function runTests (feathersClient) {
       .then(() => done())
     })
 
-    it("Can't change the questionnaireId", (done) => {
+    it.only("Can't change the questionnaireId", (done) => {
       this.userQuestionnaire.questionnaireId = 'ABC123'
       serviceOnClient.patch(this.userQuestionnaire._id, this.userQuestionnaire)
         .then(() => done('Should not be able to change questionnaireId'))
@@ -138,9 +138,8 @@ function runTests (feathersClient) {
           skel.questions[1].answerOptions[1].answer,
           [skel.questions[2].answerOptions[1].answer]
         ]
-      }).then(r => { console.log('a'); return r })
+      })
         .then(() => serviceOnClient.patch(this.userQuestionnaire._id, { status: 'COMPLETED' }))
-        .then(r => { console.log('b'); return r })
         .then(() => serviceOnClient.patch(this.userQuestionnaire._id, { status: 'STARTED' }))
         .then(() => done('Should not be able to change the status of completed'))
         .catch(err => {
@@ -153,9 +152,8 @@ function runTests (feathersClient) {
         })
     })
 
-    it("Can't set the status to completed when not all questions are completed", (done) => {
-      userAnswersService.create({
-        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+    it.only("Can't set the status to completed when not all questions are completed", (done) => {
+      serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[1].answer,
           null,
@@ -174,9 +172,8 @@ function runTests (feathersClient) {
       })
     })
 
-    it('Can set the status to completed when there are null answers in between skipTo indexes', (done) => {
-      userAnswersService.create({
-        userQuestionnaireId: this.userQuestionnaire._id.toString(),
+    it.only('Can set the status to completed when there are null answers in between skipTo indexes', (done) => {
+      serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
           skel.questions[0].answerOptions[3].answer,
           null,
