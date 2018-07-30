@@ -21,8 +21,7 @@ function validateAnswer (index, answer, answers, possibleAnswers) {
 
 module.exports = function (app) {
   return function (context) {
-    const userQuestionnaire = app.service('user-questionnaire').get(context.data.userQuestionnaireId)
-
+    const userQuestionnaire = app.service('user-questionnaire').get(context.id)
     return userQuestionnaire
     .then(data => app.service('questions').find({ query: { questionaireId: data.questionareId, $sort: { sortIndex: 1 } } }))
     .then(result => {
@@ -40,9 +39,9 @@ module.exports = function (app) {
             return validateAnswer(index, answer, answers, solution)
           } else {
             return Array.isArray(answer) &&
-                answer.length > 0 &&
-                answer.length <= solution.answerOptions.length &&
-                answer.every((multiAnswer) => validateAnswer(index, multiAnswer, answers, solution))
+            answer.length > 0 &&
+            answer.length <= solution.answerOptions.length &&
+            answer.every((multiAnswer) => validateAnswer(index, multiAnswer, answers, solution))
           }
         }
         return true

@@ -27,7 +27,10 @@ module.exports = function (app) {
       update: [mapUpdateToPatch()],
       patch: [
         preventChanges(true, 'questionnaireId', 'rewarded'),
-        validateAnswers(app),
+        iff(
+          context => context.data.answers,
+          validateAnswers(app)
+        ),
         context => {
           return context.service.get(context.id)
           .then(questionare => {
