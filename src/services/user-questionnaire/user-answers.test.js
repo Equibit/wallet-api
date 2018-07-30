@@ -70,7 +70,7 @@ const skel = {
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const userQuestionnaireService = app.service('user-questionnaire')
-  const serviceOnClient = app.service('user-questionnaire')
+  const serviceOnClient = feathersClient.service('user-questionnaire')
   const questionnaireService = app.service('questionnaires')
   const questionsService = app.service('questions')
 
@@ -119,7 +119,7 @@ function runTests (feathersClient) {
         .then(questionnaire => {
           this.questionnaire = questionnaire
           return Promise.all(skel.questions.map(q =>
-            questionsService.create(Object.assign({}, q, { questionnaireId: questionnaire._id.toString() }))))
+            questionsService.create(Object.assign({}, q, { questionnaireId: questionnaire._id }))))
         })
         .then(() => done())
     })
@@ -131,12 +131,11 @@ function runTests (feathersClient) {
       })
       .then(() => {
         const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
-          questionnaireId: this.questionnaire._id.toString(),
-          userId: this.user._id.toString()
+          questionnaireId: this.questionnaire._id.toString()
         })
-        return userQuestionnaireService.create(userQuestionnaire)
+        return serviceOnClient.create(userQuestionnaire)
       })
-      .then((userQuestionnaire) => {
+      .then(userQuestionnaire => {
         this.userQuestionnaire = userQuestionnaire
         done()
       })
