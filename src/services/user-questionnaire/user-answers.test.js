@@ -223,7 +223,7 @@ function runTests (feathersClient) {
       })
 
       describe('Valid answers', () => {
-        it.only('Should accept answers that are null', (done) => {
+        it('Should accept answers that are null', (done) => {
           patch([null, null, null])
           .then(userAnswers => {
             assert.equal(userAnswers.answers.length, 3)
@@ -233,7 +233,7 @@ function runTests (feathersClient) {
           .catch(done)
         })
 
-        it.only('Should accept answers that are null in between skipTo indexes', (done) => {
+        it('Should accept answers that are null in between skipTo indexes', (done) => {
           const validAnswers = [
             skel.questions[0].answerOptions[3].answer,
             null,
@@ -251,7 +251,7 @@ function runTests (feathersClient) {
             .catch(done)
         })
 
-        it.only('Should accept answers that are null after finalQuestion', (done) => {
+        it('Should accept answers that are null after finalQuestion', (done) => {
           const validAnswers = [
             skel.questions[0].answerOptions[0].answer,
             null,

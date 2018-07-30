@@ -218,5 +218,44 @@ function runTests (feathersClient) {
       })
       .catch(done)
     })
+
+    it('Can set the status to completed and the final answer array simultaneously', (done) => {
+      serviceOnClient.patch(this.userQuestionnaire._id, {
+        answers: [
+          skel.questions[0].answerOptions[1].answer,
+          skel.questions[1].answerOptions[1].answer,
+          [skel.questions[2].answerOptions[1].answer]
+        ],
+        status: 'COMPLETED'
+      })
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
+    })
+
+    it('Cannot set the status to completed while submitting an invalid answer', (done) => {
+      serviceOnClient.patch(this.userQuestionnaire._id, {
+        answers: [
+          skel.questions[0].answerOptions[1].answer,
+          skel.questions[1].answerOptions[1].answer,
+          [skel.questions[2].answerOptions[1].answer]
+        ]
+      }).then(() =>
+      serviceOnClient.patch(this.userQuestionnaire._id, {
+        answers: [null, null, null],
+        status: 'COMPLETED'
+      }))
+      .then(() => done('should not be able to sneak in an invalid answer'))
+      .catch(err => {
+        try {
+          assert.equal(err.message, 'Completed answer array is invalid!', err.message)
+          done()
+        } catch (err) {
+          done(err)
+        }
+      })
+    })
   })
 }
