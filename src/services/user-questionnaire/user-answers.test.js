@@ -70,24 +70,22 @@ const skel = {
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const userQuestionnaireService = app.service('user-questionnaire')
-  const serviceOnClient = feathersClient.service('user-answers')
+  const serviceOnClient = app.service('user-questionnaire')
   const questionnaireService = app.service('questionnaires')
   const questionsService = app.service('questions')
 
-  const validCreate = () => {
-    return serviceOnClient.create({
+  const patch = (answers) => {
+    return serviceOnClient.patch(this.userQuestionnaire._id, {
       userQuestionnaireId: this.userQuestionnaire._id.toString(),
-      answers: [
-        skel.questions[0].answerOptions[1].answer,
-        skel.questions[1].answerOptions[1].answer,
-      [skel.questions[2].answerOptions[1].answer]
-      ]
+      answers
+      //   skel.questions[0].answerOptions[1].answer,
+      //   skel.questions[1].answerOptions[1].answer,
+      // [skel.questions[2].answerOptions[1].answer]
     })
   }
 
   const invalidCheck = (invalidAnswers, done) => {
-    return serviceOnClient.create({
-      userQuestionnaireId: this.userQuestionnaire._id.toString(),
+    return serviceOnClient.patch(this.userQuestionnaire._id, {
       answers: invalidAnswers
     })
       .then(() => done('Should not accept invalid answers'))
@@ -102,10 +100,7 @@ function runTests (feathersClient) {
   }
 
   const invalidPatch = (invalidAnswers, done) => {
-    return validCreate()
-      .then(userAnswers => {
-        return serviceOnClient.patch(userAnswers._id.toString(), {answers: invalidAnswers})
-      })
+    return serviceOnClient.patch(this.userQuestionnaire._id, {answers: invalidAnswers})
       .then(() => done('Should not accept invalid answers'))
       .catch(err => {
         try {
@@ -137,7 +132,8 @@ function runTests (feathersClient) {
       .then(() => {
         const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
           questionnaireId: this.questionnaire._id.toString(),
-          userId: this.user._id.toString()
+          userId: this.user._id.toString(),
+          answers: [null, null, null]
         })
         return userQuestionnaireService.create(userQuestionnaire)
       })
@@ -149,8 +145,7 @@ function runTests (feathersClient) {
 
     afterEach((done) => {
       feathersClient.logout()
-        .then(() => userQuestionnaireService.remove(null, { query: { userId: this.user._id.toString() } }))
-        .then(result => app.service('user-answers').remove(null, { query: { userQuestionnaireId: result[0]._id.toString() } }))
+        .then(() => userQuestionnaireService.remove(null, { query: { userId: this.user._id } }))
         .then(() => userUtils.removeAll(app))
         .then(() => done())
         .catch(err => {
@@ -228,7 +223,7 @@ function runTests (feathersClient) {
       })
 
       describe('Valid answers', () => {
-        it.skip('Should accept answers that are null', (done) => {
+        it.only('Should accept answers that are null', (done) => {
           serviceOnClient.create({
             userQuestionnaireId: this.userQuestionnaire._id.toString(),
             answers: [null, null, null]
@@ -241,7 +236,7 @@ function runTests (feathersClient) {
           .catch(done)
         })
 
-        it.skip('Should accept answers that are null in between skipTo indexes', (done) => {
+        it.only('Should accept answers that are null in between skipTo indexes', (done) => {
           const validAnswers = [
             skel.questions[0].answerOptions[3].answer,
             null,
@@ -263,7 +258,7 @@ function runTests (feathersClient) {
             .catch(done)
         })
 
-        it.skip('Should accept answers that are null after finalQuestion', (done) => {
+        it.only('Should accept answers that are null after finalQuestion', (done) => {
           const validAnswers = [
             skel.questions[0].answerOptions[0].answer,
             null,
@@ -345,10 +340,7 @@ function runTests (feathersClient) {
 
       describe('Valid answers', () => {
         it.skip('Should accept answers that are null', (done) => {
-          validCreate()
-            .then(userAnswers => {
-              return serviceOnClient.patch(userAnswers._id, {answers: [null, null, null]})
-            })
+          patch([null, null, null])
             .then(userAnswers => {
               assert.equal(userAnswers.answers.length, 3)
               assert.ok(userAnswers.answers.every(answer => answer === null))
@@ -365,10 +357,7 @@ function runTests (feathersClient) {
           [skel.questions[2].answerOptions[1].answer]
         ]
 
-        validCreate()
-          .then(userAnswers => {
-            return serviceOnClient.patch(userAnswers._id, {answers: validAnswers})
-          })
+        patch(validAnswers)
           .then(userAnswers => {
             assert.equal(userAnswers.answers.length, 3)
             assert.equal(userAnswers.answers[0], validAnswers[0])
@@ -387,10 +376,7 @@ function runTests (feathersClient) {
           null
         ]
 
-        validCreate()
-          .then(userAnswers => {
-            return serviceOnClient.patch(userAnswers._id, {answers: validAnswers})
-          })
+        patch(validAnswers)
           .then(userAnswers => {
             assert.equal(userAnswers.answers.length, 3)
             assert.equal(userAnswers.answers[0], validAnswers[0])
@@ -403,10 +389,7 @@ function runTests (feathersClient) {
 
       describe('userQuestionnaireId, ', () => {
         it.skip('Should not modify userQuestionnaireId field ', (done) => {
-          validCreate()
-            .then(userAnswers => {
-              return serviceOnClient.patch(userAnswers._id.toString(), {userQuestionnaireId: 'abc'})
-            })
+          serviceOnClient.patch(this.userQuestionnaire._id, {userQuestionnaireId: 'abc'})
             .then(() => done('Should not patch userQuestionnaireId'))
             .catch(err => {
               try {
