@@ -21,6 +21,10 @@ module.exports = function (app) {
       ],
       create: [
         // Check if questionnaire exists
+        iff(
+          isProvider('external'),
+          discard('lock', 'rewarded', 'manualPaymentRequired')
+        ),
         context => {
           return app.service('questionnaires').get(context.data.questionnaireId)
           .then(() => context)
@@ -36,7 +40,7 @@ module.exports = function (app) {
           preventChanges(true, 'questionnaireId', 'lock', 'rewarded', 'manualPaymentRequired')
         ),
         validateAnswers(app),
-        completeValidation(app)
+        completeValidation(app)        
       ],
       remove: []
     },
