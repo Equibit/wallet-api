@@ -11,9 +11,14 @@ module.exports = function (app) {
     userId: { type: ObjectId, required: true },
     answers: [{ type: mongooseClient.SchemaTypes.Mixed }],
     status: { type: String, enum: ['STARTED', 'COMPLETED'], required: true, default: 'STARTED' },
+<<<<<<< HEAD
     rewarded: { type: Boolean, required: true, default: false },
     locked: { type: Number, default: 0, required: true },
     manualPaymentRequired: { type: Boolean, default: false }
+=======
+    rewarded: { type: Boolean, required: true, default: false }
+
+>>>>>>> fix conflicts
   }, {
     timestamps: true
   })
