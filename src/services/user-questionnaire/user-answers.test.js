@@ -167,7 +167,7 @@ function runTests (feathersClient) {
 
     describe('Create method ', () => {
       describe('Invalid answers ', () => {
-        it.skip('Should not accept answers that are not valid', (done) => {
+        it('Should not accept answers that are not valid', (done) => {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             'invalidanswer',
@@ -176,7 +176,7 @@ function runTests (feathersClient) {
           invalidCheck(invalidAnswers, done)
         })
 
-        it.skip('Should not accept invalid answers in multi question array', function (done) {
+        it('Should not accept invalid answers in multi question array', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -185,7 +185,7 @@ function runTests (feathersClient) {
           invalidCheck(invalidAnswers, done)
         })
 
-        it.skip('Should not accept a string for a multi question', function (done) {
+        it('Should not accept a string for a multi question', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -194,7 +194,7 @@ function runTests (feathersClient) {
           invalidCheck(invalidAnswers, done)
         })
 
-        it.skip('Should not accept more answers than are required for a multi question', function (done) {
+        it('Should not accept more answers than are required for a multi question', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -203,7 +203,7 @@ function runTests (feathersClient) {
           invalidCheck(invalidAnswers, done)
         })
 
-        it.skip('Should not accept answers between skipTo indexes', (done) => {
+        it('Should not accept answers between skipTo indexes', (done) => {
           const invalidAnswers = [
             skel.questions[0].answerOptions[3].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -212,7 +212,7 @@ function runTests (feathersClient) {
           invalidCheck(invalidAnswers, done)
         })
 
-        it.skip('Should not accept answers set after finalQuestion', (done) => {
+        it('Should not accept answers set after finalQuestion', (done) => {
           const invalidAnswers = [
             skel.questions[0].answerOptions[0].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -224,10 +224,7 @@ function runTests (feathersClient) {
 
       describe('Valid answers', () => {
         it.only('Should accept answers that are null', (done) => {
-          serviceOnClient.create({
-            userQuestionnaireId: this.userQuestionnaire._id.toString(),
-            answers: [null, null, null]
-          })
+          patch([null, null, null])
           .then(userAnswers => {
             assert.equal(userAnswers.answers.length, 3)
             assert.ok(userAnswers.answers.every(answer => answer === null))
@@ -242,11 +239,7 @@ function runTests (feathersClient) {
             null,
             [skel.questions[2].answerOptions[1].answer]
           ]
-
-          serviceOnClient.create({
-            userQuestionnaireId: this.userQuestionnaire._id.toString(),
-            answers: validAnswers
-          })
+          patch(validAnswers)
             .then(userAnswers => {
               assert.equal(userAnswers.answers.length, 3)
               assert.equal(userAnswers.answers[0], validAnswers[0])
@@ -264,11 +257,7 @@ function runTests (feathersClient) {
             null,
             null
           ]
-
-          serviceOnClient.create({
-            userQuestionnaireId: this.userQuestionnaire._id.toString(),
-            answers: validAnswers
-          })
+          patch(validAnswers)
           .then(userAnswers => {
             assert.equal(userAnswers.answers.length, 3)
             assert.equal(userAnswers.answers[0], validAnswers[0])
@@ -283,7 +272,7 @@ function runTests (feathersClient) {
 
     describe('Patch method ', () => {
       describe('Invalid answers ', () => {
-        it.skip('Should not accept answers that are not valid', (done) => {
+        it('Should not accept answers that are not valid', (done) => {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             'invalidanswer',
@@ -292,7 +281,7 @@ function runTests (feathersClient) {
           invalidPatch(invalidAnswers, done)
         })
 
-        it.skip('Should not accept invalid answers in multi question array', function (done) {
+        it('Should not accept invalid answers in multi question array', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -301,7 +290,7 @@ function runTests (feathersClient) {
           invalidPatch(invalidAnswers, done)
         })
 
-        it.skip('Should not accept a string for a multi question', function (done) {
+        it('Should not accept a string for a multi question', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -310,7 +299,7 @@ function runTests (feathersClient) {
           invalidPatch(invalidAnswers, done)
         })
 
-        it.skip('Should not accept more answers than are required for a multi question', function (done) {
+        it('Should not accept more answers than are required for a multi question', function (done) {
           const invalidAnswers = [
             skel.questions[0].answerOptions[1].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -319,7 +308,7 @@ function runTests (feathersClient) {
           invalidPatch(invalidAnswers, done)
         })
 
-        it.skip('Should not accept answers between skipTo indexes', (done) => {
+        it('Should not accept answers between skipTo indexes', (done) => {
           const invalidAnswers = [
             skel.questions[0].answerOptions[3].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -328,7 +317,7 @@ function runTests (feathersClient) {
           invalidPatch(invalidAnswers, done)
         })
 
-        it.skip('Should not accept answers set after finalQuestion', (done) => {
+        it('Should not accept answers set after finalQuestion', (done) => {
           const invalidAnswers = [
             skel.questions[0].answerOptions[0].answer,
             skel.questions[1].answerOptions[1].answer,
@@ -339,7 +328,7 @@ function runTests (feathersClient) {
       })
 
       describe('Valid answers', () => {
-        it.skip('Should accept answers that are null', (done) => {
+        it('Should accept answers that are null', (done) => {
           patch([null, null, null])
             .then(userAnswers => {
               assert.equal(userAnswers.answers.length, 3)
@@ -350,7 +339,7 @@ function runTests (feathersClient) {
         })
       })
 
-      it.skip('Should accept answers that are null in between skipTo indexes', (done) => {
+      it('Should accept answers that are null in between skipTo indexes', (done) => {
         const validAnswers = [
           skel.questions[0].answerOptions[3].answer,
           null,
@@ -369,7 +358,7 @@ function runTests (feathersClient) {
           .catch(done)
       })
 
-      it.skip('Should accept answers that are null after finalQuestion', (done) => {
+      it('Should accept answers that are null after finalQuestion', (done) => {
         const validAnswers = [
           skel.questions[0].answerOptions[0].answer,
           null,
@@ -388,7 +377,7 @@ function runTests (feathersClient) {
       })
 
       describe('userQuestionnaireId, ', () => {
-        it.skip('Should not modify userQuestionnaireId field ', (done) => {
+        it('Should not modify userQuestionnaireId field ', (done) => {
           serviceOnClient.patch(this.userQuestionnaire._id, {userQuestionnaireId: 'abc'})
             .then(() => done('Should not patch userQuestionnaireId'))
             .catch(err => {
