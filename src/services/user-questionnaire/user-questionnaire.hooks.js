@@ -5,6 +5,7 @@ const { authenticate } = require('feathers-authentication').hooks
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const completeValidation = require('./hooks/hooks.complete-validate')
 const validateAnswers = require('./hooks/hooks.validate-answers')
+const initialAnswers = require('./hooks/hooks.initial-answers')
 
 module.exports = function (app) {
   return {
@@ -22,7 +23,8 @@ module.exports = function (app) {
         context => {
           context.data.status = 'STARTED'
           return context
-        }
+        },
+        initialAnswers(app)
       ],
       update: [mapUpdateToPatch()],
       patch: [
@@ -33,8 +35,8 @@ module.exports = function (app) {
         ),
         context => {
           return context.service.get(context.id)
-          .then(questionare => {
-            if (questionare.status === 'COMPLETED' && context.data.status !== 'COMPLETED') {
+          .then(questionnaire => {
+            if (questionnaire.status === 'COMPLETED' && context.data.status !== 'COMPLETED') {
               return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionnaire that is already completed!"))
             }
             return Promise.resolve(context)

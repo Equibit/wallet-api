@@ -23,7 +23,7 @@ module.exports = function (app) {
   return function (context) {
     const userQuestionnaire = app.service('user-questionnaire').get(context.id)
     return userQuestionnaire
-    .then(data => app.service('questions').find({ query: { questionaireId: data.questionareId, $sort: { sortIndex: 1 } } }))
+    .then(data => app.service('questions').find({ query: { questionnaireId: data.questionnaireId, $sort: { sortIndex: 1 } } }))
     .then(result => {
       const answers = context.data.answers
       // Validate the length of the array (size === questionnaire numbers)
