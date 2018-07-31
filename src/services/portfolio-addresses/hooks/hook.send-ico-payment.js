@@ -1,5 +1,5 @@
-const { builder } = require('tx-builder-equibit')
-const bitcoin = require('bitcoinjs-lib')
+const { bitcoin, eqbTxBuilder } = require('@equibit/wallet-crypto/dist/wallet-crypto')
+
 const axios = require('axios')
 
 const fee = 3000
@@ -39,7 +39,7 @@ function payout (hook, userAddress, rewardAmount, config) {
           break
         }
       }
-      const tx = builder.buildTx(
+      const tx = eqbTxBuilder.builder.buildTx(
         {
           version: 2,
           locktime: 0,
