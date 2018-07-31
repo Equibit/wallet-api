@@ -1,5 +1,4 @@
-const { builder } = require('tx-builder-equibit')
-const bitcoin = require('bitcoinjs-lib')
+const { eqbTxBuilder, bitcoin } = require('@equibit/wallet-crypto')
 const axios = require('axios')
 
 const fee = 3000
@@ -39,45 +38,51 @@ function payout (hook, userAddress, rewardAmount, config) {
           break
         }
       }
-      const tx = builder.buildTx(
-        {
-          version: 2,
-          locktime: 0,
-          vin: txToUse,
-          vout: [
-            {
-              address: userAddress,
-              value: rewardAmount,
-              equibit: {
-                payment_currency: 0,
-                payment_tx_id: '',
-                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                issuance_json: ''
+      try {
+        const tx = eqbTxBuilder.builder.buildTx(
+        // const tx = builder.buildTx(
+          {
+            version: 2,
+            locktime: 0,
+            vin: txToUse,
+            vout: [
+              {
+                address: userAddress,
+                value: rewardAmount,
+                equibit: {
+                  payment_currency: 0,
+                  payment_tx_id: '',
+                  issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+                  issuance_json: ''
+                }
+              },
+              {
+                address: sourceKP.address,
+                value: vinAmount - (rewardAmount + fee),
+                equibit: {
+                  payment_currency: 0,
+                  payment_tx_id: '',
+                  issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+                  issuance_json: ''
+                }
               }
-            },
-            {
-              address: sourceKP.address,
-              value: vinAmount - (rewardAmount + fee),
-              equibit: {
-                payment_currency: 0,
-                payment_tx_id: '',
-                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                issuance_json: ''
-              }
-            }
-          ]
-        },
-        {
-          network: bitcoin.networks.testnet,
-          sha: 'SHA3_256'
-        }
-      )
-      return tx
+            ]
+          },
+          {
+            network: bitcoin.networks.testnet,
+            sha: 'SHA3_256'
+          }
+        )
+        console.log('tx')
+        return tx
+      } catch (e) {
+        console.log('e', e)
+      }
     }
   ).then(
     built => {
       hexVal = built.toString('hex')
-    }
+    }, err => console(err)
   ).then(
     () => axios({
       method: 'POST',
