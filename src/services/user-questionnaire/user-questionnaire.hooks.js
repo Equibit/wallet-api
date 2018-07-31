@@ -2,6 +2,7 @@
 const errors = require('feathers-errors')
 const { preventChanges, iff } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
+const { associateCurrentUser, restrictToOwner } = require('feathers-authentication-hooks')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const completeValidation = require('./hooks/hooks.complete-validate')
 const validateAnswers = require('./hooks/hooks.validate-answers')
@@ -11,8 +12,12 @@ module.exports = function (app) {
   return {
     before: {
       all: [authenticate('jwt')],
-      find: [],
-      get: [],
+      find: [
+        restrictToOwner({ idField: '_id', ownerField: 'userId' })
+      ],
+      get: [
+        restrictToOwner({ idField: '_id', ownerField: 'userId' })
+      ],
       create: [
         // Check if questionnaire exists
         context => {
@@ -24,7 +29,8 @@ module.exports = function (app) {
           context.data.status = 'STARTED'
           return context
         },
-        initialAnswers(app)
+        initialAnswers(app),
+        associateCurrentUser({ idField: '_id', as: 'userId' })
       ],
       update: [mapUpdateToPatch()],
       patch: [

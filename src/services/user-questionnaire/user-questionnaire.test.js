@@ -92,8 +92,7 @@ function runTests (feathersClient) {
       })
       .then(() => {
         const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
-          questionnaireId: this.questionnaire._id.toString(),
-          userId: this.user._id.toString()
+          questionnaireId: this.questionnaire._id.toString()
         })
         return serviceOnClient.create(userQuestionnaire)
       })
