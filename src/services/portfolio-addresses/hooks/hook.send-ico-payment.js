@@ -13,13 +13,20 @@ function payout (hook, userAddress, rewardAmount, config) {
   const listUnspentService = app.service('listunspent')
   const txToUse = []
   let hexVal
-  return listUnspentService.find({
+  let network = bitcoin.networks.testnet
+  return app.service('blockchain-info').find({query: {
+    coinType: 'EQB'
+  }}).then(info => {
+    if (info[0] && info[0].mode === 'main') {
+      network = bitcoin.networks.bitcoin
+    }
+  }).then(() => listUnspentService.find({
     query: {
       eqb: [sourceKP.address],
       doImport: false,
       byAddress: false
     }
-  }).then(
+  })).then(
     unspent => {
       const utxo = unspent.EQB.txouts
       const total = unspent.EQB.summary.total
@@ -32,7 +39,7 @@ function payout (hook, userAddress, rewardAmount, config) {
         txToUse.push({
           txid: tx.txid,
           vout: 0,
-          keyPair: bitcoin.ECPair.fromWIF(sourceKP.key, bitcoin.networks.testnet)
+          keyPair: bitcoin.ECPair.fromWIF(sourceKP.key, network)
         })
         vinAmount += tx.amount
         if (vinAmount > rewardAmount) {
@@ -68,7 +75,7 @@ function payout (hook, userAddress, rewardAmount, config) {
           ]
         },
         {
-          network: bitcoin.networks.testnet,
+          network,
           sha: 'SHA3_256'
         }
       )
@@ -92,20 +99,18 @@ function payout (hook, userAddress, rewardAmount, config) {
         password: config.password
       }
     }).then(
-      response => {
-        app.service('/transactions').create({
-          fromAddress: sourceKP.address,
-          toAddress: userAddress,
-          addressTxId: txToUse[0].txId,
-          addressVout: '0',
-          type: 'TRANSFER',
-          currencyType: 'EQB',
-          amount: rewardAmount,
-          fee: fee,
-          txid: response.data.result,
-          hex: hexVal
-        })
-      }
+      response => app.service('/transactions').create({
+        fromAddress: sourceKP.address,
+        toAddress: userAddress,
+        addressTxId: txToUse[0].txId,
+        addressVout: '0',
+        type: 'TRANSFER',
+        currencyType: 'EQB',
+        amount: rewardAmount,
+        fee: fee,
+        txId: response.data.result,
+        hex: hexVal
+      })
     )
   )
 }

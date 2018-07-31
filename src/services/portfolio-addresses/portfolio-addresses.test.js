@@ -225,6 +225,7 @@ function runTests (feathersClient) {
 
     describe('With Auth', function () {
       const icoService = app.service('icoinvestors')
+      const transactionsService = app.service('transactions')
       beforeEach(function (done) {
         // Remove all portfolios before each test.
         transactions.setupMock()
@@ -234,7 +235,11 @@ function runTests (feathersClient) {
 
       afterEach(function (done) {
         transactions.resetMock()
-        icoService.remove(null, {}).then(() => done())
+        Promise.all([
+          icoService.remove(null, {}),
+          transactionsService.remove(null, {})
+        ])
+        .then(() => done())
       })
 
       it('allows users to create a portfolio address', function (done) {
