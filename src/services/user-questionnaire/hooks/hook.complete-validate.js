@@ -32,6 +32,10 @@ function validateCompleteAnswers (questions, userAnswers) {
 
 module.exports = function (app) {
   return function (context) {
+    if (context.data.status !== 'COMPLETED') {
+      return context
+    }
+
     return context.service.get(context.id)
       .then(userQuestionnaire => Promise.all([
         Promise.resolve(context.data.answers || userQuestionnaire.answers),
