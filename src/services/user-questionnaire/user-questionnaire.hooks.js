@@ -1,10 +1,18 @@
 const errors = require('feathers-errors')
+<<<<<<< HEAD
 const { preventChanges, iff, isProvider, discard } = require('feathers-hooks-common')
+=======
+const { preventChanges, iff, isProvider } = require('feathers-hooks-common')
+>>>>>>> Added rewards hook.
 const { authenticate } = require('feathers-authentication').hooks
 const { associateCurrentUser, restrictToOwner } = require('feathers-authentication-hooks')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const completeValidation = require('./hooks/hook.complete-validate')
 const validateAnswers = require('./hooks/hook.validate-answers')
+<<<<<<< HEAD
+=======
+const initialAnswers = require('./hooks/hook.initial-answers')
+>>>>>>> Added rewards hook.
 const sendReward = require('./hooks/hook.send-reward')
 
 module.exports = function (app) {
@@ -28,6 +36,10 @@ module.exports = function (app) {
           .then(() => context)
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
         },
+<<<<<<< HEAD
+=======
+        initialAnswers(app),
+>>>>>>> Added rewards hook.
         associateCurrentUser({ idField: '_id', as: 'userId' })
       ],
       update: [mapUpdateToPatch()],
