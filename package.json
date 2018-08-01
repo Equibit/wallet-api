@@ -24,6 +24,7 @@
     "test-local": "npm run lint && TESTING=true NODE_ENV=testing npm run mocha",
     "lint": "standard --fix",
     "start": "node src/",
+    "keygen": "node src/keygen",
     "mocha": "nyc mocha -u tdd --timeout 999999 --colors \"./+(src|test|test-utils)/**/*.test.js\" --recursive",
     "questionnaire": "node src/questionnaire.js",
     "qa": "npm run release:qa:patch",
