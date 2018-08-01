@@ -54,7 +54,7 @@
     "sha": "SHA256"
   },
   "seeder": {
-    "enabled": true,
+    "enabled": false,
     "delete": true,
     "params": {
       "internal": true
@@ -67,6 +67,10 @@
       "data": "services/companies/companies.seed.json"
     }]
   },
+  "icoPayoutAddress": "ICO_PAYOUT_ADDRESS",
+  "icoPayoutKey": "ICO_PAYOUT_KEY",
+  "rewardAddress": "REWARD_ADDRESS",
+  "rewardKey": "REWARD_KEY",
   "bitcoinAverage": {
     "key": "BITCOIN_AVERAGE_KEY",
     "secret": "BITCOIN_AVERAGE_SECRET"

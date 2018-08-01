@@ -15,19 +15,19 @@ module.exports = function (app) {
     after: {
       all: [],
       find: [context => {
-        return Promise.all(context.result.data.map(questionaire =>
-          app.service('questions').find({query: {questionaireId: questionaire._id.toString()}})
+        return Promise.all(context.result.data.map(questionnaire =>
+          app.service('questions').find({query: {questionnaireId: questionnaire._id.toString(), $sort: { sortIndex: 1 }}})
         ))
           .then(result => {
-            context.result.data = context.result.data.map((questionaire, i) => {
-              questionaire.questions = result[i].data
-              return questionaire
+            context.result.data = context.result.data.map((questionnaire, i) => {
+              questionnaire.questions = result[i].data
+              return questionnaire
             })
             return Promise.resolve(context)
           })
       }],
       get: [context => {
-        return app.service('questions').find({query: {questionaireId: context.id.toString()}})
+        return app.service('questions').find({query: {questionnaireId: context.id.toString(), $sort: { sortIndex: 1 }}})
           .then(result => {
             context.result.questions = result.data
             return Promise.resolve(context)

@@ -18,6 +18,8 @@ const sendDuplicateSignupEmail = require('./hooks/hook.email.duplicate-signup')
 const verifyOldPassword = require('./hooks/hook.password.verify-old-password')
 const rejectEmptyPassword = require('./hooks/hook.password.reject-empty-password')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
+const createReferralInfo = require('./hooks/hook.create-referral-info')
+const mnemonicHash = require('./hooks/hook.mnemonic-hash')
 
 function findUser (options) {
   return function (hook) {
@@ -57,22 +59,27 @@ module.exports = function (app) {
       find: [],
       get: [],
       create: [
-        // the only things the user is allowed to choose for their
-        // account (on creation)
-        keep('email', 'autoLogoutTime'),
-        lowerCase('email'),
-        // Sets `hook.params.existingUser` to the existing user.
-        // Also sets hook.result to only contain the passed-in email.
-        isExistingUser(),
         iff(
-          hook => !hook.params.existingUser,
-          createTemporaryPassword({
-            passwordField: 'tempPassword',
-            plainPasswordField: 'tempPasswordPlain',
-            timeStampField: 'tempPasswordCreatedAt'
-          }),
-          generateSalt({ randomBytes }),
-          hashPassword({ pbkdf2, passwordField: 'tempPassword' })
+          // for seeding purposes
+          hook => hook.params.internal
+        ).else(
+          // the only things the user is allowed to choose for their
+          // account (on creation)
+          keep('email', 'autoLogoutTime', 'referral'),
+          lowerCase('email'),
+          // Sets `hook.params.existingUser` to the existing user.
+          // Also sets hook.result to only contain the passed-in email.
+          isExistingUser(),
+          iff(
+            hook => !hook.params.existingUser,
+            createTemporaryPassword({
+              passwordField: 'tempPassword',
+              plainPasswordField: 'tempPasswordPlain',
+              timeStampField: 'tempPasswordCreatedAt'
+            }),
+            generateSalt({ randomBytes }),
+            hashPassword({ pbkdf2, passwordField: 'tempPassword' })
+          )
         )
       ],
       update: [mapUpdateToPatch()],
@@ -147,6 +154,7 @@ module.exports = function (app) {
             hook.user.tempPasswordCreatedAt = undefined
             hook.data.passwordCreatedAt = Date.now()
           },
+          // Note: when password is changed we need to update the encrypted key and mnemonic.
           // On password change, ignore any changes not related to this flow
           keep(
             'password',
@@ -253,7 +261,15 @@ module.exports = function (app) {
             )
           )
         ),
-        hook => { hook.data.updatedAt = Date.now() }
+        hook => { hook.data.updatedAt = Date.now() },
+
+        // The `mnemonicHash` value can be passed either for saving to db or for verification.
+        // - Allow to set mnemonicHash only when encrypted key and mnemonic are generated for the 1st time
+        // - Verify mnemonicHash and immediately return the result of verification.
+        iff(
+          hook => (hook.data && hook.data.mnemonicHash),
+          mnemonicHash()
+        )
       ],
       remove: [
         disallow('external')
@@ -272,6 +288,7 @@ module.exports = function (app) {
             'pastPasswordHashes',
             'encryptedKey',
             'encryptedMnemonic',
+            'mnemonicHash',
             'twoFactorCode',
             'emailVerificationCode'
           ),
@@ -287,7 +304,7 @@ module.exports = function (app) {
       create: [
         // Only send emails if we're not using a test account.
         iff(
-          hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST',
+          hook => hook.app.get('postmark').key !== 'POSTMARK_API_TEST' && hook.app.get('env') !== 'testing',
           iff(
             hook => hook.params.existingUser,
             sendDuplicateSignupEmail({
@@ -306,7 +323,11 @@ module.exports = function (app) {
         // to know if this email address is already being used for another account.
         hook => {
           hook.result = { email: hook.data.email }
-        }
+        },
+        iff(
+          hook => 'referral' in hook.data,
+          createReferralInfo()
+        )
       ],
       update: [],
       patch: [],

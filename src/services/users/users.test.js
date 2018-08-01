@@ -344,5 +344,73 @@ function runTests (feathersClient) {
           done()
         })
     })
+
+    it('updates the referral info table when a new user is created', function (done) {
+      const code = 'abc123'
+      const email = 'referraluser@test.com'
+      let id = null
+      app.service('/referral-codes').create({ referralCode: code })
+      .then(res => {
+        id = res._id
+        return app.service('/users').create({ email: email, referral: code })
+      })
+      .then(() => app.service('/referral-info').find({ query: { referralCodeId: id } }))
+      .then(res => {
+        const info = res.data[0]
+        assert.equal(info.email, email)
+      })
+      .then(() => app.service('/users').remove(null, { query: { email: email } }))
+      .then(() => app.service('/referral-codes').remove(null, { query: { referralCode: code } }))
+      .then(() => {
+        app.service('/referral-info').remove(null, { query: { referralCodeId: id } })
+        done()
+      })
+      .catch(error => {
+        try {
+          assert(false, error.message)
+          done()
+        } catch (error) {
+          done(error)
+        }
+      })
+    })
+
+    it('expects user to be created without updating referral info', function (done) {
+      const code = 'wrongcode'
+      const email = 'referraluser@test.com'
+      app.service('/users').create({ email: email, referral: code })
+        .then(user => {
+          assert.equal(user.email, email)
+          return app.service('/referral-codes').find({ query: { code: code } })
+        })
+        .then(res => {
+          assert.equal(res.data.length, 0)
+          return app.service('/users').remove(null, { query: { email: email } })
+        })
+        .then(() => done())
+    })
+
+    it('allows to set mnemonicHash only for the new user', function (done) {
+      const user = this.user
+
+      userUtils.authenticateTemp(app, feathersClient, user)
+        .then(res => {
+          return feathersClient.service('users').patch(user._id, {
+            encryptedKey: '123',
+            encryptedMnemonic: 'abc',
+            mnemonicHash: '456abc'
+          })
+        })
+        .then(user => {
+          Object.keys(user).forEach(field => {
+            assert(allowedUserFields.includes(field), `the "${field}" field was returned in the user object`)
+          })
+          done()
+        })
+        .catch(error => {
+          assert(false, error.message)
+          done()
+        })
+    })
   })
 }

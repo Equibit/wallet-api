@@ -553,7 +553,8 @@ function runTests (feathersClient) {
       })
 
       it('sets offerId on HTLC tx #1 when created', function (done) {
-        let txId
+        // Note: `txId` is different from `tx._id`.
+        const txId = '21242f342bbef8ae5d170d06f73c8206323346ffc15548de2d0b10db7b7924c8'
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
             return app.service('transactions').create({
@@ -570,7 +571,6 @@ function runTests (feathersClient) {
             })
           })
           .then(tx => {
-            txId = tx._id
             const createData = Object.assign({}, skels.sellOffer, {
               orderId: this.order._id.toString(),
               userId: this.user._id.toString(),
@@ -581,7 +581,7 @@ function runTests (feathersClient) {
           })
           .then(offer => {
             const offerId = offer._id
-            return app.service('transactions').find({ query: { _id: txId } })
+            return app.service('transactions').find({ query: { txId } })
               .then(result => {
                 const tx = result.data[0]
                 assert.equal(tx.offerId, offerId, 'offerId set on transaction')

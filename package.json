@@ -1,7 +1,7 @@
 {
   "name": "wallet-api",
   "description": "Equibit Wallet API",
-  "version": "0.8.2",
+  "version": "0.8.5",
   "homepage": "",
   "main": "src",
   "keywords": [
@@ -24,10 +24,13 @@
     "test-local": "npm run lint && TESTING=true NODE_ENV=testing npm run mocha",
     "lint": "standard --fix",
     "start": "node src/",
+    "keygen": "node src/keygen",
     "mocha": "nyc mocha -u tdd --timeout 999999 --colors \"./+(src|test|test-utils)/**/*.test.js\" --recursive",
-    "questionaire": "node src/questionaire.js",
+    "questionnaire": "node src/questionnaire.js",
     "qa": "npm run release:qa:patch",
-    "release:qa:patch": "npm version patch && make release-qa"
+    "release:qa:patch": "npm version patch && make release-qa",
+    "add-referral-code": "node src/add-referral-code.js",
+    "e2e": "TESTING=true NODE_ENV=testing npm start"
   },
   "standard": {
     "env": [

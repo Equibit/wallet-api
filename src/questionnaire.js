@@ -27,9 +27,9 @@ function askStatus (description) {
       r1.question('Is the status active (y|n)? ', (status) => {
         status = status.toLowerCase()
         if (status === 'y') {
-          resolve([description, 'active'])
+          resolve([description, true])
         } else if (status === 'n') {
-          resolve([description, 'closed'])
+          resolve([description, false])
         } else {
           console.log('(y|n)')
           waitForUserInput()
@@ -59,11 +59,11 @@ function askReward ([description, status]) {
 const app = feathers()
 app.configure(configuration(path.join(__dirname, '..')))
 app.configure(mongoose)
-const createQuestionaireModel = require('./services/questionaires/questionaires.model')
+const createQuestionnaireModel = require('./services/questionnaires/questionnaires.model')
 const createQuestionsModel = require('./services/questions/questions.model')
 const cli = app.get('mongooseClient')
 
-const Questionaires = createQuestionaireModel(app)
+const Questionnaires = createQuestionnaireModel(app)
 const Questions = createQuestionsModel(app)
 
 askDescription()
@@ -71,13 +71,13 @@ askDescription()
   .then(askReward)
   .then(([description, status, reward]) => {
     r1.close()
-    return Questionaires.create({description: description, status: status, reward: reward})
+    return Questionnaires.create({description: description, isActive: status, reward: reward})
   })
-  .then((questionaire) => {
+  .then((questionnaire) => {
     const file = process.argv[process.argv.length - 1]
     const orig = require(path.join(process.cwd(), file))
     const data = orig.map((val) => {
-      val.questionaireId = questionaire.id
+      val.questionnaireId = questionnaire.id
       return val
     })
     return Questions.insertMany(data)
