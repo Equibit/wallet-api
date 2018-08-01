@@ -295,11 +295,11 @@ module.exports = function (app) {
           isProvider('external'),
           iff(
             hook => orderOwnedByUser(hook.params.user._id, hook.id),
-            keep('isAccepted', 'htlcTxId2', 'htlcTxId4', 'htlcStep', 'before', 'status')
+            keep('isAccepted', 'htlcTxId2', 'htlcTxId4', 'htlcStep', 'before', 'status', 'timelock2')
           ),
           iff(
             hook => offerOwnedByUser(hook.params.user._id, hook.id),
-            keep('description', 'status', 'before', 'htlcStep', 'htlcTxId1', 'htlcTxId3')
+            keep('description', 'status', 'before', 'htlcStep', 'htlcTxId1', 'htlcTxId3', 'secret')
           ),
           idRequired(),
           blockOfferAcceptance(app),
