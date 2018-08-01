@@ -341,7 +341,7 @@ function runTests (feathersClient) {
           })
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(() => {
-            const requests = transactions.history.post.filter(
+            const requests = transactions.history().post.filter(
               req => req.data.indexOf('"method":"sendrawtransaction"') > -1
             )
             assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
