@@ -237,7 +237,6 @@ function runTests (feathersClient) {
         .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
         .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
         .then(() => {
-          console.log(transactions.mock())
           const requests = transactions.history().post.filter(req => req.data.indexOf('"method":"sendrawtransaction"') > -1)
           assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
           done()
