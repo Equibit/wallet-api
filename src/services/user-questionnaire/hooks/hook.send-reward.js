@@ -76,7 +76,7 @@ function payout (hook, userAddress, rewardAmount, config) {
   ).then(
     built => {
       hexVal = built.toString('hex')
-    }, err => console(err)
+    }
   ).then(
     () => axios({
       method: 'POST',
