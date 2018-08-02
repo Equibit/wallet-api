@@ -41,7 +41,7 @@
     "@equibit/wallet-crypto": "0.27.0",
     "ajv": "^5.2.2",
     "axios": "^0.16.2",
-    "axios-mock-adapter": "^1.9.0",
+    "axios-mock-adapter": "^1.15.0",
     "bip39": "^2.3.1",
     "bitcoinjs-lib": "^3.1.0",
     "body-parser": "^1.17.2",
