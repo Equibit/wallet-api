@@ -129,27 +129,6 @@ function runTests (feathersClient) {
         })
     })
 
-    // it("Can't change the status field from completed to started", (done) => {
-    //   serviceOnClient.patch(this.userQuestionnaire._id, {
-    //     answers: [
-    //       skel.questions[0].answerOptions[1].answer,
-    //       skel.questions[1].answerOptions[1].answer,
-    //       [skel.questions[2].answerOptions[1].answer]
-    //     ]
-    //   })
-    //     .then(() => serviceOnClient.patch(this.userQuestionnaire._id, { status: 'COMPLETED' }))
-    //     .then(() => serviceOnClient.patch(this.userQuestionnaire._id, { status: 'STARTED' }))
-    //     .then(() => done('Should not be able to change the status of completed'))
-    //     .catch(err => {
-    //       try {
-    //         assert.equal(err.message, "Can't change the completed status of a questionnaire that is already completed!", err.message)
-    //         done()
-    //       } catch (err) {
-    //         done(err)
-    //       }
-    //     })
-    // })
-
     it("Can't set the status to completed when not all questions are completed", (done) => {
       serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
