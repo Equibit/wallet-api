@@ -1,12 +1,11 @@
 
 const errors = require('feathers-errors')
-const { preventChanges, iff, isProvider } = require('feathers-hooks-common')
+const { preventChanges, iff, isProvider, discard } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
 const { associateCurrentUser, restrictToOwner } = require('feathers-authentication-hooks')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const completeValidation = require('./hooks/hook.complete-validate')
 const validateAnswers = require('./hooks/hook.validate-answers')
-const initialAnswers = require('./hooks/hook.initial-answers')
 const sendReward = require('./hooks/hook.send-reward')
 
 module.exports = function (app) {
@@ -20,6 +19,10 @@ module.exports = function (app) {
         restrictToOwner({ idField: '_id', ownerField: 'userId' })
       ],
       create: [
+        iff(
+          isProvider('external'),
+          discard('lock', 'rewarded', 'manualPaymentRequired')
+        ),
         // Check if questionnaire exists
         iff(
           isProvider('external'),
@@ -30,7 +33,6 @@ module.exports = function (app) {
           .then(() => context)
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
         },
-        initialAnswers(app),
         associateCurrentUser({ idField: '_id', as: 'userId' })
       ],
       update: [mapUpdateToPatch()],
