@@ -38,46 +38,40 @@ function payout (hook, userAddress, rewardAmount, config) {
           break
         }
       }
-      try {
-        const tx = eqbTxBuilder.builder.buildTx(
-        // const tx = builder.buildTx(
-          {
-            version: 2,
-            locktime: 0,
-            vin: txToUse,
-            vout: [
-              {
-                address: userAddress,
-                value: rewardAmount,
-                equibit: {
-                  payment_currency: 0,
-                  payment_tx_id: '',
-                  issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                  issuance_json: ''
-                }
-              },
-              {
-                address: sourceKP.address,
-                value: vinAmount - (rewardAmount + fee),
-                equibit: {
-                  payment_currency: 0,
-                  payment_tx_id: '',
-                  issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                  issuance_json: ''
-                }
+      const tx = eqbTxBuilder.builder.buildTx(
+        {
+          version: 2,
+          locktime: 0,
+          vin: txToUse,
+          vout: [
+            {
+              address: userAddress,
+              value: rewardAmount,
+              equibit: {
+                payment_currency: 0,
+                payment_tx_id: '',
+                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+                issuance_json: ''
               }
-            ]
-          },
-          {
-            network: bitcoin.networks.testnet,
-            sha: 'SHA3_256'
-          }
-        )
-        console.log('tx')
-        return tx
-      } catch (e) {
-        console.log('e', e)
-      }
+            },
+            {
+              address: sourceKP.address,
+              value: vinAmount - (rewardAmount + fee),
+              equibit: {
+                payment_currency: 0,
+                payment_tx_id: '',
+                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+                issuance_json: ''
+              }
+            }
+          ]
+        },
+        {
+          network: bitcoin.networks.testnet,
+          sha: 'SHA3_256'
+        }
+      )
+      return tx
     }
   ).then(
     built => {
