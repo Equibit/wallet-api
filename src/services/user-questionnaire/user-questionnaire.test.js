@@ -9,9 +9,6 @@ utils.clients.forEach(client => {
 })
 
 const skel = {
-  userQuestionnaire: {
-    status: 'STARTED'
-  },
   questionnaire: {
     description: 'Test questionnaire',
     status: 'active',
@@ -68,11 +65,27 @@ const skel = {
     }]
 }
 
+const validAnswers = [
+  skel.questions[0].answerOptions[1].answer,
+  skel.questions[1].answerOptions[1].answer,
+  [skel.questions[2].answerOptions[1].answer]
+]
+
+const address = 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG'
+
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const serviceOnClient = feathersClient.service('user-questionnaire')
   const questionnaireService = app.service('questionnaires')
   const questionsService = app.service('questions')
+
+  const create = (answers, address) => {
+    return serviceOnClient.create({
+      questionnaireId: this.questionnaire._id,
+      answers,
+      address
+    })
+  }
 
   describe(`User Questionnaire Tests - ${transport}`, () => {
     before((done) => {
@@ -91,16 +104,7 @@ function runTests (feathersClient) {
         this.user = user
         return userUtils.authenticateTemp(app, feathersClient, this.user)
       })
-      .then(() => {
-        const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
-          questionnaireId: this.questionnaire._id.toString()
-        })
-        return serviceOnClient.create(userQuestionnaire)
-      })
-      .then(userQuestionnaire => {
-        this.userQuestionnaire = userQuestionnaire
-        done()
-      })
+      .then(() => done())
     })
 
     afterEach((done) => {
@@ -115,30 +119,13 @@ function runTests (feathersClient) {
       .then(() => done())
     })
 
-    it("Can't change the questionnaireId", (done) => {
-      this.userQuestionnaire.questionnaireId = 'ABC123'
-      serviceOnClient.patch(this.userQuestionnaire._id, this.userQuestionnaire)
-        .then(() => done('Should not be able to change questionnaireId'))
-        .catch(err => {
-          try {
-            assert.equal(err.message, 'Field questionnaireId may not be patched. (preventChanges)', err.message)
-            done()
-          } catch (err) {
-            done(err)
-          }
-        })
-    })
-
     it("Can't set the status to completed when not all questions are completed", (done) => {
-      serviceOnClient.patch(this.userQuestionnaire._id, {
-        answers: [
-          skel.questions[0].answerOptions[1].answer,
-          null,
-          null
-        ]
-      })
-      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
-      .then(() => done('Should not be able to change the status of completed'))
+      create([
+        skel.questions[0].answerOptions[1].answer,
+        null,
+        null
+      ])
+      .then(() => done('Should not be completed'))
       .catch(err => {
         try {
           assert.equal(err.message, 'Completed answer array is invalid!', err.message)
@@ -149,16 +136,12 @@ function runTests (feathersClient) {
       })
     })
 
-    it('Can set the status to completed when there are null answers in between skipTo indexes', (done) => {
-      serviceOnClient.patch(this.userQuestionnaire._id, {
-        answers: [
-          skel.questions[0].answerOptions[3].answer,
-          null,
-          [skel.questions[2].answerOptions[1].answer]
-
-        ]
-      })
-      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
+    it('Can set the status to completed when the final answer array is valid without address', (done) => {
+      create([
+        skel.questions[0].answerOptions[1].answer,
+        skel.questions[1].answerOptions[1].answer,
+        [skel.questions[2].answerOptions[1].answer]
+      ])
       .then(userQuestionnaire => {
         assert.equal(userQuestionnaire.status, 'COMPLETED')
         done()
@@ -166,36 +149,17 @@ function runTests (feathersClient) {
       .catch(done)
     })
 
-    it('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
-      serviceOnClient.patch(this.userQuestionnaire._id, {
-        answers: [
-          skel.questions[0].answerOptions[0].answer,
-          null,
-          null
-        ]
+    it('Will not create two user questionnaires of the same questionnaire and user', (done) => {
+      Promise.all([create(validAnswers, address), create(validAnswers, address)])
+      .then(() => done('Should not create user questionnaire record twice!'))
+      .catch(err => {
+        try {
+          assert.equal(err.name, 'Conflict', 'Conflict error')
+          done()
+        } catch (err) {
+          done(err)
+        }
       })
-      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
-      .then(userQuestionnaire => {
-        assert.equal(userQuestionnaire.status, 'COMPLETED')
-        done()
-      })
-      .catch(done)
-    })
-
-    it('Can set the status to completed when the final answer array is valid', (done) => {
-      serviceOnClient.patch(this.userQuestionnaire._id, {
-        answers: [
-          skel.questions[0].answerOptions[1].answer,
-          skel.questions[1].answerOptions[1].answer,
-          [skel.questions[2].answerOptions[1].answer]
-        ]
-      })
-      .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED' }))
-      .then(userQuestionnaire => {
-        assert.equal(userQuestionnaire.status, 'COMPLETED')
-        done()
-      })
-      .catch(done)
     })
 
     describe('Rewards tests', (done) => {
@@ -210,35 +174,10 @@ function runTests (feathersClient) {
       })
 
       it('Will send reward after first completion', (done) => {
-        serviceOnClient.patch(this.userQuestionnaire._id, {
-          answers: [
-            skel.questions[0].answerOptions[1].answer,
-            skel.questions[1].answerOptions[1].answer,
-            [skel.questions[2].answerOptions[1].answer]
-          ]
-        })
-        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
+        create(validAnswers, address)
         .then(userQuestionnaire => {
-          assert.ok(userQuestionnaire.rewarded, 'user has been rewarded')
+          assert.equal(userQuestionnaire.status, 'REWARDED', 'user has been rewarded')
           assert.equal(userQuestionnaire.manualPaymentRequired, false, 'does require not need manual payment')
-          done()
-        })
-        .catch(done)
-      })
-
-      it('Will not send a reward after second completion', (done) => {
-        serviceOnClient.patch(this.userQuestionnaire._id, {
-          answers: [
-            skel.questions[0].answerOptions[1].answer,
-            skel.questions[1].answerOptions[1].answer,
-            [skel.questions[2].answerOptions[1].answer]
-          ]
-        })
-        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
-        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
-        .then(() => {
-          const requests = transactions.history().post.filter(req => req.data.indexOf('"method":"sendrawtransaction"') > -1)
-          assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
           done()
         })
         .catch(done)
@@ -258,18 +197,9 @@ function runTests (feathersClient) {
             return questionnaireService.patch(this.questionnaire._id, { reward })
           }
         )
-        .then(() =>
-          serviceOnClient.patch(this.userQuestionnaire._id, {
-            answers: [
-              skel.questions[0].answerOptions[1].answer,
-              skel.questions[1].answerOptions[1].answer,
-              [skel.questions[2].answerOptions[1].answer]
-            ]
-          })
-        )
-        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
+        .then(() => create(validAnswers, address))
         .then(userQuestionnaire => {
-          assert.equal(userQuestionnaire.rewarded, false, 'not rewarded')
+          assert.equal(userQuestionnaire.status, 'COMPLETED', 'not rewarded')
           assert.ok(userQuestionnaire.manualPaymentRequired, 'manual payment required')
           done()
         })
