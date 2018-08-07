@@ -12,6 +12,7 @@ module.exports = function (app) {
     answers: [{ type: mongooseClient.SchemaTypes.Mixed }],
     status: { type: String, enum: ['STARTED', 'COMPLETED'], required: true, default: 'STARTED' },
 <<<<<<< HEAD
+<<<<<<< HEAD
     rewarded: { type: Boolean, required: true, default: false },
     locked: { type: Number, default: 0, required: true },
     manualPaymentRequired: { type: Boolean, default: false }
@@ -19,6 +20,11 @@ module.exports = function (app) {
     rewarded: { type: Boolean, required: true, default: false }
 
 >>>>>>> fix conflicts
+=======
+    rewarded: { type: Boolean, required: true, default: false },
+    locked: { type: Number, default: 0, required: true },
+    manualPaymentRequired: { type: Boolean, default: false }
+>>>>>>> 795b3ca9c73e4a7a0154b271f825dc354e370c7e
   }, {
     timestamps: true
   })
