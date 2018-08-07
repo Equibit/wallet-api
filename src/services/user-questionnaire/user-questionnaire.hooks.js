@@ -42,7 +42,7 @@ module.exports = function (app) {
           preventChanges(true, 'questionnaireId', 'lock', 'rewarded', 'manualPaymentRequired')
         ),
         validateAnswers(app),
-        completeValidation(app)        
+        completeValidation(app)
       ],
       remove: []
     },
