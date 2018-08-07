@@ -4,12 +4,22 @@ const axios = require('axios')
 
 const defaultFee = 3000
 
-function payout (hook, userAddress, rewardAmount, config) {
-  const app = hook.app
+/**
+ * listUnspentService
+ * blockchainInfoService
+ * transactionService
+ * transactionNotesService
+ * userAddr
+ * srcAddr
+ * srcKey
+ * message
+ */
+function payout (app, srcAddress, srcKey, userAddress, rewardAmount, message) {
   const sourceKP = {
-    address: app.get('icoPayoutAddress'),
-    key: app.get('icoPayoutKey')
+    address: srcAddress,
+    key: srcKey
   }
+  const config = app.get('equibitCore')
   const listUnspentService = app.service('listunspent')
   const txToUse = []
   let hexVal
@@ -129,7 +139,7 @@ function payout (hook, userAddress, rewardAmount, config) {
       }).then(() => app.service('transaction-notes').create({
         txId: txToUse[0].txId,
         address: sourceKP.address,
-        description: 'Automated ICO payment'
+        description: message
       }))
     )
   )
@@ -162,7 +172,8 @@ module.exports = function () {
             if (data[0].balanceOwed !== null && data[0].balanceOwed < balanceThreshold) {
               // Here we add the payment methods, payable to EQB address of user
               // Then remove the entry
-              return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(
+              const app = hook.app
+              return payout(app, app.get('icoPayoutAddress'), app.get('icoPayoutKey'), addressEQB, data[0].balanceOwed, 'Automated ICO payment').then(
                 () => investorsService.patch(data[0]._id, { address: null, status: 'PAID', locked: 0 }),
                 // in the case of a failed payment, flag the record as needing to be manually handled
                 err => {
