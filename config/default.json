@@ -69,6 +69,7 @@
   },
   "icoPayoutAddress": "ICO_PAYOUT_ADDRESS",
   "icoPayoutKey": "ICO_PAYOUT_KEY",
+  "icoPayoutThreshold": 100,
   "rewardAddress": "REWARD_ADDRESS",
   "rewardKey": "REWARD_KEY",
   "bitcoinAverage": {
