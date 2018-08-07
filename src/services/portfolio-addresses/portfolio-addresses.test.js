@@ -230,7 +230,7 @@ function runTests (feathersClient) {
         // Remove all portfolios before each test.
         transactions.setupMock()
         app.service('portfolios').remove(null, { query: { name: 'My Test Portfolio' } })
-          .then(() => done())
+        .then(() => done())
       })
 
       afterEach(function (done) {
@@ -283,20 +283,23 @@ function runTests (feathersClient) {
           isUsed: false
         }
         userUtils.authenticateTemp(app, feathersClient, user)
-          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(() => feathersClient.service('portfolios').create({ name }))
           .then(portfolio => {
             data.portfolioId = portfolio._id
             return icoService.create({
               email: this.user.email,
               balanceOwed: 10000,
-              manualPaymentRequired: false
+              status: 'OWED'
             }).then(
               () => serviceOnClient.create(data)
             )
           })
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(result => {
-            assert.equal(result.total, 0, 'the investor record was removed')
+            assert.equal(result.total, 1, 'the investor record was not removed')
+            console.log(result)
+            assert.equal(result.data[0].status, 'PAID', 'the investor record was flagged as payed')
+            assert.equal(result.data[0].address, null, 'the address was removed')
             done()
           })
           .catch(error => {
@@ -324,7 +327,7 @@ function runTests (feathersClient) {
             return icoService.create({
               email: this.user.email,
               balanceOwed: 10000,
-              manualPaymentRequired: false
+              status: 'OWED'
             }).then(
               () => Promise.all([
                 serviceOnClient.create(data).catch(() => 'ignore errors'),
@@ -372,14 +375,14 @@ function runTests (feathersClient) {
             return icoService.create({
               email: this.user.email,
               balanceOwed: 9999999999999,
-              manualPaymentRequired: false
+              status: 'OWED'
             }).then(
               () => serviceOnClient.create(data)
             )
           })
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(result => {
-            assert(result.data[0].manualPaymentRequired, 'the investor record was flagged')
+            assert.equal(result.data[0].status, 'MANUALREQUIRED', 'the investor record was flagged')
             assert.equal(result.data[0].address, 'mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj', 'the investor address was recorded')
             done()
           })
@@ -409,15 +412,16 @@ function runTests (feathersClient) {
             return icoService.create({
               email: this.user.email,
               balanceOwed: 10000,
-              manualPaymentRequired: false
+              status: 'OWED'
             }).then(
               () => serviceOnClient.create(data)
             )
           })
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(result => {
-            assert(result.data[0].manualPaymentRequired, 'the investor record was flagged')
+            assert.equal(result.data[0].status, 'MANUALREQUIRED', 'the investor record was flagged')
             assert.equal(result.data[0].address, 'invalidAddress', 'the investor address was recorded')
+            assert.equal(result.data[0].error, 'Expected Address, got String "invalidAddress"', 'the error was recorded')
             done()
           })
           .catch(error => {
