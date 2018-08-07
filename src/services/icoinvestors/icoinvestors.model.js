@@ -16,7 +16,7 @@ module.exports = function (app) {
     // if this payment is currently being processed
     locked: { type: Number, default: 0 },
     // enum ['OWED', MANUALREQUIRED', 'PAID']
-    status: { type: String, required: true, default: 'OWED' },
+    status: { type: String, required: true, enum: ['OWED', 'MANUALREQUIRED', 'PAID'], default: 'OWED' },
     error: { type: String, required: false }
 
   }, {
