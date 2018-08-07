@@ -1,0 +1,24 @@
+[
+    {
+        "_id":"5b69bc2307b3a03e802995c1",
+        "isChange":false,
+        "isUsed":false,
+        "portfolioId":"5b69bbe607b3a03e802995bf",
+        "index":0,
+        "type":"BTC",
+        "createdAt":"2018-08-07T15:34:59.011Z",
+        "updatedAt":"2018-08-07T15:34:59.011Z",
+        "__v":0
+    },
+    {
+        "_id":"5b69bc2307b3a03e802995c0",
+        "isChange":false,
+        "isUsed":false,
+        "portfolioId":"5b69bbe607b3a03e802995bf",
+        "index":0,
+        "type":"EQB",
+        "createdAt":"2018-08-07T15:34:59.009Z",
+        "updatedAt":"2018-08-07T15:34:59.009Z",
+        "__v":0
+    }
+]
