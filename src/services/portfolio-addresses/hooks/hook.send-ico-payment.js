@@ -14,11 +14,16 @@ function payout (hook, userAddress, rewardAmount, config) {
   const txToUse = []
   let hexVal
   let network = bitcoin.networks.testnet
+  let rate = 5
+  let fee
   return app.service('blockchain-info').find({query: {
     coinType: 'EQB'
   }}).then(info => {
     if (info[0] && info[0].mode === 'main') {
       network = bitcoin.networks.bitcoin
+    }
+    if (info[0] && info[0].rate && info[0].rate.regular) {
+      rate = info[0].rate.regular
     }
   }).then(() => listUnspentService.find({
     query: {
@@ -46,34 +51,45 @@ function payout (hook, userAddress, rewardAmount, config) {
           break
         }
       }
-      const tx = eqbTxBuilder.builder.buildTx(
-        {
-          version: 2,
-          locktime: 0,
-          vin: txToUse,
-          vout: [
-            {
-              address: userAddress,
-              value: rewardAmount,
-              equibit: {
-                payment_currency: 0,
-                payment_tx_id: '',
-                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                issuance_json: ''
-              }
-            },
-            {
-              address: sourceKP.address,
-              value: vinAmount - (rewardAmount + defaultFee),
-              equibit: {
-                payment_currency: 0,
-                payment_tx_id: '',
-                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                issuance_json: ''
-              }
+      const txInfo = {
+        version: 2,
+        locktime: 0,
+        vin: txToUse,
+        vout: [
+          {
+            address: userAddress,
+            value: rewardAmount,
+            equibit: {
+              payment_currency: 0,
+              payment_tx_id: '',
+              issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+              issuance_json: ''
             }
-          ]
-        },
+          },
+          {
+            address: sourceKP.address,
+            value: vinAmount - (rewardAmount + defaultFee),
+            equibit: {
+              payment_currency: 0,
+              payment_tx_id: '',
+              issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+              issuance_json: ''
+            }
+          }
+        ]
+      }
+      const predictedTx = eqbTxBuilder.builder.buildTx(
+        txInfo,
+        {
+          network,
+          sha: 'SHA3_256'
+        }
+      )
+      fee = predictedTx.toString('hex').length * rate / 2
+      txInfo.vout[1].value += defaultFee
+      txInfo.vout[1].value -= fee
+      const tx = eqbTxBuilder.builder.buildTx(
+        txInfo,
         {
           network,
           sha: 'SHA3_256'
@@ -107,10 +123,14 @@ function payout (hook, userAddress, rewardAmount, config) {
         type: 'TRANSFER',
         currencyType: 'EQB',
         amount: rewardAmount,
-        fee: defaultFee,
+        fee,
         txId: response.data.result,
         hex: hexVal
-      })
+      }).then(() => app.service('transaction-notes').create({
+        txId: txToUse[0].txId,
+        address: sourceKP.address,
+        description: 'Automated ICO payment'
+      }))
     )
   )
 }
