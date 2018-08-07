@@ -118,13 +118,13 @@ function payout (hook, userAddress, rewardAmount, config) {
 module.exports = function () {
   return hook => {
     const investorsService = hook.app.service('icoinvestors')
-    const balanceThreshold = 100 * 100000000
     let addressEQB
     const email = (hook.params.user && hook.params.user.email) || hook.data.email
     if (hook.data.type === 'EQB') {
       addressEQB = hook.data.importAddress
     }
     if (email && addressEQB) {
+      const balanceThreshold = hook.app.get('icoPayoutThreshold') * 100000000
       const random = Math.random()
       // use patch rather than find to atomically check and set the locked field
       return investorsService.patch(null, {locked: random}, {query: {
