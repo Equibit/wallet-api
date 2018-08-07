@@ -1,12 +1,11 @@
-
 const errors = require('feathers-errors')
-const { preventChanges, iff } = require('feathers-hooks-common')
+const { preventChanges, iff, isProvider, discard } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
 const { associateCurrentUser, restrictToOwner } = require('feathers-authentication-hooks')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const completeValidation = require('./hooks/hooks.complete-validate')
-const validateAnswers = require('./hooks/hooks.validate-answers')
-const initialAnswers = require('./hooks/hooks.initial-answers')
+const completeValidation = require('./hooks/hook.complete-validate')
+const validateAnswers = require('./hooks/hook.validate-answers')
+const sendReward = require('./hooks/hook.send-reward')
 
 module.exports = function (app) {
   return {
@@ -19,39 +18,26 @@ module.exports = function (app) {
         restrictToOwner({ idField: '_id', ownerField: 'userId' })
       ],
       create: [
+        iff(
+          isProvider('external'),
+          discard('lock', 'rewarded', 'manualPaymentRequired')
+        ),
         // Check if questionnaire exists
         context => {
           return app.service('questionnaires').get(context.data.questionnaireId)
           .then(() => context)
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
         },
-        context => {
-          context.data.status = 'STARTED'
-          return context
-        },
-        initialAnswers(app),
         associateCurrentUser({ idField: '_id', as: 'userId' })
       ],
       update: [mapUpdateToPatch()],
       patch: [
-        preventChanges(true, 'questionnaireId', 'rewarded'),
         iff(
-          context => context.data.answers,
-          validateAnswers(app)
+          isProvider('external'),
+          preventChanges(true, 'questionnaireId', 'lock', 'rewarded', 'manualPaymentRequired')
         ),
-        context => {
-          return context.service.get(context.id)
-          .then(questionnaire => {
-            if (questionnaire.status === 'COMPLETED' && context.data.status !== 'COMPLETED') {
-              return Promise.reject(new errors.BadRequest("Can't change the completed status of a questionnaire that is already completed!"))
-            }
-            return Promise.resolve(context)
-          })
-        },
-        iff(
-          context => context.data.status === 'COMPLETED',
-          completeValidation(app)
-        )
+        validateAnswers(app),
+        completeValidation(app)
       ],
       remove: []
     },
@@ -62,7 +48,9 @@ module.exports = function (app) {
       get: [],
       create: [],
       update: [],
-      patch: [],
+      patch: [
+        sendReward()
+      ],
       remove: []
     },
 

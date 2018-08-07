@@ -21,6 +21,10 @@ function validateAnswer (index, answer, answers, possibleAnswers) {
 
 module.exports = function (app) {
   return function (context) {
+    if (!Array.isArray(context.data.answers)) {
+      return context
+    }
+
     const userQuestionnaire = app.service('user-questionnaire').get(context.id)
     return userQuestionnaire
     .then(data => app.service('questions').find({ query: { questionnaireId: data.questionnaireId, $sort: { sortIndex: 1 } } }))

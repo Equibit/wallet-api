@@ -9,11 +9,11 @@ module.exports = function (app) {
   const userQuestionnaire = new Schema({
     questionnaireId: { type: ObjectId, required: true, unique: true },
     userId: { type: ObjectId, required: true },
-    status: { type: String, enum: ['STARTED', 'COMPLETED', 'REWARDED'], required: true },
-    answers: [{ type: mongooseClient.SchemaTypes.Mixed }]
-    // started: { type: Boolean, default: false, required: true },
-    // completed: { type: Boolean, default: false, required: true },
-    // rewarded: { type: Boolean }
+    answers: [{ type: mongooseClient.SchemaTypes.Mixed }],
+    status: { type: String, enum: ['STARTED', 'COMPLETED'], required: true, default: 'STARTED' },
+    rewarded: { type: Boolean, required: true, default: false },
+    locked: { type: Number, default: 0, required: true },
+    manualPaymentRequired: { type: Boolean, default: false }
   }, {
     timestamps: true
   })
