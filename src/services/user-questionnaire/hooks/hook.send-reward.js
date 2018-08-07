@@ -1,114 +1,4 @@
-const { eqbTxBuilder, bitcoin } = require('@equibit/wallet-crypto')
-const axios = require('axios')
-
-const fee = 3000
-
-function payout (hook, userAddress, rewardAmount, config) {
-  const app = hook.app
-  const sourceKP = {
-    address: app.get('rewardAddress'),
-    key: app.get('rewardKey')
-  }
-  const listUnspentService = app.service('listunspent')
-  const txToUse = []
-  let hexVal
-  return listUnspentService.find({
-    query: {
-      eqb: [sourceKP.address],
-      doImport: false,
-      byAddress: false
-    }
-  }).then(
-    unspent => {
-      const utxo = unspent.EQB.txouts
-      const total = unspent.EQB.summary.total
-      if (total < rewardAmount) {
-        console.error('Funds were not available to dispense an ico entitlement, refill ', sourceKP.address)
-        throw new Error('insufficient funds')
-      }
-      let vinAmount = 0
-      for (let tx of utxo) {
-        txToUse.push({
-          txid: tx.txid,
-          vout: 0,
-          keyPair: bitcoin.ECPair.fromWIF(sourceKP.key, bitcoin.networks.testnet)
-        })
-        vinAmount += tx.amount
-        if (vinAmount > rewardAmount) {
-          break
-        }
-      }
-      const tx = eqbTxBuilder.builder.buildTx(
-        {
-          version: 2,
-          locktime: 0,
-          vin: txToUse,
-          vout: [
-            {
-              address: userAddress,
-              value: rewardAmount,
-              equibit: {
-                payment_currency: 0,
-                payment_tx_id: '',
-                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                issuance_json: ''
-              }
-            },
-            {
-              address: sourceKP.address,
-              value: vinAmount - (rewardAmount + fee),
-              equibit: {
-                payment_currency: 0,
-                payment_tx_id: '',
-                issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-                issuance_json: ''
-              }
-            }
-          ]
-        },
-        {
-          network: bitcoin.networks.testnet,
-          sha: 'SHA3_256'
-        }
-      )
-      return tx
-    }
-  ).then(
-    built => {
-      hexVal = built.toString('hex')
-    }
-  ).then(
-    () => axios({
-      method: 'POST',
-      url: config.url,
-      data: {
-        jsonrpc: '1.0',
-        method: 'sendrawtransaction',
-        params: [hexVal]
-      },
-      auth: {
-        username: config.username,
-        password: config.password
-      }
-    })
-    .then(
-      response => {
-        return app.service('/transactions').create({
-          fromAddress: sourceKP.address,
-          toAddress: userAddress,
-          addressTxId: txToUse[0].txId,
-          addressVout: '0',
-          type: 'TRANSFER',
-          currencyType: 'EQB',
-          amount: rewardAmount,
-          fee: fee,
-          txid: response.data.result,
-          hex: hexVal
-        })
-      }
-    )
-  )
-}
+const payout = require('../../../utils/send-eqb-payment')
 
 module.exports = function () {
   return function (hook) {
@@ -131,8 +21,10 @@ module.exports = function () {
         const reward = questionnaire.reward
         const balanceThreshold = 100 * 100000000
         if (reward < balanceThreshold) {
+          const srcAddress = hook.app.get('rewardAddress')
+          const srcKey = hook.app.get('rewardKey')
           const address = hook.data.address
-          return payout(hook, address, reward, hook.app.get('equibitCore'))
+          return payout(hook.app, srcAddress, srcKey, address, reward, 'Automated Reward payment')
             .then(
               () => hook.service.patch(hook.id, {rewarded: true, locked: 0, manualPaymentRequired: false}),
               () =>
