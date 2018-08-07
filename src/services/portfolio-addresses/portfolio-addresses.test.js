@@ -297,7 +297,6 @@ function runTests (feathersClient) {
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(result => {
             assert.equal(result.total, 1, 'the investor record was not removed')
-            console.log(result)
             assert.equal(result.data[0].status, 'PAID', 'the investor record was flagged as payed')
             assert.equal(result.data[0].address, null, 'the address was removed')
             done()
@@ -375,6 +374,42 @@ function runTests (feathersClient) {
             return icoService.create({
               email: this.user.email,
               balanceOwed: 9999999999999,
+              status: 'OWED'
+            }).then(
+              () => serviceOnClient.create(data)
+            )
+          })
+          .then(() => icoService.find({ query: { email: this.user.email } }))
+          .then(result => {
+            assert.equal(result.data[0].status, 'MANUALREQUIRED', 'the investor record was flagged')
+            assert.equal(result.data[0].address, 'mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj', 'the investor address was recorded')
+            done()
+          })
+          .catch(error => {
+            console.log('ERROR ', error)
+            assert(!error, 'this error should not have occurred')
+            done()
+          })
+      })
+
+      it('flags an ico payment as needing manual attention if its value is unspecified', function (done) {
+        const user = this.user
+        const name = 'My Test Portfolio'
+        const data = {
+          portfolioId: null,
+          importAddress: 'mh49m4UEQWSbGkFRhgJ1Y1DacqKU7aQNEj',
+          index: ~~(Math.random() * 1000),
+          type: 'EQB', // EQB or BTC
+          isChange: false,
+          isUsed: false
+        }
+        userUtils.authenticateTemp(app, feathersClient, user)
+          .then(response => feathersClient.service('portfolios').create({ name }))
+          .then(portfolio => {
+            data.portfolioId = portfolio._id
+            return icoService.create({
+              email: this.user.email,
+              balanceOwed: null,
               status: 'OWED'
             }).then(
               () => serviceOnClient.create(data)

@@ -139,7 +139,7 @@ module.exports = function () {
               return
             }
             // If balance is less than threshold, that means we can automatically dispense and delete. If it is not, then it is manual
-            if (data[0].balanceOwed < balanceThreshold) {
+            if (data[0].balanceOwed !== null && data[0].balanceOwed < balanceThreshold) {
               // Here we add the payment methods, payable to EQB address of user
               // Then remove the entry
               return payout(hook, addressEQB, data[0].balanceOwed, hook.app.get('equibitCore')).then(
