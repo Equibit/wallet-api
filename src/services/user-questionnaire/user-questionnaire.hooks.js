@@ -24,10 +24,6 @@ module.exports = function (app) {
           discard('lock', 'rewarded', 'manualPaymentRequired')
         ),
         // Check if questionnaire exists
-        iff(
-          isProvider('external'),
-          discard('lock', 'rewarded', 'manualPaymentRequired')
-        ),
         context => {
           return app.service('questionnaires').get(context.data.questionnaireId)
           .then(() => context)
