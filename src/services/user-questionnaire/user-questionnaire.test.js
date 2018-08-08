@@ -258,7 +258,7 @@ function runTests (feathersClient) {
         .catch(done)
       })
 
-      it('Will not send a reward after second completion', (done) => {
+      it('Will send only one reward after multiple parallel requests', (done) => {
         const data = { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }
         serviceOnClient.patch(this.userQuestionnaire._id, {
           answers: [
