@@ -3,15 +3,12 @@ const payout = require('../../../utils/send-eqb-payment')
 
 module.exports = function () {
   return function (hook) {
-    if (hook.result.status !== 'COMPLETED' ||
-      hook.result.rewarded ||
-      hook.result.manualPaymentRequired ||
-      !hook.data.hasOwnProperty('address')) {
+    if (hook.data.status !== 'COMPLETED' || !hook.data.hasOwnProperty('address')) {
       return hook
     }
 
     const random = Math.random()
-    return hook.service.patch(null, {locked: random}, {query: { locked: 0, _id: hook.id }})
+    return hook.service.patch(null, {locked: random}, {query: { locked: 0, _id: hook.id, status: 'COMPLETED' }})
       .then(data => {
         if (Array.isArray(data) && data.length > 0 && data[0].locked === random) {
           return hook.app.service('questionnaires').get(hook.result.questionnaireId)
@@ -25,10 +22,10 @@ module.exports = function () {
         const rewardKey = hook.app.get('rewardKey')
         return payout(hook.app, rewardAddress, rewardKey, address, reward, 'Automated reward payment')
           .then(
-            () => hook.service.patch(hook.id, {rewarded: true, locked: 0, manualPaymentRequired: false}),
-            () =>
+            () => hook.service.patch(hook.id, {status: 'REWARDED', locked: 0}),
+            err =>
               // Payment did not go through
-              hook.service.patch(hook.id, {locked: 0, manualPaymentRequired: true}))
+              hook.service.patch(hook.id, {address, locked: 0, status: 'MANUALREQUIRED', error: err.message}))
       },
       result => Promise.resolve(result)
       )

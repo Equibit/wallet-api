@@ -92,10 +92,9 @@ function runTests (feathersClient) {
         return userUtils.authenticateTemp(app, feathersClient, this.user)
       })
       .then(() => {
-        const userQuestionnaire = Object.assign({}, skel.userQuestionnaire, {
+        return serviceOnClient.create({
           questionnaireId: this.questionnaire._id.toString()
         })
-        return serviceOnClient.create(userQuestionnaire)
       })
       .then(userQuestionnaire => {
         this.userQuestionnaire = userQuestionnaire
@@ -166,6 +165,22 @@ function runTests (feathersClient) {
       .catch(done)
     })
 
+    it('Can set the status to completed and the final answer array simultaneously', (done) => {
+      serviceOnClient.patch(this.userQuestionnaire._id, {
+        answers: [
+          skel.questions[0].answerOptions[1].answer,
+          skel.questions[1].answerOptions[1].answer,
+          [skel.questions[2].answerOptions[1].answer]
+        ],
+        status: 'COMPLETED'
+      })
+      .then(userQuestionnaire => {
+        assert.equal(userQuestionnaire.status, 'COMPLETED')
+        done()
+      })
+      .catch(done)
+    })
+
     it('Can set the status to completed when there are null answers after the finalQuestion', (done) => {
       serviceOnClient.patch(this.userQuestionnaire._id, {
         answers: [
@@ -219,8 +234,7 @@ function runTests (feathersClient) {
         })
         .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
         .then(userQuestionnaire => {
-          assert.ok(userQuestionnaire.rewarded, 'user has been rewarded')
-          assert.equal(userQuestionnaire.manualPaymentRequired, false, 'does require not need manual payment')
+          assert.ok(userQuestionnaire.status, 'REWARDED', 'user has been rewarded')
           done()
         })
         .catch(done)

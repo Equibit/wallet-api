@@ -10,10 +10,11 @@ module.exports = function (app) {
     questionnaireId: { type: ObjectId, required: true, unique: true },
     userId: { type: ObjectId, required: true },
     answers: [{ type: mongooseClient.SchemaTypes.Mixed }],
-    status: { type: String, enum: ['STARTED', 'COMPLETED'], required: true, default: 'STARTED' },
+    status: { type: String, enum: ['STARTED', 'COMPLETED', 'MANUALREQUIRED', 'REWARDED'], required: true, default: 'STARTED' },
     rewarded: { type: Boolean, required: true, default: false },
     locked: { type: Number, default: 0, required: true },
-    manualPaymentRequired: { type: Boolean, default: false }
+    address: { type: String, required: false },
+    error: { type: String, required: false }
   }, {
     timestamps: true
   })

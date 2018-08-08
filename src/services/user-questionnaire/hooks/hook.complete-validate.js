@@ -38,14 +38,20 @@ module.exports = function (app) {
 
     return context.service.get(context.id)
       .then(userQuestionnaire => Promise.all([
+        Promise.resolve(userQuestionnaire),
         Promise.resolve(context.data.answers || userQuestionnaire.answers),
         app.service('questionnaires').get(userQuestionnaire.questionnaireId)
       ])
       ).then(res => {
-        const userAnswers = res[0]
-        const questions = res[1].questions
+        const userQuestionnaire = res[0]
+        const userAnswers = res[1]
+        const questions = res[2].questions
         if (!validateCompleteAnswers(questions, userAnswers)) {
           return Promise.reject(new errors.BadRequest('Completed answer array is invalid!'))
+        }
+        // If it is already rewarded, then status remains the same
+        if (['MANUALREQUIRED', 'REWARDED'].includes(userQuestionnaire.status)) {
+          context.data.status = userQuestionnaire.status
         }
         return Promise.resolve(context)
       })
