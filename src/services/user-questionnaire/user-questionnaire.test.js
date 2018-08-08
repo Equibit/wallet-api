@@ -243,38 +243,6 @@ function runTests (feathersClient) {
         })
         .catch(done)
       })
-
-      it('Will flag a reward with manual payment required when payment is too large', (done) => {
-        app.service('listunspent').find({
-          query: {
-            eqb: [app.get('rewardAddress')],
-            doImport: false,
-            byAddress: false
-          }
-        })
-        .then(
-          unspent => {
-            const reward = unspent.EQB.summary.total + 1
-            return questionnaireService.patch(this.questionnaire._id, { reward })
-          }
-        )
-        .then(() =>
-          serviceOnClient.patch(this.userQuestionnaire._id, {
-            answers: [
-              skel.questions[0].answerOptions[1].answer,
-              skel.questions[1].answerOptions[1].answer,
-              [skel.questions[2].answerOptions[1].answer]
-            ]
-          })
-        )
-        .then(() => serviceOnClient.patch(this.userQuestionnaire._id.toString(), { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }))
-        .then(userQuestionnaire => {
-          assert.equal(userQuestionnaire.rewarded, false, 'not rewarded')
-          assert.ok(userQuestionnaire.manualPaymentRequired, 'manual payment required')
-          done()
-        })
-        .catch(done)
-      })
     })
   })
 }

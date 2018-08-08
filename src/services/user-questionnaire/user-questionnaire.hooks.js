@@ -37,15 +37,7 @@ module.exports = function (app) {
           preventChanges(true, 'questionnaireId', 'lock', 'rewarded', 'manualPaymentRequired')
         ),
         validateAnswers(app),
-<<<<<<< HEAD
-<<<<<<< HEAD
-        completeValidation(app)        
-=======
         completeValidation(app)
->>>>>>> 795b3ca9c73e4a7a0154b271f825dc354e370c7e
-=======
-        completeValidation(app)
->>>>>>> parent of 138045b... fix conflicts
       ],
       remove: []
     },
