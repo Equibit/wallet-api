@@ -19,15 +19,19 @@ module.exports = function () {
       })
       .then(questionnaire => {
         const reward = questionnaire.reward
-        const srcAddress = hook.app.get('rewardAddress')
-        const srcKey = hook.app.get('rewardKey')
-        const address = hook.data.address
-        return payout(hook.app, srcAddress, srcKey, address, reward, 'Automated reward payment')
-          .then(
-            () => hook.service.patch(hook.id, {rewarded: true, locked: 0, manualPaymentRequired: false}),
-            () =>
-              // Payment did not go through
-              hook.service.patch(hook.id, {locked: 0, manualPaymentRequired: true}))
+        const balanceThreshold = 100 * 100000000
+        if (reward < balanceThreshold) {
+          const srcAddress = hook.app.get('rewardAddress')
+          const srcKey = hook.app.get('rewardKey')
+          const address = hook.data.address
+          return payout(hook.app, srcAddress, srcKey, address, reward, 'Automated Reward payment')
+            .then(
+              () => hook.service.patch(hook.id, {rewarded: true, locked: 0, manualPaymentRequired: false}),
+              () =>
+                // Payment did not go through
+                hook.service.patch(hook.id, {locked: 0, manualPaymentRequired: true}))
+        }
+        return hook.service.patch(hook.id, {locked: 0, manualPaymentRequired: true})
       },
       result => Promise.resolve(result)
       )
