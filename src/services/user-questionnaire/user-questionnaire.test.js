@@ -257,6 +257,29 @@ function runTests (feathersClient) {
         })
         .catch(done)
       })
+
+      it('Will not send a reward after second completion', (done) => {
+        const data = { status: 'COMPLETED', address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG' }
+        serviceOnClient.patch(this.userQuestionnaire._id, {
+          answers: [
+            skel.questions[0].answerOptions[1].answer,
+            skel.questions[1].answerOptions[1].answer,
+            [skel.questions[2].answerOptions[1].answer]
+          ]
+        })
+        .then(() => Promise.all([
+          serviceOnClient.patch(this.userQuestionnaire._id.toString(), data),
+          serviceOnClient.patch(this.userQuestionnaire._id.toString(), data),
+          serviceOnClient.patch(this.userQuestionnaire._id.toString(), data),
+          serviceOnClient.patch(this.userQuestionnaire._id.toString(), data)
+        ]))
+        .then(() => {
+          const requests = transactions.history().post.filter(req => req.data.indexOf('"method":"sendrawtransaction"') > -1)
+          assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
+          done()
+        })
+        .catch(done)
+      })
     })
   })
 }
