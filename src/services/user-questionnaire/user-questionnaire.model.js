@@ -13,7 +13,7 @@ module.exports = function (app) {
     status: { type: String, enum: ['STARTED', 'COMPLETED'], required: true, default: 'STARTED' },
     rewarded: { type: Boolean, required: true, default: false },
     locked: { type: Number, default: 0, required: true },
-    manualPaymentRequired: { type: Boolean, default: false },
+    manualPaymentRequired: { type: Boolean, default: false }
   }, {
     timestamps: true
   })
