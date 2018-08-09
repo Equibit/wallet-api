@@ -177,30 +177,21 @@ function runTests (feathersClient) {
         create(validAnswers, address)
         .then(userQuestionnaire => {
           assert.equal(userQuestionnaire.status, 'REWARDED', 'user has been rewarded')
-          assert.equal(userQuestionnaire.manualPaymentRequired, false, 'does require not need manual payment')
           done()
         })
         .catch(done)
       })
 
-      it('Will flag a reward with manual payment required when payment is too large', (done) => {
-        app.service('listunspent').find({
-          query: {
-            eqb: [app.get('rewardAddress')],
-            doImport: false,
-            byAddress: false
-          }
-        })
-        .then(
-          unspent => {
-            const reward = unspent.EQB.summary.total + 1
-            return questionnaireService.patch(this.questionnaire._id, { reward })
-          }
-        )
-        .then(() => create(validAnswers, address))
-        .then(userQuestionnaire => {
-          assert.equal(userQuestionnaire.status, 'COMPLETED', 'not rewarded')
-          assert.ok(userQuestionnaire.manualPaymentRequired, 'manual payment required')
+      it('Will send only one reward after multiple parallel requests', (done) => {
+        Promise.all([
+          create(validAnswers, address),
+          create(validAnswers, address),
+          create(validAnswers, address),
+          create(validAnswers, address)
+        ])
+        .then(() => {
+          const requests = transactions.history().post.filter(req => req.data.indexOf('"method":"sendrawtransaction"') > -1)
+          assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
           done()
         })
         .catch(done)

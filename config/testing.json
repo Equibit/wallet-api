@@ -24,6 +24,12 @@
       "services": [{
         "path": "users",
         "data": "services/users/users.seed.json"
+      }, {
+        "path": "portfolios",
+        "data": "services/portfolios/portfolios.seed.json"
+      }, {
+        "path": "portfolio-addresses",
+        "data": "services/portfolio-addresses/portfolio-addresses.seed.json"
       }]
     },
     "addressMapEncryptionKey": "10789b383c9b6c853f605e303f2a80ef",

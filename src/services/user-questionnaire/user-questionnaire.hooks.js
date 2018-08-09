@@ -1,4 +1,3 @@
-
 const errors = require('feathers-errors')
 const { iff, isProvider, discard, required, disallow } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks

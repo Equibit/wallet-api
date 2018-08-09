@@ -10,9 +10,14 @@ module.exports = function (app) {
   const icoinvestors = new Schema({
     email: { type: String, unique: true, lowercase: true, required: true },
     // Address will be populated by Wallet when new user is created with the same email
-    address: { type: String },
+    // and removed once the payment is made
+    address: { type: String, required: false },
     balanceOwed: { type: Number },
-    manualPaymentRequired: { type: Boolean, default: false }
+    // if this payment is currently being processed
+    locked: { type: Number, default: 0 },
+    // enum ['OWED', MANUALREQUIRED', 'PAID']
+    status: { type: String, required: true, enum: ['OWED', 'MANUALREQUIRED', 'PAID'], default: 'OWED' },
+    error: { type: String, required: false }
 
   }, {
     timestamps: true
