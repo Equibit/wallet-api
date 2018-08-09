@@ -1,6 +1,7 @@
 [
     {
         "_id":"5b69bbe607b3a03e802995bf",
+        "_email":"test@evenset.com",
         "name":"My Test Portfolio",
         "userId":"5b69bbcf07b3a03e802995bc",
         "index":0,
@@ -8,5 +9,15 @@
         "createdAt":"2018-08-07T15:33:58.711Z",
         "updatedAt":"2018-08-07T15:33:58.711Z",
         "__v":0
-    }
+    },
+    {
+        "_id":"5b6c55777ee09b234ee4cad1",
+        "_email":"test2@evenset.com",
+        "name":"My Test Portfolio 2",
+        "userId":"5b6c55617ee09b234ee4cace",
+        "index":0,
+        "importFrom":"2018-08-09T14:53:43.993Z",
+        "createdAt":"2018-08-09T14:53:43.993Z",
+        "updatedAt":"2018-08-09T14:53:43.993Z",
+        "__v":0}
 ]

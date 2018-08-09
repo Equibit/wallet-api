@@ -1,6 +1,7 @@
 [
     {
         "_id":"5b69bc2307b3a03e802995c1",
+        "_email":"test@evenset.com",
         "isChange":false,
         "isUsed":false,
         "portfolioId":"5b69bbe607b3a03e802995bf",
@@ -12,6 +13,7 @@
     },
     {
         "_id":"5b69bc2307b3a03e802995c0",
+        "_email":"test@evenset.com",
         "isChange":false,
         "isUsed":false,
         "portfolioId":"5b69bbe607b3a03e802995bf",
@@ -19,6 +21,30 @@
         "type":"EQB",
         "createdAt":"2018-08-07T15:34:59.009Z",
         "updatedAt":"2018-08-07T15:34:59.009Z",
+        "__v":0
+    },
+    {
+        "_id":"5b6c55bc7ee09b234ee4cad2",
+        "_email":"test2@evenset.com",
+        "isChange":false,
+        "isUsed":false,
+        "portfolioId":"5b6c55777ee09b234ee4cad1",
+        "index":0,
+        "type":"BTC",
+        "createdAt":"2018-08-09T14:54:52.308Z",
+        "updatedAt":"2018-08-09T14:54:52.308Z",
+        "__v":0
+    },
+    {
+        "_id":"5b6c55bc7ee09b234ee4cad3",
+        "_email":"test2@evenset.com",
+        "isChange":false,
+        "isUsed":false,
+        "portfolioId":"5b6c55777ee09b234ee4cad1",
+        "index":0,
+        "type":"EQB",
+        "createdAt":"2018-08-09T14:54:52.327Z",
+        "updatedAt":"2018-08-09T14:54:52.327Z",
         "__v":0
     }
 ]
