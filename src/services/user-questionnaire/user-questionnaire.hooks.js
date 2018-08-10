@@ -32,6 +32,12 @@ module.exports = function (app) {
           const { questionnaireId, answers } = context.data
           return app.service('user-answers').create({ questionnaireId, answers })
             .then(() => context)
+        },
+        // Make sure to unset address before doing rewards
+        context => {
+          context.params.address = context.data.address
+          context.data.address = null
+          return context
         }
       ],
       update: [disallow('external')],

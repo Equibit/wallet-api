@@ -7,16 +7,17 @@ module.exports = function (app) {
   const { Schema } = mongooseClient
   const ObjectId = mongooseClient.SchemaTypes.ObjectId
   const userQuestionnaire = new Schema({
-    questionnaireId: { type: ObjectId, required: true, unique: true },
+    questionnaireId: { type: ObjectId, required: true },
     userId: { type: ObjectId, required: true },
-    status: { type: String, enum: ['COMPLETED', 'MANUALREQUIRED', 'REWARDED'], required: true, default: 'STARTED' },
-    manualPaymentRequired: { type: Boolean, default: false },
-    answers: [{ type: mongooseClient.SchemaTypes.Mixed }],
+    status: { type: String, enum: ['COMPLETED', 'MANUALREQUIRED', 'REWARDED'], required: true, default: 'COMPLETED' },
+    locked: { type: Number, default: 0 },
     address: { type: String, required: false },
     error: { type: String, required: false }
   }, {
     timestamps: true
   })
+
+  userQuestionnaire.index({ questionnaireId: 1, userId: 1 }, { unique: true })
 
   return mongooseClient.model('userQuestionnaire', userQuestionnaire)
 }

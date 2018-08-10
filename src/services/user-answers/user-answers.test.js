@@ -1,73 +1,18 @@
 const assert = require('assert')
 const app = require('../../app')
 const utils = require('../../../test-utils/index')
+const questionnaireSkel = require('../../../test-utils/questionnaire')
 
 utils.clients.forEach(client => {
   runTests(client)
 })
-
-const skel = {
-  questionnaire: {
-    description: 'Test questionnaire',
-    status: 'active',
-    reward: 0.005
-  },
-  questions: [
-    {
-      question: 'What best describes your interest in Equibit?',
-      questionType: 'SINGLE',
-      sortIndex: 1,
-      answerOptions: [
-        {
-          answer: 'I just want the free EQB for completing this questionnaire <strong>[end]</strong>',
-          finalQuestion: true
-        },
-        { answer: 'I’m interested in both investing and raising money for companies on the blockchain' },
-        { answer: 'I’m only interested in using Equibit Portfolio to invest in companies' },
-        {
-          answer: 'I’m only interested in using Equibit Portfolio to raise money for companies <strong>[Goto Q8]</strong>',
-          skipTo: 3
-        }
-      ]
-    },
-    {
-      question: 'How likely are you to use Equibit Portfolio to invest in a company?',
-      questionType: 'SINGLE',
-      sortIndex: 2,
-      answerOptions: [
-        {
-          answer: 'Unlikely <strong>[end]</strong>',
-          finalQuestion: true
-        },
-        { answer: 'Somewhat likely' },
-        { answer: 'Very likely' },
-        { answer: 'Don’t know' }
-      ]
-    },
-    {
-      question: 'What types of companies are you most interested investing in?',
-      questionType: 'MULTI',
-      sortIndex: 3,
-      answerOptions: [
-        {
-          answer: 'Blockchain',
-          finalQuestion: true
-        },
-        { answer: 'Fintech' },
-        { answer: 'Cannabis' },
-        { answer: 'Any Start-up' },
-        { answer: 'Traditional/Blue chip' },
-        { answer: 'Any' },
-        { answer: "Don't know" }
-      ]
-    }]
-}
 
 function runTests (feathersClient) {
   const transport = feathersClient.io ? 'feathers-socketio' : 'feathers-rest'
   const userAnswersService = app.service('user-answers')
   const questionnaireService = app.service('questionnaires')
   const questionsService = app.service('questions')
+  const questions = questionnaireSkel.questions
 
   const invalidCreate = (invalidAnswers, done) => {
     return userAnswersService.create({questionnaireId: this.questionnaire._id, answers: invalidAnswers})
@@ -90,18 +35,20 @@ function runTests (feathersClient) {
   describe(`User Answers Tests - ${transport}`, () => {
     before((done) => {
       // Initialize questionnaire and questions
-      questionnaireService.create(skel.questionnaire)
+      questionnaireService.create(questionnaireSkel.questionnaire)
         .then(questionnaire => {
           this.questionnaire = questionnaire
-          return Promise.all(skel.questions.map(q =>
+          return Promise.all(questions.map(q =>
             questionsService.create(Object.assign({}, q, { questionnaireId: questionnaire._id }))))
         })
         .then(() => done())
     })
 
     after((done) => {
-      Promise.all([questionnaireService.remove(this.questionnaire._id.toString()),
-        questionsService.remove(null, {})
+      Promise.all([
+        questionnaireService.remove(this.questionnaire._id.toString()),
+        questionsService.remove(null, {}),
+        userAnswersService.remove(null, {})
       ])
       .then(() => done())
     })
@@ -110,26 +57,26 @@ function runTests (feathersClient) {
       describe('Invalid answers ', () => {
         it('Should not accept answers that are not valid', (done) => {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[1].answer,
+            questions[0].answerOptions[1].answer,
             'invalidanswer',
-            [skel.questions[2].answerOptions[1].answer, skel.questions[2].answerOptions[2].answer]
+            [questions[2].answerOptions[1].answer, questions[2].answerOptions[2].answer]
           ]
           invalidCreate(invalidAnswers, done)
         })
 
         it('Should not accept invalid answers in multi question array', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[1].answer,
-            skel.questions[1].answerOptions[1].answer,
-            [skel.questions[2].answerOptions[1].answer, 'invalidanswer', 'invalidanswer']
+            questions[0].answerOptions[1].answer,
+            questions[1].answerOptions[1].answer,
+            [questions[2].answerOptions[1].answer, 'invalidanswer', 'invalidanswer']
           ]
           invalidCreate(invalidAnswers, done)
         })
 
         it('Should not accept a string for a multi question', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[1].answer,
-            skel.questions[1].answerOptions[1].answer,
+            questions[0].answerOptions[1].answer,
+            questions[1].answerOptions[1].answer,
             'invalidanswer'
           ]
           invalidCreate(invalidAnswers, done)
@@ -137,27 +84,27 @@ function runTests (feathersClient) {
 
         it('Should not accept more answers than are required for a multi question', function (done) {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[1].answer,
-            skel.questions[1].answerOptions[1].answer,
-            [skel.questions[2].answerOptions[1].answer, 'invalidanswer', 'invalidanswer', 'invalidanswer']
+            questions[0].answerOptions[1].answer,
+            questions[1].answerOptions[1].answer,
+            [questions[2].answerOptions[1].answer, 'invalidanswer', 'invalidanswer', 'invalidanswer']
           ]
           invalidCreate(invalidAnswers, done)
         })
 
         it('Should not accept answers between skipTo indexes', (done) => {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[3].answer,
-            skel.questions[1].answerOptions[1].answer,
-            [skel.questions[2].answerOptions[1].answer]
+            questions[0].answerOptions[3].answer,
+            questions[1].answerOptions[1].answer,
+            [questions[2].answerOptions[1].answer]
           ]
           invalidCreate(invalidAnswers, done)
         })
 
         it('Should not accept answers set after finalQuestion', (done) => {
           const invalidAnswers = [
-            skel.questions[0].answerOptions[0].answer,
-            skel.questions[1].answerOptions[1].answer,
-            [skel.questions[2].answerOptions[1].answer]
+            questions[0].answerOptions[0].answer,
+            questions[1].answerOptions[1].answer,
+            [questions[2].answerOptions[1].answer]
           ]
           invalidCreate(invalidAnswers, done)
         })
@@ -166,9 +113,9 @@ function runTests (feathersClient) {
       describe('Valid answers', () => {
         it('Should accept answers that are null in between skipTo indexes', (done) => {
           const validAnswers = [
-            skel.questions[0].answerOptions[3].answer,
+            questions[0].answerOptions[3].answer,
             null,
-            [skel.questions[2].answerOptions[1].answer]
+            [questions[2].answerOptions[1].answer]
           ]
           validCreate(validAnswers)
             .then(userAnswers => {
@@ -184,7 +131,7 @@ function runTests (feathersClient) {
 
         it('Should accept answers that are null after finalQuestion', (done) => {
           const validAnswers = [
-            skel.questions[0].answerOptions[0].answer,
+            questions[0].answerOptions[0].answer,
             null,
             null
           ]
