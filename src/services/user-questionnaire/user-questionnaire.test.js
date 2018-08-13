@@ -118,7 +118,7 @@ function runTests (feathersClient) {
           create(validAnswers).catch(() => 'ignore error')])
         .then(() => {
           const requests = transactions.history().post.filter(req => req.data.indexOf('"method":"sendrawtransaction"') > -1)
-          assert.ok(requests.length === 1, 'sendrawtransaction was called once or none')
+          assert.ok(requests.length === 1, 'sendrawtransaction was called exactly once')
           done()
         })
         .catch(done)
