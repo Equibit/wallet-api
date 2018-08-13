@@ -58,7 +58,8 @@ function runTests (feathersClient) {
           questions[0].answerOptions[1].answer,
           questions[1].answerOptions[1].answer,
           [questions[2].answerOptions[1].answer]
-        ]
+        ],
+        address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG'
       }))
       .then(() => serviceOnClient.find())
       .then(res => {

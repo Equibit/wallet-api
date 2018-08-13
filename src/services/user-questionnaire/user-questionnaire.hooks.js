@@ -18,7 +18,7 @@ module.exports = function (app) {
         iff(
           isProvider('external'),
           discard('status', 'manualPaymentRequired'),
-          required('answers')
+          required('answers', 'address')
         ),
         // Check if questionnaire exists
         context => {

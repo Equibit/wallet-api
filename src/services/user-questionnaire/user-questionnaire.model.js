@@ -11,8 +11,8 @@ module.exports = function (app) {
     userId: { type: ObjectId, required: true },
     status: { type: String, enum: ['COMPLETED', 'MANUALREQUIRED', 'REWARDED'], required: true, default: 'COMPLETED' },
     locked: { type: Number, default: 0 },
-    address: { type: String, required: false },
-    error: { type: String, required: false }
+    address: { type: String },
+    error: { type: String }
   }, {
     timestamps: true
   })

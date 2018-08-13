@@ -22,13 +22,11 @@ function runTests (feathersClient) {
     [questions[2].answerOptions[1].answer]
   ]
 
-  const address = 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG'
-
-  const create = (answers, address) => {
+  const create = (answers) => {
     return serviceOnClient.create({
       questionnaireId: this.questionnaire._id,
       answers,
-      address
+      address: 'mkZQx5aLbtDwyEctWhPwk5BhbNfcLLXsaG'
     })
   }
 
@@ -85,19 +83,6 @@ function runTests (feathersClient) {
       })
     })
 
-    it('Can set the status to completed when the final answer array is valid without address', (done) => {
-      create([
-        questions[0].answerOptions[1].answer,
-        questions[1].answerOptions[1].answer,
-        [questions[2].answerOptions[1].answer]
-      ])
-      .then(userQuestionnaire => {
-        assert.equal(userQuestionnaire.status, 'COMPLETED')
-        done()
-      })
-      .catch(done)
-    })
-
     describe('Rewards tests', (done) => {
       beforeEach(() => {
         transactions.setupMock()
@@ -110,7 +95,7 @@ function runTests (feathersClient) {
       })
 
       it('Will send reward after first completion', (done) => {
-        create(validAnswers, address)
+        create(validAnswers)
         .then(userQuestionnaire => {
           assert.equal(userQuestionnaire.status, 'REWARDED', 'user has been rewarded')
           done()
@@ -119,7 +104,7 @@ function runTests (feathersClient) {
       })
 
       it('Will not show address in record if reward goes through', (done) => {
-        create(validAnswers, address)
+        create(validAnswers)
         .then(userQuestionnaire => {
           assert.equal(userQuestionnaire.address, null, 'address is set to null')
           done()
@@ -128,17 +113,15 @@ function runTests (feathersClient) {
       })
 
       it('Will send only one reward after multiple parallel requests', (done) => {
-        Promise.all([create(validAnswers, address), create(validAnswers, address)])
-        .catch(err => {
-          try {
-            const requests = transactions.history().post.filter(req => req.data.indexOf('"method":"sendrawtransaction"') > -1)
-            assert.equal(err.name, 'Conflict', 'Conflict error')
-            assert.ok(requests.length <= 1, 'sendrawtransaction was called once or none')
-            done()
-          } catch (assertionErr) {
-            done(assertionErr)
-          }
+        Promise.all([
+          create(validAnswers).catch(() => 'ignore error'),
+          create(validAnswers).catch(() => 'ignore error')])
+        .then(() => {
+          const requests = transactions.history().post.filter(req => req.data.indexOf('"method":"sendrawtransaction"') > -1)
+          assert.ok(requests.length === 1, 'sendrawtransaction was called once or none')
+          done()
         })
+        .catch(done)
       })
     })
   })
