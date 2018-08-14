@@ -42,7 +42,7 @@ function payout (app, srcAddress, srcKey, userAddress, rewardAmount, message) {
       for (let tx of utxo) {
         txToUse.push({
           txid: tx.txid,
-          vout: 0,
+          vout: tx.vout,
           keyPair: bitcoin.ECPair.fromWIF(sourceKP.key, network)
         })
         vinAmount += tx.amount
