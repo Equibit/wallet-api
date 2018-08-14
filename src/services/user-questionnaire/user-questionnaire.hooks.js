@@ -9,14 +9,19 @@ module.exports = function (app) {
     before: {
       all: [authenticate('jwt')],
       find: [
-        restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        iff(
+          isProvider('external'),
+          restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        )
       ],
       get: [
-        restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        iff(
+          isProvider('external'),
+          restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        )
       ],
       create: [
         iff(
-          isProvider('external'),
           discard('status', 'manualPaymentRequired'),
           required('answers', 'address')
         ),
