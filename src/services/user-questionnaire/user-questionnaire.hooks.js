@@ -1,10 +1,7 @@
 const errors = require('feathers-errors')
-const { preventChanges, iff, isProvider, discard } = require('feathers-hooks-common')
+const { iff, isProvider, discard, required, disallow } = require('feathers-hooks-common')
 const { authenticate } = require('feathers-authentication').hooks
 const { associateCurrentUser, restrictToOwner } = require('feathers-authentication-hooks')
-const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const completeValidation = require('./hooks/hook.complete-validate')
-const validateAnswers = require('./hooks/hook.validate-answers')
 const sendReward = require('./hooks/hook.send-reward')
 
 module.exports = function (app) {
@@ -12,15 +9,21 @@ module.exports = function (app) {
     before: {
       all: [authenticate('jwt')],
       find: [
-        restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        iff(
+          isProvider('external'),
+          restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        )
       ],
       get: [
-        restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        iff(
+          isProvider('external'),
+          restrictToOwner({ idField: '_id', ownerField: 'userId' })
+        )
       ],
       create: [
         iff(
-          isProvider('external'),
-          discard('lock', 'rewarded', 'manualPaymentRequired')
+          discard('status', 'manualPaymentRequired'),
+          required('answers', 'address')
         ),
         // Check if questionnaire exists
         context => {
@@ -28,29 +31,32 @@ module.exports = function (app) {
           .then(() => context)
           .catch(err => Promise.reject(new errors.BadRequest(err.message)))
         },
-        associateCurrentUser({ idField: '_id', as: 'userId' })
+        associateCurrentUser({ idField: '_id', as: 'userId' }),
+        // Send answers to service
+        context => {
+          const { questionnaireId, answers } = context.data
+          return app.service('user-answers').create({ questionnaireId, answers })
+            .then(() => context)
+        },
+        // Make sure to unset address before doing rewards
+        context => {
+          context.params.address = context.data.address
+          context.data.address = null
+          return context
+        }
       ],
-      update: [mapUpdateToPatch()],
-      patch: [
-        iff(
-          isProvider('external'),
-          preventChanges(true, 'questionnaireId', 'lock', 'rewarded', 'manualPaymentRequired')
-        ),
-        validateAnswers(app),
-        completeValidation(app)
-      ],
-      remove: []
+      update: [disallow('external')],
+      patch: [disallow('external')],
+      remove: [disallow('external')]
     },
 
     after: {
       all: [],
       find: [],
       get: [],
-      create: [],
+      create: [sendReward()],
       update: [],
-      patch: [
-        sendReward()
-      ],
+      patch: [],
       remove: []
     },
 
