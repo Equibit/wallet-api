@@ -19,5 +19,17 @@
         "importFrom":"2018-08-09T14:53:43.993Z",
         "createdAt":"2018-08-09T14:53:43.993Z",
         "updatedAt":"2018-08-09T14:53:43.993Z",
-        "__v":0}
+        "__v":0
+    },
+    {
+        "_id":"5b71f62fd33088655117f5a3",
+        "_email": "test3@evenset.com",
+        "name":"My Test Portfolio 3",
+        "userId":"5b71f61cd33088655117f5a0",
+        "index":0,
+        "importFrom":"2018-08-13T21:20:47.142Z",
+        "createdAt":"2018-08-13T21:20:47.142Z",
+        "updatedAt":"2018-08-13T21:20:47.142Z",
+        "__v":0
+    }
 ]

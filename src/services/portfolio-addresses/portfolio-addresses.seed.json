@@ -46,5 +46,29 @@
         "createdAt":"2018-08-09T14:54:52.327Z",
         "updatedAt":"2018-08-09T14:54:52.327Z",
         "__v":0
+    },
+    {
+        "_id":"5b71f6c7d33088655117f5a4",
+        "_email": "test3@evenset.com",
+        "isChange":false,
+        "isUsed":false,
+        "portfolioId":"5b71f62fd33088655117f5a3",
+        "index":0,
+        "type":"BTC",
+        "createdAt":"2018-08-13T21:23:19.158Z",
+        "updatedAt":"2018-08-13T21:23:19.158Z",
+        "__v":0
+    },
+    {
+        "_id":"5b71f6c7d33088655117f5a5",
+        "_email": "test3@evenset.com",
+        "isChange":false,
+        "isUsed":false,
+        "portfolioId":"5b71f62fd33088655117f5a3",
+        "index":0,
+        "type":"EQB",
+        "createdAt":"2018-08-13T21:23:19.164Z",
+        "updatedAt":"2018-08-13T21:23:19.164Z",
+        "__v":0
     }
 ]
