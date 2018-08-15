@@ -6,6 +6,7 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient')
   const { Schema } = mongooseClient
   const paymentLogging = new Schema({
+    // Amount in Satoshi units
     amount: { type: Number, required: true },
     // Address of receiver
     address: { type: String, required: true },
