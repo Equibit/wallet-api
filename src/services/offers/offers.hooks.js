@@ -70,7 +70,7 @@ module.exports = function (app) {
               hook.notificationAddress = hook.result.eqbAddress
               if (hook.result.isAccepted && order.isFillOrKill) {
                 return app.service('/orders').patch(hook.result.orderId, {
-                  status: 'CLOSED'
+                  status: hook.result.htlcStep === 2 ? 'TRADING' : 'CLOSED'
                 }).then(() => hook)
               }
             }
