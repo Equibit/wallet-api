@@ -41,6 +41,7 @@ const userAnswers = require('./user-answers/user-answers.service.js')
 const userQuestionnaire = require('./user-questionnaire/user-questionnaire.service.js')
 
 const paymentLogging = require('./payment-logging/payment-logging.service.js')
+const twitterCampaign = require('./twitter-campaign/twitter-campaign.service.js')
 
 module.exports = function () {
   const app = this
@@ -78,4 +79,5 @@ module.exports = function () {
   app.configure(referralCodes)
   app.configure(referralInfo)
   app.configure(paymentLogging)
+  app.configure(twitterCampaign)
 }
