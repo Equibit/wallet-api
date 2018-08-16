@@ -16,7 +16,7 @@ function validateAnswers (questions, userAnswers) {
       if (Array.isArray(userAnswer)) {
         const selectedOptions = userAnswer.map(answerText => {
           let selected = answerOptions.find(option => option.answer === answerText)
-          if (selected === null) {
+          if (!selected) {
             selected = answerOptions.find(option => option.answer === 'CUSTOM')
           }
           return selected
@@ -47,14 +47,15 @@ function validateAnswers (questions, userAnswers) {
         option = answerOptions.find(ans => ans.answer === 'CUSTOM')
       }
     }
-
     if (option) {
       if (option.finalQuestion) {
         return userAnswers.slice(i + 1).every(ans => ans === null)
       }
       if (option.skipTo) {
+        // skipTo is based on question numbers (it starts at 1)
         if (userAnswers.slice(i + 1, option.skipTo - 1).every(ans => ans === null)) {
-          i = option.skipTo - 1
+          // -2 because the loop will increment before running again
+          i = option.skipTo - 2
           userAnswer = userAnswers[i]
         } else {
           return false
