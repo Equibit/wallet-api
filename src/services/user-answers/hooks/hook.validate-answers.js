@@ -16,7 +16,7 @@ function validateAnswers (questions, userAnswers) {
       if (Array.isArray(userAnswer)) {
         const selectedOptions = userAnswer.map(answerText => {
           let selected = answerOptions.find(option => option.answer === answerText)
-          if (!selected) {
+          if (!selected && answerText) {
             selected = answerOptions.find(option => option.answer === 'CUSTOM')
           }
           return selected
@@ -43,7 +43,7 @@ function validateAnswers (questions, userAnswers) {
       }
     } else {
       option = answerOptions.find(ans => userAnswer === ans.answer)
-      if (!option) {
+      if (!option && userAnswer) {
         option = answerOptions.find(ans => ans.answer === 'CUSTOM')
       }
     }
