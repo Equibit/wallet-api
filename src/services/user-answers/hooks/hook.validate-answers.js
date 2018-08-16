@@ -13,13 +13,25 @@ function validateAnswers (questions, userAnswers) {
     let userAnswer = userAnswers[i]
     let option = null
     if (questionType === 'MULTI') {
-      const answers = answerOptions.map(ans => ans.answer)
-      if (Array.isArray(userAnswer) && userAnswer.every(ans => answers.indexOf(ans) !== -1)) {
+      if (Array.isArray(userAnswer)) {
+        const selectedOptions = userAnswer.map(answerText => {
+          let selected = answerOptions.find(option => option.answer === answerText)
+          if (selected === null) {
+            selected = answerOptions.find(option => option.answer === 'CUSTOM')
+          }
+          return selected
+        })
+        if (selectedOptions.some(option => !option)) {
+          return false
+        }
+        if (selectedOptions.filter(option => option.answer === 'CUSTOM').length > 1) {
+          return false
+        }
         // For multi question type, skip to the farthest index or to the final question if available.
-        option = userAnswer.reduce((prev, curr) => {
+        option = selectedOptions.reduce((prev, curr) => {
           const currHasSkipTo = curr.hasOwnProperty('skipTo')
           const currHasFinalIndex = curr.hasOwnProperty('finalQuestion')
-          const prevHasSkipTo = curr.hasOwnProperty('skipTo')
+          const prevHasSkipTo = prev.hasOwnProperty('skipTo')
           if (currHasFinalIndex || (currHasSkipTo && prevHasSkipTo && curr.skipTo > prev.skipTo)) {
             return curr
           } else {
@@ -31,6 +43,9 @@ function validateAnswers (questions, userAnswers) {
       }
     } else {
       option = answerOptions.find(ans => userAnswer === ans.answer)
+      if (!option) {
+        option = answerOptions.find(ans => ans.answer === 'CUSTOM')
+      }
     }
 
     if (option) {
