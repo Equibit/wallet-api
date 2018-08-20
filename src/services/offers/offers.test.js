@@ -409,6 +409,125 @@ function runTests (feathersClient) {
         .then(done, err => done(err))
       })
 
+      it('change order status back to OPEN if offer is expired for fill or kill order', function (done) {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          htlcStep: 2,
+          status: 'TRADING',
+          quantity: 1
+        })
+        let createdId
+        ordersServiceOnServer.patch(this.order._id.toString(), {
+          isFillOrKill: true
+        }).then(() =>
+          serviceOnServer.create(createData).then(offer => {
+            createdId = offer._id.toString()
+          })
+        ).then(() =>
+          userUtils.authenticateTemp(app, feathersClient, this.orderUser)
+        ).then(() =>
+          serviceOnClient.patch(createdId, { htlcStep: 3, timelockExpiredAt: Date.now() })
+        )
+        .then(() =>
+          ordersServiceOnServer.get(this.order._id)
+        )
+        .then(order => {
+          assert.equal(order.status, 'OPEN')
+        })
+        .then(done, err => done(err))
+      })
+
+      it('change order status back to OPEN if offer gets refunded for fill or kill order', function (done) {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          htlcStep: 2,
+          status: 'TRADING',
+          quantity: 1
+        })
+        let createdId
+        ordersServiceOnServer.patch(this.order._id.toString(), {
+          isFillOrKill: true
+        }).then(() =>
+          serviceOnServer.create(createData).then(offer => {
+            createdId = offer._id.toString()
+          })
+        ).then(() =>
+          userUtils.authenticateTemp(app, feathersClient, this.orderUser)
+        ).then(() =>
+          serviceOnClient.patch(createdId, { htlcStep: 3, status: 'CLOSED' })
+        )
+        .then(() =>
+          ordersServiceOnServer.get(this.order._id)
+        )
+        .then(order => {
+          assert.equal(order.status, 'OPEN')
+        })
+        .then(done, err => done(err))
+      })
+
+      it('change order status to TRADING once offer gets accepted', function (done) {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          htlcStep: 1,
+          status: 'OPEN',
+          quantity: 0
+        })
+        let createdId
+        serviceOnServer.create(createData).then(offer => {
+          createdId = offer._id.toString()
+        })
+        .then(() =>
+          userUtils.authenticateTemp(app, feathersClient, this.orderUser)
+        ).then(() =>
+          serviceOnClient.patch(createdId, { htlcStep: 2, isAccepted: true })
+        )
+        .then(() =>
+          ordersServiceOnServer.get(this.order._id)
+        )
+        .then(order => {
+          assert.equal(order.status, 'TRADING')
+        })
+        .then(done, err => done(err))
+      })
+
+      it('change partial order status to CLOSED once quantities are fully filled', function (done) {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          htlcStep: 3,
+          status: 'TRADING',
+          quantity: 20
+        })
+        let createdId1, createdId2, createdId3
+        ordersServiceOnServer.patch(this.order._id.toString(), {
+          isFillOrKill: true
+        }).then(() =>
+          Promise.all([
+            serviceOnServer.create(createData).then(offer => { createdId1 = offer._id.toString() }),
+            serviceOnServer.create(createData).then(offer => { createdId2 = offer._id.toString() }),
+            serviceOnServer.create(createData).then(offer => { createdId3 = offer._id.toString() })
+          ])
+        ).then(() =>
+          userUtils.authenticateTemp(app, feathersClient, this.orderUser)
+        ).then(() =>
+          Promise.all([
+            serviceOnClient.patch(createdId1, { htlcStep: 4 }),
+            serviceOnClient.patch(createdId2, { htlcStep: 4 }),
+            serviceOnClient.patch(createdId3, { htlcStep: 4 })
+          ])
+        )
+        .then(() =>
+          ordersServiceOnServer.get(this.order._id)
+        )
+        .then(order => {
+          assert.equal(order.status, 'CLOSED')
+        })
+        .then(done, err => done(err))
+      })
+
       // hooks were updated so transactions take care of this
       it.skip('patches the related issuance when CLOSED if offer user is issuer', function (done) {
         const initialSharesIssued = 22
