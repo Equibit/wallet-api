@@ -265,13 +265,22 @@ module.exports = function (app) {
               const ordersService = app.service('orders')
               return ordersService.find({ query: { _id: data.orderId } })
                 .then(response => {
-                  const order = response.data[0] || {}
-                  const quantity = order.quantity || 0
-
+                  let order = response.data[0] || {}
+                  let quantity = order.quantity || 0
                   if (data.quantity > quantity) {
                     return Promise.reject(new errors.BadRequest('Buy Quantity exceeds maximum'))
                   }
-                  return Promise.resolve(context)
+                  if (!order.isFillOrKill) {
+                    return context.service.find({ query: { orderId: data.orderId, isAccepted: true } })
+                    .then(response => {
+                      const totalFilled = response.data.reduce((total, curr) => total + curr.quantity, 0)
+                      if (totalFilled + data.quantity > quantity) {
+                        return Promise.reject(new errors.BadRequest('Buy Quantity exceeds remaining order quantities'))
+                      }
+                      return context
+                    })
+                  }
+                  return context
                 })
             }
           ),
