@@ -11,6 +11,7 @@ const blockOfferAcceptance = require('./hooks/hook.block-offer-acceptance')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const errors = require('feathers-errors')
 const updateTransaction = require('../transactions/hooks/hook.update-transaction')
+const changeOrderStatus = require('./hooks/hook.change-order-status')
 
 /* Rules for Offer.status enforced by hooks:
   OPEN, htlcStep=1 (default)
@@ -68,16 +69,12 @@ module.exports = function (app) {
               // these updates (steps 2 or 4) were made by the order holder.
               // Notify the offer creator
               hook.notificationAddress = hook.result.eqbAddress
-              if (hook.result.isAccepted && order.isFillOrKill) {
-                return app.service('/orders').patch(hook.result.orderId, {
-                  status: 'CLOSED'
-                }).then(() => hook)
-              }
             }
             return hook
           }
         })
       },
+      changeOrderStatus(),
       createNotification({
         type: 'offer',
         addressPath: 'notificationAddress',
@@ -268,13 +265,22 @@ module.exports = function (app) {
               const ordersService = app.service('orders')
               return ordersService.find({ query: { _id: data.orderId } })
                 .then(response => {
-                  const order = response.data[0] || {}
-                  const quantity = order.quantity || 0
-
+                  let order = response.data[0] || {}
+                  let quantity = order.quantity || 0
                   if (data.quantity > quantity) {
                     return Promise.reject(new errors.BadRequest('Buy Quantity exceeds maximum'))
                   }
-                  return Promise.resolve(context)
+                  if (!order.isFillOrKill) {
+                    return context.service.find({ query: { orderId: data.orderId, isAccepted: true } })
+                    .then(response => {
+                      const totalFilled = response.data.reduce((total, curr) => total + curr.quantity, 0)
+                      if (totalFilled + data.quantity > quantity) {
+                        return Promise.reject(new errors.BadRequest('Buy Quantity exceeds remaining order quantities'))
+                      }
+                      return context
+                    })
+                  }
+                  return context
                 })
             }
           ),
