@@ -1,11 +1,11 @@
 module.exports = function () {
   return function changeOrderStatus (context) {
     const { app, result } = context
-    return app.service('/orders').get({
+    const ordersService = app.service('/orders')
+    return ordersService.get({
       _id: result.orderId
     })
       .then(order => {
-        const ordersService = app.service('/orders')
         // If fill or kill order is cancelled or refunded (status is set to CANCELLED), set order to OPEN
         if (order.isFillOrKill && (result.status === 'CANCELLED' || result.timelockExpiredAt)) {
           return ordersService.patch(result.orderId, {
@@ -23,7 +23,7 @@ module.exports = function () {
           return context.service.find({query: {orderId: result.orderId, isAccepted: true}})
             .then(res => {
               const totalQuantity = res.data.reduce((total, curr) => total + curr.quantity, 0)
-              if (totalQuantity === order.quantity) {
+              if (totalQuantity >= order.quantity) {
                 return ordersService.patch(result.orderId, {
                   status: 'CLOSED'
                 }).then(() => context)
