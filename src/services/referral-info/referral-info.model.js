@@ -9,7 +9,8 @@ module.exports = function (app) {
   const referralInfo = new Schema({
     referralCodeId: { type: ObjectId, required: true },
     // User email used with code on account creation
-    email: { type: String }
+    email: { type: String },
+    completed: { type: Boolean, default: false }
   }, {
     timestamps: true
   })
