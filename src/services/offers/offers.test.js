@@ -514,9 +514,9 @@ function runTests (feathersClient) {
           userUtils.authenticateTemp(app, feathersClient, this.orderUser)
         ).then(() =>
           Promise.all([
-            serviceOnClient.patch(createdId1, { htlcStep: 4 }),
-            serviceOnClient.patch(createdId2, { htlcStep: 4 }),
-            serviceOnClient.patch(createdId3, { htlcStep: 4 })
+            serviceOnClient.patch(createdId1, { htlcStep: 4, isAccepted: true }),
+            serviceOnClient.patch(createdId2, { htlcStep: 4, isAccepted: true }),
+            serviceOnClient.patch(createdId3, { htlcStep: 4, isAccepted: true })
           ])
         )
         .then(() =>

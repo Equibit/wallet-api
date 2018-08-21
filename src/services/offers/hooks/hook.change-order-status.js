@@ -20,7 +20,7 @@ module.exports = function () {
             }).then(() => context)
           }
           // Only close when order is fully filled
-          return context.service.find({query: {orderId: result.orderId}})
+          return context.service.find({query: {orderId: result.orderId, isAccepted: true}})
             .then(res => {
               const totalQuantity = res.data.reduce((total, curr) => total + curr.quantity, 0)
               if (totalQuantity === order.quantity) {
