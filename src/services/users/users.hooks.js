@@ -145,14 +145,27 @@ module.exports = function (app) {
           removeTempPassword(),
           // Used the temp password to login, which was sent via email.
           //  This verifies the email address as well.
-          hook => {
-            if (hook.user.tempPassword) {
+          iff(
+            hook => hook.user.tempPassword,
+            hook => {
               hook.data.emailVerified = true
-            } else {
+              return hook
+            },
+            // Set referral info to completed if account is made with a referral code
+            hook => app.service('referral-info')
+              .patch(null, {completed: true}, {query: { email: hook.user.email }})
+              .then(() => hook)
+          )
+          .else(
+            hook => {
               delete hook.data.emailVerified
+              return hook
             }
+          ),
+          hook => {
             hook.user.tempPasswordCreatedAt = undefined
             hook.data.passwordCreatedAt = Date.now()
+            return hook
           },
           // Note: when password is changed we need to update the encrypted key and mnemonic.
           // On password change, ignore any changes not related to this flow
