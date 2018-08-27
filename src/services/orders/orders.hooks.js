@@ -60,6 +60,34 @@ module.exports = function (app) {
           //   }
           // ),
           iff(
+            context => context.assetType !== 'ISSUANCE',
+            context => {
+              const { data } = context
+              const BCService = context.app.service('blockchain-info')
+              let eqbAmt
+              let btcAmt
+              if (context.data.type.toUpperCase() === 'SELL') {
+                eqbAmt = data.quantity
+                btcAmt = eqbAmt * (data.price / 100000000)
+              } else {
+                btcAmt = data.quantity
+                eqbAmt = btcAmt * (data.price / 100000000)
+              }
+              return BCService.find({query: {}}).then(result => {
+                const eqbInfo = result.find(info => info.coinType === 'EQB')
+                const eqbRelay = eqbInfo ? eqbInfo.relayfee : 0.00001
+                const btcInfo = result.find(info => info.coinType === 'BTC')
+                const btcRelay = eqbInfo ? btcInfo.relayfee : 0.00001
+                if (eqbAmt <= eqbRelay) {
+                  return Promise.reject(new Error('EQB quantity too low (min relay fee not met)'))
+                }
+                if (btcAmt <= btcRelay) {
+                  return Promise.reject(new Error('BTC quantity too low (min relay fee not met)'))
+                }
+              })
+            }
+          ),
+          iff(
             // if create data type is BUY
             context => {
               const { data } = context
