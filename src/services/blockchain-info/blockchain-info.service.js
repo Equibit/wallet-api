@@ -46,12 +46,30 @@ function getFromDB (service, coinType) {
 }
 function getFromBlockchain (proxycoreService, coinType) {
   // console.log(`- getFromBlockchain ${coinType}`)
-  return proxycoreService.find({
-    query: {
-      node: coinType.toLowerCase(),
-      method: 'getblockchaininfo'
-    }
-  }).then(normalizeBlockchainInfo(coinType))
+  const promises = [
+    proxycoreService.find({
+      query: {
+        node: coinType.toLowerCase(),
+        method: 'getblockchaininfo'
+      }
+    }),
+    proxycoreService.find({
+      query: {
+        node: coinType.toLowerCase(),
+        method: 'getnetworkinfo'
+      }
+    })
+  ]
+  return Promise.all(promises).then((results) => {
+    const blockchainInfo = results[0]
+    const networkInfo = results[1]
+    // combine the two info objects (preferring the data in the first)
+    Object.keys(blockchainInfo.result).forEach(key => {
+      networkInfo.result[key] = blockchainInfo.result[key]
+    })
+    return networkInfo
+  }, errs => errs.find(errExists => errExists))
+  .then(normalizeBlockchainInfo(coinType))
 }
 function normalizeBlockchainInfo (coinType) {
   return function (response) {
@@ -67,6 +85,7 @@ function normalizeBlockchainInfo (coinType) {
       bestblockhash: blockchainInfo.bestblockhash,
       difficulty: blockchainInfo.difficulty,
       mediantime: blockchainInfo.mediantime,
+      relayfee: blockchainInfo.relayfee,
       errorMessage: ''
     }
     return newData
