@@ -11,6 +11,7 @@ const blockOfferAcceptance = require('./hooks/hook.block-offer-acceptance')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const errors = require('feathers-errors')
 const updateTransaction = require('../transactions/hooks/hook.update-transaction')
+const forbidSmall = require('../orders/hooks/hook.forbid-small')
 const changeOrderStatus = require('./hooks/hook.change-order-status')
 
 /* Rules for Offer.status enforced by hooks:
@@ -252,6 +253,7 @@ module.exports = function (app) {
           //     return Promise.resolve(context)
           //   }
           // ),
+          forbidSmall(),
           iff(
             // if create data type is BUY
             context => {
