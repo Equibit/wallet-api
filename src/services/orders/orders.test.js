@@ -288,6 +288,33 @@ function runTests (feathersClient) {
         .catch(done)
       })
 
+      it('cannot create an order with a very small quantity', function () {
+        const createData = Object.assign({}, skels.buyOrder, {
+          userId: this.user._id.toString(),
+          quantity: 1
+        })
+        return userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(() => serviceOnClient.create(createData))
+        .then(
+          () => Promise.reject(new Error('should have failed')),
+          () => Promise.resolve('failed correctly')
+        )
+      })
+
+      it.only('cannot create an order with a very small quantity', function () {
+        const createData = Object.assign({}, skels.buyOrder, {
+          userId: this.user._id.toString(),
+          quantity: 100000000,
+          price: 1000
+        })
+        return userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(() => serviceOnClient.create(createData))
+        .then(
+          () => Promise.reject(new Error('should have failed')),
+          () => Promise.resolve('failed correctly')
+        )
+      })
+
       it('cannot see the userId that does not belong to the user', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
           userId: this.user._id.toString()
