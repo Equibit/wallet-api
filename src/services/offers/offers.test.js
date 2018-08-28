@@ -621,7 +621,7 @@ function runTests (feathersClient) {
 
       it('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
         const initialSharesIssued = 11
-        const offerQuantity = 100 * SATOSHI
+        const offerQuantity = (60 * SATOSHI)
         const offerCreateData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),

@@ -12,6 +12,7 @@ const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const errors = require('feathers-errors')
 const updateTransaction = require('../transactions/hooks/hook.update-transaction')
 const forbidSmall = require('../orders/hooks/hook.forbid-small')
+const forbidNearTotal = require('./hooks/hook.forbid-near-total')
 const changeOrderStatus = require('./hooks/hook.change-order-status')
 
 /* Rules for Offer.status enforced by hooks:
@@ -254,6 +255,7 @@ module.exports = function (app) {
           //   }
           // ),
           forbidSmall(),
+          forbidNearTotal(),
           iff(
             // if create data type is BUY
             context => {
