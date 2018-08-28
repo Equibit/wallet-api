@@ -101,7 +101,7 @@ function runTests (feathersClient) {
   // socketio has trouble with switching accounts
   const restOnly = feathersClient.io ? it.skip : it
 
-  describe.only(`Offers Service Tests - ${transport}`, function () {
+  describe(`Offers Service Tests - ${transport}`, function () {
     before(function () {
       return userUtils.removeAll(app)
     })

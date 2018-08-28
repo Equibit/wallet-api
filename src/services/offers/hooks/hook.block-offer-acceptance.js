@@ -17,6 +17,7 @@ module.exports = function (app) {
     const signedInUserId = params.user._id
     const offerId = id || query._id
     const offersService = app.service('offers')
+    const BCService = app.service('blockchain-info')
 
     // if we're not setting isAccepted to true in this patch, continue normally
     if (!data.isAccepted) {
@@ -48,17 +49,33 @@ module.exports = function (app) {
             const buyOfferTotal = offersResponse.data.reduce((total, obj) => total + (obj.quantity || 0), 0)
             const ordersService = app.service('orders')
 
-            return ordersService.find({ query: { _id: currentOffer.orderId } })
-              .then(orderResponse => {
+            return Promise.all([
+              ordersService.find({ query: { _id: currentOffer.orderId } }),
+              BCService.find({query: {}})
+            ])
+              .then(([orderResponse, chainInfo]) => {
                 const order = orderResponse.data[0]
                 const offerQuantity = data.quantity || currentOffer.quantity || 0
                 const maxOfferQuantity = order.quantity - buyOfferTotal
+                const eqbInfo = chainInfo.data.find(info => info.coinType === 'EQB')
+                const eqbRelay = eqbInfo ? eqbInfo.relayfee : 0.00001
+                const btcInfo = chainInfo.data.find(info => info.coinType === 'BTC')
+                const btcRelay = eqbInfo ? btcInfo.relayfee : 0.00001
 
                 if (!order.userId.equals(signedInUserId)) {
                   return Promise.reject(new errors.BadRequest('Cannot accept offer for order you did not place.'))
                 }
-                if (offerQuantity > maxOfferQuantity) {
+                const remaining = maxOfferQuantity - offerQuantity
+                if (remaining < 0) {
                   return Promise.reject(new errors.BadRequest('Offer quantity exceeds maximum available.'))
+                }
+                if (remaining) {
+                  if (remaining < (eqbRelay * 100000000)) {
+                    return Promise.reject(new errors.BadRequest('Remainder of offer is too small to accept.'))
+                  }
+                  if ((remaining * order.price) / 100000000 < (btcRelay * 100000000)) {
+                    return Promise.reject(new errors.BadRequest('Remainder of offer is too small to accept.'))
+                  }
                 }
                 return Promise.resolve(context)
               })
