@@ -15,7 +15,7 @@ const {
 const proxycoreUtils = require('../../../test-utils/transactions')
 const offerUtils = require('../../../test-utils/offers')
 
-describe.only('\'blockchain-info\' service', () => {
+describe('\'blockchain-info\' service', () => {
   const fixtureNormalized = {
     mode: 'regtest',
     status: true,

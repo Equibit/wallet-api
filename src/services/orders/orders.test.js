@@ -8,13 +8,15 @@ utils.clients.forEach(client => {
   runTests(client)
 })
 
+const SATOSHI = 100000000
+
 const skels = {
   sellOffer: Object.freeze({
     userId: '000000000000000000000000',
     type: 'SELL',
     status: 'OPEN',
     htlcStep: 1,
-    quantity: 10,
+    quantity: 10 * SATOSHI,
     price: 333,
     issuanceId: '000000000000000000000000',
     issuanceAddress: '000000000000000000000000',
@@ -28,7 +30,7 @@ const skels = {
     type: 'BUY',
     status: 'OPEN',
     htlcStep: 1,
-    quantity: 10,
+    quantity: 10 * SATOSHI,
     price: 333,
     issuanceId: '000000000000000000000000',
     issuanceAddress: '000000000000000000000000',
@@ -43,8 +45,8 @@ const skels = {
     issuanceAddress: '000000000000000000000000',
     type: 'SELL',
     portfolioId: '000000000000000000000000',
-    quantity: 60,
-    price: 10,
+    quantity: 60 * SATOSHI,
+    price: 1000,
     status: 'OPEN',
     isFillOrKill: false,
     goodFor: 7,
@@ -58,8 +60,8 @@ const skels = {
     issuanceAddress: '000000000000000000000000',
     type: 'BUY',
     portfolioId: '000000000000000000000000',
-    quantity: 60,
-    price: 10,
+    quantity: 60 * SATOSHI,
+    price: 1000,
     status: 'OPEN',
     isFillOrKill: false,
     goodFor: 7,
@@ -155,8 +157,7 @@ function runTests (feathersClient) {
 
       it('can create order and cancel it', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -175,8 +176,7 @@ function runTests (feathersClient) {
 
       it('cannot cancel an order that is TRADING', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -205,8 +205,7 @@ function runTests (feathersClient) {
 
       it('can cancel an order that has offers', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -236,8 +235,7 @@ function runTests (feathersClient) {
 
       it('cannot cancel an order that has accepted offers', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -349,14 +347,13 @@ function runTests (feathersClient) {
 
       it('cannot update an order with restricted fields', function (done) {
         const createData = Object.assign({}, skels.buyOrder, {
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => serviceOnClient.create(createData))
         .then(order => serviceOnClient.patch(order._id.toString(), { price: 0 }))
         .then(order => {
-          assert.equal(order.price, 10)
+          assert.equal(order.price, 1000)
           done()
         }).catch(done)
       })
@@ -364,8 +361,7 @@ function runTests (feathersClient) {
       describe('that is a non-owner', function () {
         it('cannot update an order that does not belong to them', function (done) {
           const createData = Object.assign({}, skels.buyOrder, {
-            userId: this.user._id.toString(),
-            quantity: 0
+            userId: this.user._id.toString()
           })
 
           userUtils.authenticateTemp(app, feathersClient, this.user)
