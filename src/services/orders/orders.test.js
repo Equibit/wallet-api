@@ -301,7 +301,7 @@ function runTests (feathersClient) {
         )
       })
 
-      it.only('cannot create an order with a very small quantity', function () {
+      it('cannot create an order with a very small quantity', function () {
         const createData = Object.assign({}, skels.buyOrder, {
           userId: this.user._id.toString(),
           quantity: 100000000,
