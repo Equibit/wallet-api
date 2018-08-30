@@ -13,7 +13,8 @@
       "url": "http://169.55.144.154:18331",
       "username": "equibitqa",
       "password": "V5yfZLWJAcQmM0EgUOK8oSCDvqjQ9e8XU6jVUBTXsI8=",
-      "methodPrefix": ""
+      "methodPrefix": "",
+      "sha": "SHA3_256"
     },
     "seeder": {
       "enabled": true,
