@@ -32,11 +32,14 @@ function payout (app, srcAddress, srcKey, userAddress, rewardAmount, message) {
     }
   })).then(
     unspent => {
+      if (!(unspent && unspent.EQB && unspent.EQB.txouts)) {
+        throw new Error(`no funds in ${sourceKP.address}, refill`)
+      }
       const utxo = unspent.EQB.txouts
       const total = unspent.EQB.summary.total
       if (total < rewardAmount) {
         console.error('Funds were not available to complete an eqb payment, refill ', sourceKP.address)
-        throw new Error('insufficient funds')
+        throw new Error(`insufficient funds in ${sourceKP.address}`)
       }
       let vinAmount = 0
       for (let tx of utxo) {
