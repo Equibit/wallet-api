@@ -64,7 +64,7 @@ function getFromBlockchain (proxycoreService, coinType) {
     const blockchainInfo = results[0]
     const networkInfo = results[1]
     // combine the two info objects (preferring the data in the first)
-    Object.assign({}, blockchainInfo.result, networkInfo.result)
+    Object.assign(networkInfo.result, blockchainInfo.result)
     return networkInfo
   }, errs => errs.find(errExists => errExists))
   .then(normalizeBlockchainInfo(coinType))
