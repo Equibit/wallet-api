@@ -1,6 +1,7 @@
 const assert = require('assert')
 const app = require('../../app')
 const fixtureBlockchain = require('./fixture-blockchain.json')
+const fixtureBlockchainNetwork = require('./fixture-blockchain-network.json')
 const fixtureDB = require('./fixture-db.json')
 const blockchainInfoService = require('./blockchain-info.service')
 const {
@@ -22,14 +23,15 @@ describe('\'blockchain-info\' service', () => {
     bestblockhash: '1962811fcbe887ad37049cc33bf635e3e3ba6a955aacd5edd436ba708c552445',
     difficulty: 4.656542373906925e-10,
     'mediantime': 1521682385,
-    errorMessage: ''
+    errorMessage: '',
+    relayfee: 0.00001
   }
   const service = {
     patch: () => Promise.resolve(fixtureDB.data[0]),
     find: () => Promise.resolve(fixtureDB)
   }
   const proxycoreService = {
-    find: () => Promise.resolve(fixtureBlockchain)
+    find: args => Promise.resolve(args.query.method === 'getnetworkinfo' ? fixtureBlockchainNetwork : fixtureBlockchain)
   }
 
   it('registered the service', () => {
@@ -52,14 +54,18 @@ describe('\'blockchain-info\' service', () => {
   })
   describe('normalizeBlockchainInfo', function () {
     it('should normalize blockchainInfo data', function () {
-      assert.deepEqual(normalizeBlockchainInfo('BTC')(fixtureBlockchain), fixtureNormalized)
+      const combined = {
+        result: {...fixtureBlockchain.result, ...fixtureBlockchainNetwork.result},
+        error: fixtureBlockchain.error,
+        id: fixtureBlockchain.id
+      }
+      assert.deepEqual(normalizeBlockchainInfo('BTC')(combined), fixtureNormalized)
     })
   })
   describe('getFromBlockchain', function () {
-    it('should return normalized data from blockchain service', function (done) {
-      getFromBlockchain(proxycoreService, 'BTC').then(result => {
+    it('should return normalized data from blockchain service', function () {
+      return getFromBlockchain(proxycoreService, 'BTC').then(result => {
         assert.deepEqual(result, fixtureNormalized)
-        done()
       })
     })
   })
@@ -162,7 +168,8 @@ describe('\'blockchain-info\' service', () => {
               'currentBlockHeight': 1271,
               'mediantime': 1521682385,
               'errorMessage': '',
-              'feeRates': { 'priority': 20, 'regular': 5 }
+              'feeRates': { 'priority': 20, 'regular': 5 },
+              'relayfee': 0.00001
             }
           ]
         })

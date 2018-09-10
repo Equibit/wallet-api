@@ -4,6 +4,7 @@ const idRequired = require('../../hooks/hook.id-required')
 const { restrictToOwner } = require('feathers-authentication-hooks')
 // const addSellIssuanceDataToParams = require('../../hooks/hook.add-sell-issuance-data-to-params')
 const allowCancel = require('./hooks/hook.allow-cancel')
+const forbidSmall = require('./hooks/hook.forbid-small')
 const errors = require('feathers-errors')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
 const filterUserIdField = require('../../hooks/hook.filter-userid-field')
@@ -59,6 +60,7 @@ module.exports = function (app) {
           //     return Promise.resolve(context)
           //   }
           // ),
+          forbidSmall(),
           iff(
             // if create data type is BUY
             context => {

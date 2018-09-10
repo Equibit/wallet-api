@@ -29,10 +29,10 @@ module.exports = function (app) {
 
     portfolioId: { type: String, required: issuanceRequired },
 
-    // Number of units:
+    // Number of units, in satoshi:
     quantity: { type: Number, required: true },
 
-    // Price of one unit of the issuance, in Satoshi:
+    // Price of one (full) unit of the issuance, in Satoshi:
     price: { type: Number, required: true },
 
     isFillOrKill: { type: Boolean, required: true },

@@ -9,14 +9,14 @@ const assertAuthNotRequired = require('../../../test-utils/assert/auth-not-requi
 utils.clients.forEach(client => {
   runTests(client)
 })
-
+const SATOSHI = 100000000
 const skels = {
   sellOffer: Object.freeze({
     userId: '000000000000000000000000',
     type: 'SELL',
     status: 'OPEN',
     htlcStep: 1,
-    quantity: 10,
+    quantity: 10 * SATOSHI,
     price: 333,
     issuanceId: '000000000000000000000000',
     issuanceAddress: '000000000000000000000000',
@@ -30,7 +30,7 @@ const skels = {
     type: 'BUY',
     status: 'OPEN',
     htlcStep: 1,
-    quantity: 10,
+    quantity: 10 * SATOSHI,
     price: 333,
     issuanceId: '000000000000000000000000',
     issuanceAddress: '000000000000000000000000',
@@ -45,8 +45,8 @@ const skels = {
     issuanceAddress: '000000000000000000000000',
     type: 'SELL',
     portfolioId: '000000000000000000000000',
-    quantity: 60,
-    price: 10,
+    quantity: 60 * SATOSHI,
+    price: 1000,
     status: 'OPEN',
     isFillOrKill: false,
     goodFor: 7,
@@ -62,8 +62,8 @@ const skels = {
     issuanceAddress: '000000000000000000000000',
     type: 'BUY',
     portfolioId: '000000000000000000000000',
-    quantity: 60,
-    price: 10,
+    quantity: 60 * SATOSHI,
+    price: 1000,
     status: 'OPEN',
     isFillOrKill: false,
     goodFor: 7,
@@ -232,8 +232,8 @@ function runTests (feathersClient) {
       it('sets offer.status automatically - normal flow and some edge cases', function (done) {
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
+
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -277,12 +277,55 @@ function runTests (feathersClient) {
         })
       })
 
+      it('cannot make a very small offer', function () {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          quantity: 1
+        })
+        return userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => {
+          return serviceOnClient.create(createData)
+        })
+        .then(
+          () => Promise.reject(new Error('should have failed')),
+          () => Promise.resolve('failed correctly')
+        )
+      })
+
+      it('cannot make an offer that is nearly all the order', function () {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          quantity: this.order.quantity - 50
+        })
+        return userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => {
+          return serviceOnClient.create(createData)
+        })
+        .then(
+          () => Promise.reject(new Error('should have failed')),
+          () => Promise.resolve('failed correctly')
+        )
+      })
+
+      it('can make an offer that is exactly all the order', function () {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          quantity: this.order.quantity
+        })
+        return userUtils.authenticateTemp(app, feathersClient, this.user)
+        .then(loggedInResponse => {
+          return serviceOnClient.create(createData)
+        })
+      })
+
       restOnly('offer.status can be set to CANCELLED while OPEN - and cannot be changed after except in limited circumstances', function (done) {
         let txObj
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
         .then(loggedInResponse => {
@@ -354,8 +397,7 @@ function runTests (feathersClient) {
       it('offer.status can be set to CANCELLED while TRADING', function (done) {
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
-          userId: this.user._id.toString(),
-          quantity: 0
+          userId: this.user._id.toString()
         })
         userUtils.authenticateTemp(app, feathersClient, this.user)
           .then(loggedInResponse => {
@@ -385,8 +427,7 @@ function runTests (feathersClient) {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
           htlcStep: 3,
-          status: 'TRADING',
-          quantity: 0
+          status: 'TRADING'
         })
         let createdId
         ordersServiceOnServer.patch(this.order._id.toString(), {
@@ -414,8 +455,7 @@ function runTests (feathersClient) {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
           htlcStep: 2,
-          status: 'TRADING',
-          quantity: 1
+          status: 'TRADING'
         })
         let createdId
         ordersServiceOnServer.patch(this.order._id.toString(), {
@@ -443,8 +483,7 @@ function runTests (feathersClient) {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
           htlcStep: 2,
-          status: 'TRADING',
-          quantity: 1
+          status: 'TRADING'
         })
         let createdId
         ordersServiceOnServer.patch(this.order._id.toString(), {
@@ -472,8 +511,8 @@ function runTests (feathersClient) {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
           htlcStep: 1,
-          status: 'OPEN',
-          quantity: 0
+          status: 'OPEN'
+
         })
         let createdId
         serviceOnServer.create(createData).then(offer => {
@@ -526,6 +565,37 @@ function runTests (feathersClient) {
           assert.equal(order.status, 'CLOSED')
         })
         .then(done, err => done(err))
+      })
+
+      it('cannot accept an offer which would nearly complete the order', function () {
+        const createData = Object.assign({}, skels.sellOffer, {
+          orderId: this.order._id.toString(),
+          userId: this.user._id.toString(),
+          htlcStep: 3,
+          status: 'TRADING',
+          quantity: (this.order.quantity / 3) - 2
+        })
+        let createdId1, createdId2, createdId3
+        ordersServiceOnServer.patch(this.order._id.toString(), {
+          isFillOrKill: true
+        }).then(() =>
+          Promise.all([
+            serviceOnServer.create(createData).then(offer => { createdId1 = offer._id.toString() }),
+            serviceOnServer.create(createData).then(offer => { createdId2 = offer._id.toString() }),
+            serviceOnServer.create(createData).then(offer => { createdId3 = offer._id.toString() })
+          ])
+        ).then(() =>
+          userUtils.authenticateTemp(app, feathersClient, this.orderUser)
+        ).then(() =>
+          Promise.all([
+            serviceOnClient.patch(createdId1, { htlcStep: 4, isAccepted: true }),
+            serviceOnClient.patch(createdId2, { htlcStep: 4, isAccepted: true }),
+            serviceOnClient.patch(createdId3, { htlcStep: 4, isAccepted: true })
+          ]).then(
+            () => Promise.reject(new Error('should have failed')),
+            () => Promise.resolve('failed correctly')
+          )
+        )
       })
 
       // hooks were updated so transactions take care of this
@@ -626,7 +696,7 @@ function runTests (feathersClient) {
 
       it('does not patch the related issuance when CLOSED if neither offer or order user is the issuer', function (done) {
         const initialSharesIssued = 11
-        const offerQuantity = 100
+        const offerQuantity = (60 * SATOSHI)
         const offerCreateData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
@@ -693,7 +763,6 @@ function runTests (feathersClient) {
             const createData = Object.assign({}, skels.sellOffer, {
               orderId: this.order._id.toString(),
               userId: this.user._id.toString(),
-              quantity: 0,
               htlcTxId1: txId
             })
             return serviceOnClient.create(createData)
