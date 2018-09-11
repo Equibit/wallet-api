@@ -38,5 +38,9 @@
       "key": "YmU3NzJhYmJmMmI2NDZiMzhlN2EzZDA1MzBhZGQ4NDM",
       "secret": "ZWRkMTgyZmIyZTAyNGQyYjkwNzE2N2UwYWRjM2JmNTU1YzA0YjgzNTQ2MjM0NTllYTZmMmQwZDQwNGMwZTlmNQ"
     },
-    "blockchainInfoInterval": 5000
+    "blockchainInfoInterval": 5000,
+    "icoPayoutAddress": "mxr83jMYuekw1vqRKwmepe8HEa95wsAB9U",
+    "icoPayoutKey": "cTDizokb2Gee4jcteTMPzsDuRn3r4cDe7FjVASftSSg28faJqMfy",
+    "rewardAddress": "mutCN8wh2vDhwoHSyS5AHLvyMA9baZ23JU",
+    "rewardKey": "cRmzNxC1zdwZizZqjxcnRW6zJJANoDgiywf6pSj3H2EnGog68ixb"
 }

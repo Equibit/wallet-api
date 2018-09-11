@@ -303,8 +303,7 @@ function runTests (feathersClient) {
           })
           .catch(error => {
             console.log('ERROR ', error)
-            assert(!error, 'this error should not have occurred')
-            done()
+            done(error)
           })
       })
 
@@ -351,8 +350,7 @@ function runTests (feathersClient) {
           })
           .catch(error => {
             console.log('ERROR ', error)
-            assert(!error, 'this error should not have occurred')
-            done()
+            done(error)
           })
       })
 
@@ -387,8 +385,7 @@ function runTests (feathersClient) {
           })
           .catch(error => {
             console.log('ERROR ', error)
-            assert(!error, 'this error should not have occurred')
-            done()
+            done(error)
           })
       })
 
@@ -423,8 +420,7 @@ function runTests (feathersClient) {
           })
           .catch(error => {
             console.log('ERROR ', error)
-            assert(!error, 'this error should not have occurred')
-            done()
+            done(error)
           })
       })
 
@@ -461,8 +457,7 @@ function runTests (feathersClient) {
           })
           .catch(error => {
             console.log('ERROR ', error)
-            assert(!error, 'this error should not have occurred')
-            done()
+            done(error)
           })
       })
 
