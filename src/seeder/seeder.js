@@ -5,6 +5,8 @@ module.exports = function (app) {
 
   if (config.enabled) {
     config.services.forEach(serviceObj => {
+
+      // Prevent the seeder from deleting previous portfolio-addresses to stabilize amount of BTC/EQB in accounts
       if (serviceObj.path === 'portfolio-addresses') {
         config.delete = false
       } else {
