@@ -5,6 +5,12 @@ module.exports = function (app) {
 
   if (config.enabled) {
     config.services.forEach(serviceObj => {
+      if (serviceObj.path === 'portfolio-addresses') {
+        config.delete = false
+      } else {
+        config.delete = true
+      }
+      
       const service = app.service(serviceObj.path)
       let { data } = serviceObj
 
@@ -12,7 +18,7 @@ module.exports = function (app) {
       if (typeof data === 'string') {
         data = require(path.join(__dirname, '..', data))
       }
-
+      
       if (config.delete) {
         // Remove all records.
         service.remove(null).then(() => service.create(data, config.params))
