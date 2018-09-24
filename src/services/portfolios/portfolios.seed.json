@@ -1,13 +1,12 @@
 [
     {
-        "_id":"5b69bbe607b3a03e802995bf",
-        "_email":"test@evenset.com",
+        "_id":"5ba8f2a054a26622f2ddd636",
         "name":"My Test Portfolio",
-        "userId":"5b69bbcf07b3a03e802995bc",
+        "userId":"5ba8f28d54a26622f2ddd633",
         "index":0,
-        "importFrom":"2018-08-07T15:33:58.711Z",
-        "createdAt":"2018-08-07T15:33:58.711Z",
-        "updatedAt":"2018-08-07T15:33:58.711Z",
+        "importFrom":"2018-09-24T14:20:16.335Z",
+        "createdAt":"2018-09-24T14:20:16.335Z",
+        "updatedAt":"2018-09-24T14:20:16.335Z",
         "__v":0
     },
     {
@@ -22,14 +21,25 @@
         "__v":0
     },
     {
-        "_id":"5b71f62fd33088655117f5a3",
+        "_id":"5ba8fc09347fab2cb9dd8ecf",
         "_email": "test3@evenset.com",
         "name":"My Test Portfolio 3",
-        "userId":"5b71f61cd33088655117f5a0",
+        "userId":"5ba8fbf5347fab2cb9dd8ecc",
         "index":0,
         "importFrom":"2018-08-13T21:20:47.142Z",
         "createdAt":"2018-08-13T21:20:47.142Z",
         "updatedAt":"2018-08-13T21:20:47.142Z",
+        "__v":0
+    },
+    {
+        "_id":"5ba8eb355916c41a1eb4cc62",
+        "_email": "transactions@evenset.com",
+        "name":"My Transfer Portfolio",
+        "userId":"5ba8eb175916c41a1eb4cc5f",
+        "index":0,
+        "importFrom":"2018-09-24T13:48:37.957Z",
+        "createdAt":"2018-09-24T13:48:37.957Z",
+        "updatedAt":"2018-09-24T13:48:37.957Z",
         "__v":0
     }
 ]
