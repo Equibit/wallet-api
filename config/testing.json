@@ -42,5 +42,10 @@
     "icoPayoutAddress": "mxr83jMYuekw1vqRKwmepe8HEa95wsAB9U",
     "icoPayoutKey": "cTDizokb2Gee4jcteTMPzsDuRn3r4cDe7FjVASftSSg28faJqMfy",
     "rewardAddress": "mutCN8wh2vDhwoHSyS5AHLvyMA9baZ23JU",
-    "rewardKey": "cRmzNxC1zdwZizZqjxcnRW6zJJANoDgiywf6pSj3H2EnGog68ixb"
+    "rewardKey": "cRmzNxC1zdwZizZqjxcnRW6zJJANoDgiywf6pSj3H2EnGog68ixb",
+    "mempool": {
+      "btcAddress": "n28Ah3enJGgysRD4MySo41onoi5QxsjvAS",
+      "eqbAddress": "n4UFVgvkdyKJbCnttHsJttUWmm9LcsKkgS",
+      "limit": 20
+    }
 }

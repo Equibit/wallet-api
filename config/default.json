@@ -76,5 +76,10 @@
     "key": "BITCOIN_AVERAGE_KEY",
     "secret": "BITCOIN_AVERAGE_SECRET"
   },
-  "blockchainInfoInterval": 600000
+  "blockchainInfoInterval": 600000,
+  "mempool": {
+    "btcAddress": "MEMPOOL_BITCOIN_ADDRESS",
+    "eqbAddress": "MEMPOOL_EQUIBIT_ADDRESS",
+    "limit": 20
+  }
 }
