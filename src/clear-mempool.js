@@ -9,7 +9,7 @@ const axios = require('axios')
 
 // Configure the addresses to which you want to send the btc/eqb reward to
 // Max mempool size for eqb node is 25 - set limit to 20 for wiggle room
-// Max mempool size for btc is much larger
+// Max mempool size for btc node is minimally 34
 
 const app = feathers().configure(configuration(path.join(__dirname, '..')))
 const config = app.get('mempool')
@@ -18,7 +18,7 @@ const config = app.get('mempool')
 axios.get('http://localhost:3030/proxycore?node=btc&method=getrawmempool')
   .then(pool => {
     console.log('BTC mempool length: ', JSON.stringify(pool.data.result.length))
-    if (pool.data.result.length >= config.limit * 10) {
+    if (pool.data.result.length >= config.limit) {
       console.log('Mining...')
       axios.get(`http://localhost:3030/proxycore?node=btc&method=generatetoaddress&params[]=1&params[]=${config.btcAddress}`)
         .then(res => {
