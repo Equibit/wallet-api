@@ -8,7 +8,7 @@ const configuration = require('feathers-configuration')
 const axios = require('axios')
 
 // Configure the addresses to which you want to send the btc/eqb reward to
-// Max mempool size for eqb node is 25 - set limit to 20 for wiggle room
+// Max mempool size for eqb node is 25 - set limit to 13 for wiggle room
 // Max mempool size for btc node is minimally 34
 
 const app = feathers().configure(configuration(path.join(__dirname, '..')))
