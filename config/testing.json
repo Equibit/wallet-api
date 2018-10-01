@@ -46,6 +46,6 @@
     "mempool": {
       "btcAddress": "n28Ah3enJGgysRD4MySo41onoi5QxsjvAS",
       "eqbAddress": "n4UFVgvkdyKJbCnttHsJttUWmm9LcsKkgS",
-      "limit": 20
+      "limit": 13
     }
 }

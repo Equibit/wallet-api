@@ -80,6 +80,6 @@
   "mempool": {
     "btcAddress": "MEMPOOL_BITCOIN_ADDRESS",
     "eqbAddress": "MEMPOOL_EQUIBIT_ADDRESS",
-    "limit": 20
+    "limit": 13
   }
 }
