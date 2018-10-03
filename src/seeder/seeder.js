@@ -5,7 +5,6 @@ module.exports = function (app) {
 
   if (config.enabled) {
     config.services.forEach(serviceObj => {
-
       const service = app.service(serviceObj.path)
       let { data } = serviceObj
 
