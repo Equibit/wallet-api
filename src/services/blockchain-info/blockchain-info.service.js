@@ -40,6 +40,7 @@ function getFromDB (service, coinType) {
       coinType,
       status: false,
       feeRates: { priority: 20, regular: 5 },
+      relayfee: 0.00001,
       mode: 'unknown'
     })
   })
