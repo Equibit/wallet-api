@@ -9,9 +9,9 @@ module.exports = function () {
     const btcAmtSat = (eqbAmtSat / 100000000) * data.price
     return BCService.find({query: {}}).then(result => {
       const eqbInfo = result.data.find(info => info.coinType === 'EQB')
-      const eqbRelay = eqbInfo ? eqbInfo.relayfee : 0.00001
+      const eqbRelay = (eqbInfo && eqbInfo.relayfee) ? eqbInfo.relayfee : 0.00001
       const btcInfo = result.data.find(info => info.coinType === 'BTC')
-      const btcRelay = eqbInfo ? btcInfo.relayfee : 0.00001
+      const btcRelay = (btcInfo && btcInfo.relayfee) ? btcInfo.relayfee : 0.00001
       if (checkEqb && eqbAmtSat <= (eqbRelay * 100000000)) {
         return Promise.reject(new Error(`EQB quantity - ${eqbAmtSat} - too low (min relay fee not met)`))
       }
