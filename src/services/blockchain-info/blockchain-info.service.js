@@ -142,10 +142,10 @@ module.exports = function () {
     service.filter(filters)
   }
 
+  const queryBlockchain = checkBlockchains(app, service)
+  queryBlockchain()
   if (process.env.NODE_ENV !== 'ci' && process.env.TESTING !== 'true') {
     // Run blockchain query and schedule for every ~10 minutes:
-    const queryBlockchain = checkBlockchains(app, service)
-    queryBlockchain()
     setInterval(
       queryBlockchain,
       interval
