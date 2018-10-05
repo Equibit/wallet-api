@@ -12,10 +12,15 @@ module.exports = function () {
       const eqbRelay = eqbInfo ? eqbInfo.relayfee : 0.00001
       const btcInfo = result.data.find(info => info.coinType === 'BTC')
       const btcRelay = eqbInfo ? btcInfo.relayfee : 0.00001
+      console.log(`eqbInfo`, eqbInfo)
+      console.log(`eqbRelay=${eqbRelay}`)
+      console.log(`btcRelay=${btcRelay}`)
       if (checkEqb && eqbAmtSat <= (eqbRelay * 100000000)) {
+        console.log(`[src/services/orders/hooks/hook.forbid-small.js] amount is too small: eqbAmtSat=${eqbAmtSat}`)
         return Promise.reject(new Error(`EQB quantity - ${eqbAmtSat} - too low (min relay fee not met)`))
       }
       if (btcAmtSat <= (btcRelay * 100000000)) {
+        console.log(`[src/services/orders/hooks/hook.forbid-small.js] amount is too small: btcAmtSat=${btcAmtSat}`)
         return Promise.reject(new Error(`BTC quantity - ${btcAmtSat} - too low (min relay fee not met)`))
       }
     })

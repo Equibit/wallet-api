@@ -277,7 +277,7 @@ function runTests (feathersClient) {
         })
       })
 
-      it('cannot make a very small offer', function () {
+      it.only('cannot make a very small offer', function () {
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
