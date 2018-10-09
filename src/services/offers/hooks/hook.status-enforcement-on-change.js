@@ -87,6 +87,3 @@ module.exports = function (app) {
     return Promise.resolve(context)
   }
 }
-
-
-// ERROR PROBABLY IS CAUSED BY DEAL CLOSING DOES NOT RESET htlcStep BACK TO 1.
