@@ -37,7 +37,7 @@ module.exports = function (app) {
 
     isFillOrKill: { type: Boolean, required: true },
     goodFor: { type: Number, required: true },
-    status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED' ] },
+    status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED', 'TRADING-AVAILABLE' ] },
 
     // Issuance info:
     issuanceId: { type: ObjectId, required: issuanceRequired },
