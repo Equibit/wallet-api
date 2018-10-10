@@ -86,6 +86,7 @@
     "BTCLoadAddress": "BTC_LOAD_ADDRESS",
     "BTCLoadKey": "BTC_LOAD_KEY",
     "EQBLoadAddress": "EQB_LOAD_ADDRESS",
-    "EQBLoadKey": "EQB_LOAD_KEY"
+    "EQBLoadKey": "EQB_LOAD_KEY",
+    "transferAmount": 0.0003
   }
 }

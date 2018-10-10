@@ -52,6 +52,7 @@
       "BTCLoadAddress": "mqCZU9YyF1h4pEB4MjuqRQRLLYjQHedhiw",
       "BTCLoadKey": "cUd1CBC9NytnH8XFmMH2yGrDfyNTSJcYyurTK7Zvz4T5B3E638sm",
       "EQBLoadAddress": "mxr83jMYuekw1vqRKwmepe8HEa95wsAB9U",
-      "EQBLoadKey": "cTDizokb2Gee4jcteTMPzsDuRn3r4cDe7FjVASftSSg28faJqMfy"
+      "EQBLoadKey": "cTDizokb2Gee4jcteTMPzsDuRn3r4cDe7FjVASftSSg28faJqMfy",
+      "transferAmount": 0.0003
     }
 }
