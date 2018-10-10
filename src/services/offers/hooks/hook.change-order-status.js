@@ -2,9 +2,9 @@ module.exports = function () {
   return function changeOrderStatus (context) {
     const { app, result } = context
     const ordersService = app.service('/orders')
-    const getTotalQuantity = () =>
+    const getTotalQuantity = (minHtlc) =>
       context.service.find({query: {orderId: result.orderId, isAccepted: true}})
-      .then(res => res.data.reduce((total, curr) => total + curr.quantity, 0))
+      .then(res => res.data.reduce((total, curr) => total + (curr.htlcStep >= minHtlc ? curr.quantity : 0), 0))
     const patchOrders = (status) =>
       ordersService.patch(result.orderId, { status }).then(() => context)
 
@@ -22,7 +22,7 @@ module.exports = function () {
             return patchOrders('CLOSED')
           }
           // Only close when order is fully filled
-          return getTotalQuantity()
+          return getTotalQuantity(4)
             .then(totalQuantity => {
               if (totalQuantity >= order.quantity) {
                 return patchOrders('CLOSED')
@@ -35,7 +35,7 @@ module.exports = function () {
           if (order.isFillOrKill) {
             return patchOrders('TRADING')
           } else {
-            return getTotalQuantity()
+            return getTotalQuantity(2)
               .then(totalQuantity => patchOrders(totalQuantity >= order.quantity ? 'TRADING' : 'TRADING-AVAILABLE'))
           }
         }
