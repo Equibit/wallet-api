@@ -35,13 +35,15 @@ axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]
         vout: tx.vout,
         keyPair: bitcoin.ECPair.fromWIF(config.BTCLoadKey, network)
       })
-      vinAmount += tx.amount
+      vinAmount += Math.floor(tx.amount * 100000000)
       if (vinAmount > transferAmount) {
         break
       }
     }
-    vinAmount = Math.floor(vinAmount * 100000000)
-    transferAmount = Math.floor(transferAmount * 100000000)
+    if (vinAmount < transferAmount + defaultFee) {
+      console.error('Funds were not available to load with btc, refill', config.BTCLoadAddress)
+      throw new Error(`insufficient funds in ${config.BTCLoadAddress}`)
+    }
     const txInfo = {
       version: 2,
       locktime: 0,
@@ -94,6 +96,7 @@ axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]
       if (err.response) {
         console.error('BTC Error: ', err.response.data.error)
       }
+      console.error('BTC Error...')
       throw new Error(err)
     } else {
       console.log('BTC loaded.')
@@ -117,13 +120,15 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
        vout: tx.vout,
        keyPair: bitcoin.ECPair.fromWIF(config.EQBLoadKey, network)
      })
-     vinAmount += tx.amount
+     vinAmount += Math.floor(tx.amount * 100000000)
      if (vinAmount > transferAmount) {
        break
      }
    }
-   vinAmount *= 100000000
-   transferAmount *= 100000000
+   if (vinAmount < transferAmount + defaultFee) {
+    console.error('Funds were not available to load with eqb, refill', config.EQBLoadAddress)
+    throw new Error(`insufficient funds in ${config.EQBLoadAddress}`)
+  }
    const txInfo = {
      version: 2,
      locktime: 0,
@@ -190,6 +195,7 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
      if (err.response) {
        console.error('EQB Error: ', err.response.data.error)
      }
+     console.error('EQB Error...')
      throw new Error(err)
    } else {
      console.log('EQB loaded.')
