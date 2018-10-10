@@ -506,7 +506,7 @@ function runTests (feathersClient) {
         .then(done, err => done(err))
       })
 
-      it('change order status to TRADING once offer gets accepted', function (done) {
+      it('change order status to TRADING-AVAILABLE once offer gets accepted', function (done) {
         const createData = Object.assign({}, skels.sellOffer, {
           orderId: this.order._id.toString(),
           userId: this.user._id.toString(),
@@ -527,7 +527,7 @@ function runTests (feathersClient) {
           ordersServiceOnServer.get(this.order._id)
         )
         .then(order => {
-          assert.equal(order.status, 'TRADING')
+          assert.equal(order.status, 'TRADING-AVAILABLE')
         })
         .then(done, err => done(err))
       })

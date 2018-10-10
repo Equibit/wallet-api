@@ -2,40 +2,42 @@ module.exports = function () {
   return function changeOrderStatus (context) {
     const { app, result } = context
     const ordersService = app.service('/orders')
+    const getTotalQuantity = () =>
+      context.service.find({query: {orderId: result.orderId, isAccepted: true}})
+      .then(res => res.data.reduce((total, curr) => total + curr.quantity, 0))
+    const patchOrders = (status) =>
+      ordersService.patch(result.orderId, { status }).then(() => context)
+
     return ordersService.get({
       _id: result.orderId
     })
       .then(order => {
         // If fill or kill order is cancelled or refunded (status is set to CANCELLED), set order to OPEN
         if (order.isFillOrKill && (result.status === 'CANCELLED' || result.timelockExpiredAt)) {
-          return ordersService.patch(result.orderId, {
-            status: 'OPEN'
-          }).then(() => context)
+          return patchOrders('OPEN')
         }
 
         if (result.htlcStep === 4) {
           if (order.isFillOrKill) {
-            return ordersService.patch(result.orderId, {
-              status: 'CLOSED'
-            }).then(() => context)
+            return patchOrders('CLOSED')
           }
           // Only close when order is fully filled
-          return context.service.find({query: {orderId: result.orderId, isAccepted: true}})
-            .then(res => {
-              const totalQuantity = res.data.reduce((total, curr) => total + curr.quantity, 0)
+          return getTotalQuantity()
+            .then(totalQuantity => {
               if (totalQuantity >= order.quantity) {
-                return ordersService.patch(result.orderId, {
-                  status: 'CLOSED'
-                }).then(() => context)
+                return patchOrders('CLOSED')
               }
               return context
             })
         }
 
         if (result.isAccepted && result.htlcStep === 2) {
-          return ordersService.patch(result.orderId, {
-            status: 'TRADING'
-          }).then(() => context)
+          if (order.isFillOrKill) {
+            return patchOrders('TRADING')
+          } else {
+            return getTotalQuantity()
+              .then(totalQuantity => patchOrders(totalQuantity >= order.quantity ? 'TRADING' : 'TRADING-AVAILABLE'))
+          }
         }
 
         return context
