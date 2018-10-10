@@ -94,30 +94,5 @@
         "createdAt":"2018-09-24T13:49:23.022Z",
         "updatedAt":"2018-09-24T13:49:23.022Z",
         "__v":0
-    },
-    {
-        "_id":"5bbccd1ccd66a879b732b559",
-        "_email":"bank@evenset.com",
-        "isChange":false,
-        "isUsed":false,
-        "portfolioId":"5bbccc53cd66a879b732b555",
-        "index":0,
-        "type":"BTC",
-        "createdAt":"2018-10-09T15:45:32.612Z",
-        "updatedAt":"2018-10-09T15:45:32.612Z",
-        "__v":0
-    },
-    {
-        "_id":"5bbccd1ccd66a879b732b558",
-        "_email":"bank@evenset.com",
-        "isChange":false,
-        "isUsed":false,
-        "portfolioId":"5bbccc53cd66a879b732b555",
-        "index":0,
-        "type":"EQB",
-        "createdAt":"2018-10-09T15:45:32.591Z",
-        "updatedAt":"2018-10-09T15:45:32.591Z",
-        "__v":0
     }
-
 ]

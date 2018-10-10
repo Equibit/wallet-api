@@ -8,7 +8,6 @@ const axios = require('axios')
 
 const app = feathers().configure(configuration(path.join(__dirname, '..')))
 const config = app.get('loadTestWallet')
-const configMempool = app.get('mempool')
 const configBTC = app.get('bitcoinCore')
 const configEQB = app.get('equibitCore')
 
@@ -49,7 +48,7 @@ axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]
       vin: txToUse,
       vout: [
         {
-          address: configMempool.btcAddress,
+          address: config.BTCTargetAddress,
           value: transferAmount
         },
         {
@@ -89,13 +88,16 @@ axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]
       username: configBTC.username,
       password: configBTC.password
     }
-  }),
-  console.log('BTC loaded.')
+  })
   ).catch(err => {
-    if (err.response) {
-      console.error('BTC Error: ', err.response.data.error)
+    if (err) {
+      if (err.response) {
+        console.error('BTC Error: ', err.response.data.error)
+      }
+      throw new Error(err)
+    } else {
+      console.log('BTC loaded.')
     }
-    throw new Error(err)
   })
 
 // EQB
@@ -128,7 +130,7 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
      vin: txToUse,
      vout: [
        {
-         address: configMempool.eqbAddress,
+         address: config.EQBTargetAddress,
          value: transferAmount,
          equibit: {
            payment_currency: 0,
@@ -182,11 +184,14 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
      username: configEQB.username,
      password: configEQB.password
    }
- }),
- console.log('EQB loaded.')
+ })
  ).catch(err => {
-   if (err.response) {
-     console.error('EQB Error: ', err.response.data.error)
+   if (err) {
+     if (err.response) {
+       console.error('EQB Error: ', err.response.data.error)
+     }
+     throw new Error(err)
+   } else {
+     console.log('EQB loaded.')
    }
-   throw new Error(err)
  })

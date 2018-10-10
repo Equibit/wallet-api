@@ -203,33 +203,5 @@
         "mnemonicHash":"dd17aa4eab37afdec7ef0f95f9c83015fdeb234da0db4742dc6e38e0a10130b70e9e9e71c15e7713d74c4aa425c1f336cba73647f15a4d04ef2480ab5462114d",
         "_plainMnemonic": "glory scorpion diamond advance next ride tooth anxiety live athlete employ hawk",
         "twoFactorCode":null
-    },
-    {
-        "_id":"5bbccb96cd66a879b732b551",
-        "pastPasswordHashes":["15c19e178b72635245d0deac1b9f09d495ea5b72bc0069fd5c773f0cc3bbd746"],
-        "isNewUser":false,
-        "hasRecordedMnemonic":true,
-        "twoFactorValidatedSession":true,
-        "emailVerified":true,
-        "autoLogoutTime":1800000,
-        "email":"bank@evenset.com",
-        "tempPassword":null,
-        "tempPasswordCreatedAt":null,
-        "salt":"89b4cb116703f37e3407",
-        "failedLogins":[],
-        "createdAt":"2018-10-09T15:39:02.629Z",
-        "updatedAt":"2018-10-09T15:46:32.117Z",
-        "challenge":null,
-        "provisionalSalt":null,
-        "_plainBTCaddress":"mxMvgFt94WxVZhBwJRnTxDZBJQ5UqV1pnr",
-        "_plainEQBaddress":"msW5nT13pW3iKP4T7eqHHwNCjS9ZRz9Hkt",
-        "_plainPassword":"SpicyTunaMayo",
-        "password":"38802caab84bf9ff83c99181e31fb9e87b63eeeb1d66fba2e3bf0ab20d01bd6f6c4dc8ae7e65dc97476f7e866864accf1b2982738d53fee262c7bfa02d7064fc300d7583b3b5f837422e6475330195d5dd9d113f297e9d653390932cd31c48fe3fd9614a10e5c40cd7e00e7c099fd5c12330eaeb836879021dde5c7a90d0cb1706c55b1426940e9c69173cc80ca68b493e76f3127c73b2ceedf9e7abd0775e1c1c8cb3d8556199be1ea27bd4c21db5089796b81141d7d1af8d50d69c96ea5e568fb0910872992751f3be6eaf0254c3655c49e0f7b0b4b2dec9254d87ed1aa70d44c16f652cc221174eff9148644e5120843ba2487f659f8c5e9c9b2bdb703c91dbe41ac44cfcba31b1dadd428566ccb1a18d8704f378949be7dc87fc47e0b8e87e914b5c818d750bd686a3f02338b3db2a1e668c6d76a1ee729f496dabd81fc985df07434618049a5b08370a5d09386a1536f2a9b75757e0a403563dff34ef3a01247762a5aedcad5e72f06bba7c3da9edf762826eac90900b2cb1f5e63b3588ba263b92d85196f35b9de0f43a9941a121683313ff5e47af50b79f579177b679319b4e067fae12fbf74b5b2317a3984e3a494bc1e813af607a25ec951d277d8050d6122d9eba0f0f046ddda2090b63ac13b02c22bef7fcdcd16d3e2672da9e71b0bbf4a0ee0effc89f67f311c73d757fdc43b6c58401d2631f68f116366d4095",
-        "passwordCreatedAt":"2018-10-09T15:42:09.731Z",
-        "encryptedKey":"fbdeff9afcbc87bdec98094f2bf5dbb61074d12b49e93b71dc417328182d9df7a66c7abc13a0098a52d9aa8426c52461ec181956e7ef5a636e5c6c21de569ce6cbfb7c88d48769fa86971478fdafc119c895b6f0a1353fd754754b1f03cada2d8df9a3e11119f8466ce27222c134f06a",
-        "_plainMnemonic":"explain impulse object rubber evolve frozen clock clap mixture radar million swear",
-        "encryptedMnemonic":"a8c900cbb989089b98a54019392d168eb136353f5a67473c9beaa5c7a71d34b59dd79cf6977b7dbedc0e82cff4ad055942a8ccecb76c8f7d592c3d7d5901d19c4daa9f874e0981eeb72e648532c39bd3d839cd549f2684f46358c039b50989e0",
-        "mnemonicHash":"e88c885777ee4528a7e3a33da13fb172ffff2ea5c009faddef69a0fbc53cf080b6a1b103e7bec7215df082e4c6b0e6b0afe72f15fbed79b033ce9ca004581885",
-        "twoFactorCode":null
     }
 ]

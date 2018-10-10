@@ -87,6 +87,8 @@
     "BTCLoadKey": "BTC_LOAD_KEY",
     "EQBLoadAddress": "EQB_LOAD_ADDRESS",
     "EQBLoadKey": "EQB_LOAD_KEY",
+    "BTCTargetAddresses":  "TARGET_BTC_ADDRESS",
+    "EQBTargetAddresses": "TARGET_EQB_ADDRESS",
     "transferAmount": 0.0003
   }
 }

@@ -41,16 +41,5 @@
         "createdAt":"2018-09-24T13:48:37.957Z",
         "updatedAt":"2018-09-24T13:48:37.957Z",
         "__v":0
-    },
-    {
-        "_id":"5bbccc53cd66a879b732b555",
-        "_email":"bank@evenset.com",
-        "name":"My Bank Portfolio",
-        "userId":"5bbccb96cd66a879b732b551",
-        "index":0,
-        "importFrom":"2018-10-09T15:42:11.809Z",
-        "createdAt":"2018-10-09T15:42:11.809Z",
-        "updatedAt":"2018-10-09T15:42:11.809Z",
-        "__v":0
     }
 ]
