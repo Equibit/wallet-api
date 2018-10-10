@@ -17,7 +17,7 @@ module.exports = function (app) {
     assetType: { type: String, enum: ['ISSUANCE', 'EQUIBIT'], default: 'EQUIBIT' },
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
-    status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED' ] },
+    status: { type: String, enum: [ 'OPEN', 'TRADING', 'CANCELLED', 'CLOSED', 'TRADING-AVAILABLE' ] },
     isAccepted: { type: Boolean, default: false },
 
     // Issuance info:
