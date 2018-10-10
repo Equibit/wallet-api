@@ -1,5 +1,8 @@
 /* Script to load test wallets running e2e tests */
 const { bitcoin, eqbTxBuilder, txBuilder } = require('@equibit/wallet-crypto/dist/wallet-crypto')
+const users = require('../services/users/users.seed.json')
+const { email: emailEQB, _plainEQBaddress: plainEQBaddress } = users[0]
+const { email: emailBTC, _plainBTCaddress: plainBTCaddress } = users[2]
 
 const path = require('path')
 const feathers = require('feathers')
@@ -15,11 +18,9 @@ const defaultFee = 3000
 
 let hexVal
 let network = bitcoin.networks.testnet
-let rate = 5
-let fee
 
 // BTC
-console.log('Loading BTC...')
+console.log(`Loading BTC into ${emailBTC}...`)
 axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]=0&params[1]=99999&params[2][]=${config.BTCLoadAddress}`)
   .then(unspent => {
     if (unspent.data.result.length === 0) {
@@ -50,7 +51,7 @@ axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]
       vin: txToUse,
       vout: [
         {
-          address: config.BTCTargetAddress,
+          address: plainBTCaddress,
           value: transferAmount
         },
         {
@@ -59,15 +60,6 @@ axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]
         }
       ]
     }
-    const predictedTx = txBuilder.builder.buildTx(
-      txInfo,
-      {
-        network
-      }
-    )
-    fee = predictedTx.toString('hex').length * rate / 2
-    txInfo.vout[1].value += defaultFee
-    txInfo.vout[1].value -= fee
     const tx = txBuilder.builder.buildTx(
       txInfo,
       {
@@ -92,19 +84,15 @@ axios.get(`http://localhost:3030/proxycore?node=btc&method=listunspent&params[0]
     }
   })
   ).catch(err => {
-    if (err) {
-      if (err.response) {
-        console.error('BTC Error: ', err.response.data.error)
-      }
-      console.error('BTC Error...')
-      throw new Error(err)
-    } else {
-      console.log('BTC loaded.')
+    if (err.response) {
+      console.error('BTC Error: ', err.response.data.error)
     }
+    console.error('BTC Error...')
+    throw new Error(err)
   })
 
 // EQB
-console.log('Loading EQB...')
+console.log(`Loading EQB to ${emailEQB}...`)
 axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]=0&params[1]=99999&params[2][]=${config.EQBLoadAddress}`)
  .then(unspent => {
    if (unspent.data.result.length === 0) {
@@ -126,16 +114,16 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
      }
    }
    if (vinAmount < transferAmount + defaultFee) {
-    console.error('Funds were not available to load with eqb, refill', config.EQBLoadAddress)
-    throw new Error(`insufficient funds in ${config.EQBLoadAddress}`)
-  }
+     console.error('Funds were not available to load with eqb, refill', config.EQBLoadAddress)
+     throw new Error(`insufficient funds in ${config.EQBLoadAddress}`)
+   }
    const txInfo = {
      version: 2,
      locktime: 0,
      vin: txToUse,
      vout: [
        {
-         address: config.EQBTargetAddress,
+         address: plainEQBaddress,
          value: transferAmount,
          equibit: {
            payment_currency: 0,
@@ -156,16 +144,6 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
        }
      ]
    }
-   const predictedTx = eqbTxBuilder.builder.buildTx(
-     txInfo,
-     {
-       network,
-       sha: 'SHA3_256'
-     }
-   )
-   fee = predictedTx.toString('hex').length * rate / 2
-   txInfo.vout[1].value += defaultFee
-   txInfo.vout[1].value -= fee
    const tx = eqbTxBuilder.builder.buildTx(
      txInfo,
      {
@@ -191,13 +169,9 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
    }
  })
  ).catch(err => {
-   if (err) {
-     if (err.response) {
-       console.error('EQB Error: ', err.response.data.error)
-     }
-     console.error('EQB Error...')
-     throw new Error(err)
-   } else {
-     console.log('EQB loaded.')
+   if (err.response) {
+     console.error('EQB Error: ', err.response.data.error)
    }
+   console.error('EQB Error...')
+   throw new Error(err)
  })
