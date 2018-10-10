@@ -89,6 +89,6 @@
     "EQBLoadKey": "EQB_LOAD_KEY",
     "BTCTargetAddresses":  "TARGET_BTC_ADDRESS",
     "EQBTargetAddresses": "TARGET_EQB_ADDRESS",
-    "transferAmount": 300000
+    "transferAmount": 100000
   }
 }
