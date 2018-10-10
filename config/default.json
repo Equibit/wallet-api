@@ -81,5 +81,12 @@
     "btcAddress": "MEMPOOL_BITCOIN_ADDRESS",
     "eqbAddress": "MEMPOOL_EQUIBIT_ADDRESS",
     "limit": 13
+  },
+  "loadTestWallet": {
+    "BTCLoadAddress": "BTC_LOAD_ADDRESS",
+    "BTCLoadKey": "BTC_LOAD_KEY",
+    "EQBLoadAddress": "EQB_LOAD_ADDRESS",
+    "EQBLoadKey": "EQB_LOAD_KEY",
+    "transferAmount": 100000
   }
 }
