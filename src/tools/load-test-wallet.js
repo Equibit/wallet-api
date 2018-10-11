@@ -64,10 +64,10 @@ axios.get(`http://localhost:3030/proxycore?method=listunspent&params[0]=0&params
     const predictedTx = txBuilder.builder.buildTx(
       txInfo,
       {
-        network,
+        network
       }
     )
-    fee = predictedTx.toString('hex').length * rate / 2
+    let fee = predictedTx.toString('hex').length * rate / 2
     txInfo.vout[1].value += defaultFee
     txInfo.vout[1].value -= fee
     const tx = txBuilder.builder.buildTx(
