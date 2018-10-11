@@ -31,7 +31,14 @@
       }, {
         "path": "portfolio-addresses",
         "data": "services/portfolio-addresses/portfolio-addresses.seed.json"
-      }]
+      }, {
+        "path": "questionnaires",
+        "data": "services/questionnaires/questionnaires.seed.json"
+      }, {
+        "path": "questions",
+        "data": "services/questions/questions.seed.json"
+      }
+    ]
     },
     "addressMapEncryptionKey": "10789b383c9b6c853f605e303f2a80ef",
     "bitcoinAverage1": {
