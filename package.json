@@ -32,7 +32,7 @@
     "add-referral-code": "node src/add-referral-code.js",
     "e2e": "TESTING=true NODE_ENV=testing npm start",
     "clear-mempool": "node src/tools/clear-mempool.js",
-    "load-test-wallet": "node src/tools/load-test-wallet.js"
+    "load-test-wallet": "NODE_ENV=testing node src/tools/load-test-wallet.js"
   },
   "standard": {
     "env": [

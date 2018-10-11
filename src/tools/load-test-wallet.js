@@ -21,7 +21,7 @@ let network = bitcoin.networks.testnet
 
 // BTC
 console.log(`Loading BTC into ${emailBTC}...`)
-axios.get(`https://api-qa-wallet.equibitgroup.com/proxycore?node=btc&method=listunspent&params[0]=0&params[1]=99999&params[2][]=${config.BTCLoadAddress}`)
+axios.get(`http://localhost:3030/proxycore?method=listunspent&params[0]=0&params[1]=99999&params[2][]=${config.BTCLoadAddress}`)
   .then(unspent => {
     if (unspent.data.result.length === 0) {
       throw new Error(`no funds in ${config.BTCLoadAddress}, refill`)
@@ -93,7 +93,7 @@ axios.get(`https://api-qa-wallet.equibitgroup.com/proxycore?node=btc&method=list
 
 // EQB
 console.log(`Loading EQB to ${emailEQB}...`)
-axios.get(`https://api-qa-wallet.equibitgroup.com/proxycore?node=eqb&method=listunspent&params[0]=0&params[1]=99999&params[2][]=${config.EQBLoadAddress}`)
+axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]=0&params[1]=99999&params[2][]=${config.EQBLoadAddress}`)
  .then(unspent => {
    if (unspent.data.result.length === 0) {
      throw new Error(`no funds in ${config.EQBLoadAddress}, refill`)
