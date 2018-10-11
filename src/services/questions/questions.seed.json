@@ -61,7 +61,7 @@
     {
         "_id" : "5b75a2e0ad0ec335b36d2f58",
         "questionType" : "MULTI",
-        "question" : "What types of companies are you most interested investing in? choose all that apply",
+        "question" : "What types of companies are you most interested investing in? (choose all that apply)",
         "sortIndex" : 3,
         "answerOptions" : [ 
             {
@@ -150,7 +150,7 @@
     {
         "_id" : "5b75a2e0ad0ec335b36d2f68",
         "questionType" : "MULTI",
-        "question" : "How would you describe your blockchain investment strategy? choose all that apply",
+        "question" : "How would you describe your blockchain investment strategy? (choose all that apply)",
         "sortIndex" : 6,
         "answerOptions" : [ 
             {
@@ -210,7 +210,7 @@
     {
         "_id" : "5b75a2e0ad0ec335b36d2f73",
         "questionType" : "MULTI",
-        "question" : "What languages are you most comfortable using or conducting business in? choose all that apply",
+        "question" : "What languages are you most comfortable using or conducting business in? (choose all that apply)",
         "sortIndex" : 8,
         "answerOptions" : [ 
             {
@@ -250,7 +250,7 @@
     {
         "_id" : "5b75a2e0ad0ec335b36d2f7b",
         "questionType" : "MULTI",
-        "question" : "What geographic regions based on corporate head office address are you interested in? choose all that apply",
+        "question" : "What geographic regions based on corporate head office address are you interested in? (choose all that apply)",
         "sortIndex" : 9,
         "answerOptions" : [ 
             {
