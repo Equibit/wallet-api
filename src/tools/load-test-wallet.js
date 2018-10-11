@@ -18,6 +18,7 @@ const defaultFee = 3000
 
 let hexVal
 let network = bitcoin.networks.testnet
+let rate = 5
 
 // BTC
 console.log(`Loading BTC into ${emailBTC}...`)
@@ -60,6 +61,15 @@ axios.get(`http://localhost:3030/proxycore?method=listunspent&params[0]=0&params
         }
       ]
     }
+    const predictedTx = txBuilder.builder.buildTx(
+      txInfo,
+      {
+        network,
+      }
+    )
+    fee = predictedTx.toString('hex').length * rate / 2
+    txInfo.vout[1].value += defaultFee
+    txInfo.vout[1].value -= fee
     const tx = txBuilder.builder.buildTx(
       txInfo,
       {
