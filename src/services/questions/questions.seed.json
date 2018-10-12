@@ -1,0 +1,286 @@
+[
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f4e",
+        "questionType" : "SINGLE",
+        "question" : "What best describes your interest in Equibit?",
+        "sortIndex" : 1,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f52",
+                "answer" : "I just want the free EQB for completing this questionnaire",
+                "finalQuestion" : true
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f51",
+                "answer" : "I’m interested in both investing and raising money for companies on the blockchain"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f50",
+                "answer" : "I’m only interested in using Equibit Portfolio to invest in companies"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f4f",
+                "answer" : "I’m only interested in using Equibit Portfolio to raise money for companies ",
+                "skipTo" : 8
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.748Z",
+        "updatedAt" : "2018-08-16T16:14:24.748Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f53",
+        "questionType" : "SINGLE",
+        "question" : "How likely are you to use Equibit Portfolio to invest in a company?",
+        "sortIndex" : 2,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f57",
+                "answer" : "Unlikely",
+                "finalQuestion" : true
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f56",
+                "answer" : "Somewhat likely"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f55",
+                "answer" : "Very likely"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f54",
+                "answer" : "Don’t know"
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.748Z",
+        "updatedAt" : "2018-08-16T16:14:24.748Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f58",
+        "questionType" : "MULTI",
+        "question" : "What types of companies are you most interested investing in? (choose all that apply)",
+        "sortIndex" : 3,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f5f",
+                "answer" : "Blockchain",
+                "finalQuestion" : true
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f5e",
+                "answer" : "Fintech"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f5d",
+                "answer" : "Cannabis"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f5c",
+                "answer" : "Any Start-up"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f5b",
+                "answer" : "Traditional/Blue chip"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f5a",
+                "answer" : "Any"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f59",
+                "answer" : "Don't know"
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.748Z",
+        "updatedAt" : "2018-08-16T16:14:24.748Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f60",
+        "questionType" : "SINGLE",
+        "question" : "Are you an Accredited Investor? That is; do you earn more than $250,000 USD/year or have over $1,000,000 USD in liquid Assets or have a net worth of over $5,000,000",
+        "sortIndex" : 4,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f62",
+                "answer" : "Yes"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f61",
+                "answer" : "No"
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.748Z",
+        "updatedAt" : "2018-08-16T16:14:24.748Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f63",
+        "questionType" : "SINGLE",
+        "question" : "What is the current approximate size of your investment portfolio Both crypto and other?",
+        "sortIndex" : 5,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f67",
+                "answer" : "Less than one BTC"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f66",
+                "answer" : "Between 1 and 10 BTC"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f65",
+                "answer" : "More than 10 BTC but less than 100 BTC"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f64",
+                "answer" : "More than 100 BTC"
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.748Z",
+        "updatedAt" : "2018-08-16T16:14:24.748Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f68",
+        "questionType" : "MULTI",
+        "question" : "How would you describe your blockchain investment strategy? (choose all that apply)",
+        "sortIndex" : 6,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f6b",
+                "answer" : "I buy and sell crypto currencies ICOs and aftermarket"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f6a",
+                "answer" : "I buy and sell equity shares in crypto related business"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f69",
+                "answer" : "I look forward to using the EQB network and tools to invest in all manner of companies."
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.748Z",
+        "updatedAt" : "2018-08-16T16:14:24.748Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f6c",
+        "questionType" : "SINGLE",
+        "question" : "What features are important to you while selecting equities or assets for your portfolio?",
+        "sortIndex" : 7,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f72",
+                "answer" : "Voting Rights an investor Voice"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f71",
+                "answer" : "Capital Gains asset appreciation"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f70",
+                "answer" : "Dividends"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f6f",
+                "answer" : "Diversity"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f6e",
+                "answer" : "CUSTOM"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f6d",
+                "answer" : "Don’t know"
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.749Z",
+        "updatedAt" : "2018-08-16T16:14:24.749Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f73",
+        "questionType" : "MULTI",
+        "question" : "What languages are you most comfortable using or conducting business in? (choose all that apply)",
+        "sortIndex" : 8,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f7a",
+                "answer" : "English"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f79",
+                "answer" : "Simplified Chinese"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f78",
+                "answer" : "French"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f77",
+                "answer" : "Spanish"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f76",
+                "answer" : "Hindi"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f75",
+                "answer" : "Korean"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f74",
+                "answer" : "CUSTOM"
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.749Z",
+        "updatedAt" : "2018-08-16T16:14:24.749Z"
+    },
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f7b",
+        "questionType" : "MULTI",
+        "question" : "What geographic regions based on corporate head office address are you interested in? (choose all that apply)",
+        "sortIndex" : 9,
+        "answerOptions" : [ 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f81",
+                "answer" : "North America"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f80",
+                "answer" : "Europe"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f7f",
+                "answer" : "Asia"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f7e",
+                "answer" : "South America"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f7d",
+                "answer" : "Australia"
+            }, 
+            {
+                "_id" : "5b75a2e0ad0ec335b36d2f7c",
+                "answer" : "Africa"
+            }
+        ],
+        "questionnaireId" : "5b75a2e0ad0ec335b36d2f4d",
+        "__v" : 0,
+        "createdAt" : "2018-08-16T16:14:24.749Z",
+        "updatedAt" : "2018-08-16T16:14:24.749Z"
+    }
+]

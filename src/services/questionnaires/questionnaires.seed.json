@@ -1,0 +1,11 @@
+[
+    {
+        "_id" : "5b75a2e0ad0ec335b36d2f4d",
+        "description" : "Investor Questionnaire",
+        "isActive" : true,
+        "reward" : 10000000000.0,
+        "createdAt" : "2018-08-16T16:14:24.408Z",
+        "updatedAt" : "2018-08-16T16:14:24.408Z",
+        "__v" : 0
+    }
+]
