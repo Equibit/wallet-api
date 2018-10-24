@@ -7,14 +7,12 @@ module.exports = function () {
     }
 
     const id = hook.result._id
-    debugger;
     return hook.app.service('questionnaires').get(hook.result.questionnaireId)
       .then(questionnaire => {
         const reward = questionnaire.reward
-        if (reward < 0 || reward  > 50000000) {
+        if (reward < 0 || reward > 50000000) {
           throw new Error(`Reward amount must be greater than 0 EQB and less than eqaul to 0.5 EQB.`)
         }
-
         const address = hook.params.address
         const rewardAddress = hook.app.get('rewardAddress')
         const rewardKey = hook.app.get('rewardKey')
