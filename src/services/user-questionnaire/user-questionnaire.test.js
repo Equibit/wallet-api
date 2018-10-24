@@ -94,6 +94,16 @@ function runTests (feathersClient) {
         .then(() => done())
       })
 
+      it.skip('Will throw error if reward amount set on questionnaire is not equal to 0.5 EQB', (done) => {
+        // TODO: skip test until fake response from get questionnaire by ID is sent so that its response shows an invalid reward amount
+
+        create(validAnswers)
+        .catch(error => {
+          assert(error.message === 'Reward amount must be greater than 0 EQB and less than eqaul to 0.5 EQB.', `the correct error was returned`)
+          done()
+        })
+      })
+
       it('Will send reward after first completion', (done) => {
         create(validAnswers)
         .then(userQuestionnaire => {
