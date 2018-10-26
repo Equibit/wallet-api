@@ -99,7 +99,7 @@ function runTests (feathersClient) {
         // mock with reward = 0, > 0.5 EQB
         create(validAnswers)
         .catch(error => {
-          assert(error.message === 'Reward amount must be greater than 0 EQB and less than or eqaul to 0.5 EQB.', `the correct error was returned`)
+          assert(error.message === 'Reward amount must be greater than 0 EQB and less than or equal to 0.5 EQB.', `the correct error was returned`)
           done()
         })
       })
