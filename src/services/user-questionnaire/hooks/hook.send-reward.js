@@ -11,7 +11,7 @@ module.exports = function () {
       .then(questionnaire => {
         const reward = questionnaire.reward
         if (reward <= 0 || reward > 50000000) {
-          throw new Error(`Reward amount must be greater than 0 EQB and less than or eqaul to 0.5 EQB.`)
+          throw new Error(`Reward amount must be greater than 0 EQB and less than or equal to 0.5 EQB.`)
         }
         const address = hook.params.address
         const rewardAddress = hook.app.get('rewardAddress')
