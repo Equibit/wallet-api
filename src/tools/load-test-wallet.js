@@ -134,23 +134,23 @@ axios.get(`http://localhost:3030/proxycore?node=eqb&method=listunspent&params[0]
      vout: [
        {
          address: plainEQBaddress,
-         value: transferAmount,
-         equibit: {
-           payment_currency: 0,
-           payment_tx_id: '',
-           issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-           issuance_json: ''
-         }
+         value: transferAmount
+         // equibit: {
+         //   payment_currency: 0,
+         //   payment_tx_id: '',
+         //   issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+         //   issuance_json: ''
+         // }
        },
        {
          address: config.EQBLoadAddress,
-         value: vinAmount - (transferAmount + defaultFee),
-         equibit: {
-           payment_currency: 0,
-           payment_tx_id: '',
-           issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-           issuance_json: ''
-         }
+         value: vinAmount - (transferAmount + defaultFee)
+         // equibit: {
+         //   payment_currency: 0,
+         //   payment_tx_id: '',
+         //   issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+         //   issuance_json: ''
+         // }
        }
      ]
    }

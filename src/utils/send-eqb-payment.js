@@ -60,23 +60,23 @@ function payout (app, srcAddress, srcKey, userAddress, rewardAmount, message) {
         vout: [
           {
             address: userAddress,
-            value: rewardAmount,
-            equibit: {
-              payment_currency: 0,
-              payment_tx_id: '',
-              issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-              issuance_json: ''
-            }
+            value: rewardAmount
+            // equibit: {
+            //   payment_currency: 0,
+            //   payment_tx_id: '',
+            //   issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+            //   issuance_json: ''
+            // }
           },
           {
             address: sourceKP.address,
-            value: vinAmount - (rewardAmount + defaultFee),
-            equibit: {
-              payment_currency: 0,
-              payment_tx_id: '',
-              issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
-              issuance_json: ''
-            }
+            value: vinAmount - (rewardAmount + defaultFee)
+            // equibit: {
+            //   payment_currency: 0,
+            //   payment_tx_id: '',
+            //   issuance_tx_id: '0000000000000000000000000000000000000000000000000000000000000000',
+            //   issuance_json: ''
+            // }
           }
         ]
       }
