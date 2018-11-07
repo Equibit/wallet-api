@@ -31,6 +31,7 @@
     "release:qa:patch": "npm version patch && make release-qa",
     "add-referral-code": "node src/add-referral-code.js",
     "e2e": "TESTING=true NODE_ENV=testing npm start",
+    "safe-e2e": "npm run load-test-wallet && npm run e2e",
     "clear-mempool": "node src/tools/clear-mempool.js",
     "load-test-wallet": "NODE_ENV=testing node src/tools/load-test-wallet.js"
   },
