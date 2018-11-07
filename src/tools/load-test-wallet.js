@@ -38,7 +38,7 @@ axios.get(`http://localhost:3030/proxycore?method=listunspent&params[0]=0&params
         keyPair: bitcoin.ECPair.fromWIF(config.BTCLoadKey, network)
       })
       vinAmount += Math.floor(tx.amount * 100000000)
-      if (vinAmount > transferAmount) {
+      if (vinAmount > transferAmount + defaultFee) {
         break
       }
     }
