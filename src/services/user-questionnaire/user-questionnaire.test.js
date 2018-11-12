@@ -107,7 +107,7 @@ function runTests (feathersClient) {
       // TODO: reformat test cases to use new equibit data structure
       // These questionnaire tests depend on data stored in the equibit object in the tx vout.
       // The tests should be reworked once the new structure is known.
-      xit('Will send reward after first completion', (done) => {
+      it('Will send reward after first completion', (done) => {
         create(validAnswers)
         .then(userQuestionnaire => {
           assert.equal(userQuestionnaire.status, 'REWARDED', 'user has been rewarded')
@@ -117,7 +117,7 @@ function runTests (feathersClient) {
       })
 
       // TODO: reformat test cases to use new equibit data structure
-      xit('Will not show address in record if reward goes through', (done) => {
+      it('Will not show address in record if reward goes through', (done) => {
         create(validAnswers)
         .then(userQuestionnaire => {
           assert.equal(userQuestionnaire.address, null, 'address is set to null')
@@ -127,7 +127,7 @@ function runTests (feathersClient) {
       })
 
       // TODO: reformat test cases to use new equibit data structure
-      xit('Will send only one reward after multiple parallel requests', (done) => {
+      it('Will send only one reward after multiple parallel requests', (done) => {
         Promise.all([
           create(validAnswers).catch(() => 'ignore error'),
           create(validAnswers).catch(() => 'ignore error')])
