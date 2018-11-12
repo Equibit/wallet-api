@@ -297,12 +297,8 @@ function runTests (feathersClient) {
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(result => {
             assert.equal(result.total, 1, 'the investor record was not removed')
-            // TODO: reformat test cases to use new equibit data structure
-            // investor data is stored in the equibit object which is being reworked.
-            // These tests should be re-enabled and/or refactored when the changes are in.
-            // (See subsequent TODOs)
-            // assert.equal(result.data[0].status, 'PAID', 'the investor record was flagged as payed')
-            // assert.equal(result.data[0].address, null, 'the address was removed')
+            assert.equal(result.data[0].status, 'PAID', 'the investor record was flagged as payed')
+            assert.equal(result.data[0].address, null, 'the address was removed')
             done()
           })
           .catch(error => {
@@ -346,11 +342,10 @@ function runTests (feathersClient) {
           })
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(() => {
-            // TODO: reformat test cases to use new equibit data structure
-            // const requests = transactions.history().post.filter(
-            //   req => req.data.indexOf('"method":"sendrawtransaction"') > -1
-            // )
-            // assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
+            const requests = transactions.history().post.filter(
+              req => req.data.indexOf('"method":"sendrawtransaction"') > -1
+            )
+            assert.equal(requests.length, 1, 'sendrawtransaction was called exactly once')
             done()
           })
           .catch(error => {
@@ -456,9 +451,8 @@ function runTests (feathersClient) {
           .then(() => icoService.find({ query: { email: this.user.email } }))
           .then(result => {
             assert.equal(result.data[0].status, 'MANUALREQUIRED', 'the investor record was flagged')
-            // TODO: reformat test cases to use new equibit data structure
-            // assert.equal(result.data[0].address, 'invalidAddress', 'the investor address was recorded')
-            // assert.equal(result.data[0].error, 'Expected Address, got String "invalidAddress"', 'the error was recorded')
+            assert.equal(result.data[0].address, 'invalidAddress', 'the investor address was recorded')
+            assert.equal(result.data[0].error, 'Expected Address, got String "invalidAddress"', 'the error was recorded')
             done()
           })
           .catch(error => {
