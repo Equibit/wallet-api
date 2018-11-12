@@ -13,8 +13,7 @@ module.exports = function (app) {
 
     if (newStatus.toUpperCase() === 'CANCELLED' && currentStatus.toUpperCase() !== 'CANCELLED') {
       // This patch/update is cancelling the order
-      const orderIsOpen = order.status === 'OPEN'
-      if (!orderIsOpen) {
+      if (order.status !== 'OPEN') {
         return Promise.reject(new errors.BadRequest('Order cannot be cancelled unless it is open.'))
       }
 
