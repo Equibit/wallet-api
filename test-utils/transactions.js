@@ -4,39 +4,43 @@ const MockAdapter = require('axios-mock-adapter')
 const mock = new MockAdapter(axios, { delayResponse: 20 })
 
 const decodedTxn = {
-  'txid': '52309405287e737cf412fc42883d65a392ab950869fae80b2a5f1e33326aca46',
-  'hash': '52309405287e737cf412fc42883d65a392ab950869fae80b2a5f1e33326aca46',
-  'size': 223,
-  'vsize': 223,
-  'version': 1,
-  'locktime': 0,
-  'vin': [
+  "version": 1,
+  "vin": [
     {
-      'txid': '2ac0daff49a4ff82a35a4864797f99f23c396b0529c5ba1e04b3d7b97521feba',
-      'vout': 0,
-      'scriptSig': {
-        'asm': '3044022013d212c22f0b46bb33106d148493b9a9723adb2c3dd3a3ebe3a9c9e3b95d8cb00220461661710202fbab550f973068af45c294667fc4dc526627a7463eb23ab39e9b[ALL] 0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8',
-        'hex': '473044022013d212c22f0b46bb33106d148493b9a9723adb2c3dd3a3ebe3a9c9e3b95d8cb00220461661710202fbab550f973068af45c294667fc4dc526627a7463eb23ab39e9b01410479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8'
+      "txid": "a407f25c26d9cd24e24045ce5c272875a65ef5503ccfb711e662a399847e6e2c",
+      "vout": 1,
+      "scriptSig": {
+        "asm": "30440220299bb9f6493d2ab0dd9aad9123252d5f718618403bb19d77699f21cf732bb9c602201b5adcbcaf619c2c5ca43274b3362778bc70d09091d2447333990ebd4aff8f8a[ALL] 033701fc7f242ae2dd63a18753518b6d1425e53496878924b6c0dc08d800af46ad",
+        "hex": "4730440220299bb9f6493d2ab0dd9aad9123252d5f718618403bb19d77699f21cf732bb9c602201b5adcbcaf619c2c5ca43274b3362778bc70d09091d2447333990ebd4aff8f8a0121033701fc7f242ae2dd63a18753518b6d1425e53496878924b6c0dc08d800af46ad"
       },
-      'sequence': 4294967295
+      "sequence": 4294967295
     }
   ],
-  'vout': [
+  "vout": [
     {
-      'value': 0.06990000,
-      'n': 0,
-      'scriptPubKey': {
-        'asm': 'OP_DUP OP_HASH160 01b81d5fa1e55e069e3cc2db9c19e2e80358f306 OP_EQUALVERIFY OP_CHECKSIG',
-        'hex': '76a91401b81d5fa1e55e069e3cc2db9c19e2e80358f30688ac',
-        'reqSigs': 1,
-        'type': 'pubkeyhash',
-        'addresses': [
-          '1A6Ei5cRfDJ8jjhwxfzLJph8B9ZEthR9Z',
-          'mwmTx2oTzkbQg9spp6F5ExFVeibXwwHF32' // stub address for reverse-direction transactions
+      "value": 300000000,
+      "scriptPubKey": {
+        "hex": "76a914ea3f916f7ad64b1ed044147d4b1df2af10ea9cb688ac",
+        "type": "pubkeyhash",
+        "asm": "OP_DUP OP_HASH160 ea3f916f7ad64b1ed044147d4b1df2af10ea9cb6 OP_EQUALVERIFY OP_CHECKSIG",
+        "addresses": [
+          "n2sYZjQFTC7vYLWSqX9Q8fjgtr5kb6GxYH"
+        ]
+      }
+    },
+    {
+      "value": 49999000,
+      "scriptPubKey": {
+        "hex": "76a914b0abfca92c8a1ae023220d4134fe72ff3273a30988ac",
+        "type": "pubkeyhash",
+        "asm": "OP_DUP OP_HASH160 b0abfca92c8a1ae023220d4134fe72ff3273a309 OP_EQUALVERIFY OP_CHECKSIG",
+        "addresses": [
+          "mwd7FgMkm9yfPmNTnntsRbugZS7BEZaf32"
         ]
       }
     }
-  ]
+  ],
+  "locktime": 0
 }
 
 const listunspentFixtureData = require('../src/services/listunspent/fixtures.json')

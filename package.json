@@ -22,6 +22,7 @@
   "scripts": {
     "test": "npm run lint && NODE_ENV=ci npm run mocha",
     "test-local": "npm run lint && TESTING=true NODE_ENV=testing npm run mocha",
+    "test-one": "TESTING=true NODE_ENV=testing nyc mocha -u tdd --timeout 999999 --colors src/services/transactions/hooks/hook.validate-raw-txn.test.js",
     "lint": "standard --fix",
     "start": "node src/",
     "keygen": "node src/keygen",
@@ -41,7 +42,7 @@
     ]
   },
   "dependencies": {
-    "@equibit/wallet-crypto": "0.31.0",
+    "@equibit/wallet-crypto": "file:../wallet-crypto",
     "ajv": "^5.2.2",
     "axios": "^0.16.2",
     "axios-mock-adapter": "^1.15.0",

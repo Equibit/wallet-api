@@ -1,7 +1,6 @@
 const assert = require('assert')
-const axios = require('axios')
-const formatRpcParams = require('../../../utils/format-rpc-params')
 const errors = require('feathers-errors')
+const { eqbTxBuilder } = require('@equibit/wallet-crypto/index')
 
 module.exports = function (options) {
   const requestParams = [ 'url', 'username', 'password' ]
@@ -11,6 +10,7 @@ module.exports = function (options) {
   })
 
   return function validateRawTxn (context) {
+    context.params.decodedTxn = eqbTxBuilder.decoder.decodeTx(Buffer.from(context.data.hex, 'hex'))[0]
     const decodedTxn = context.params.decodedTxn
 
     // Make sure that `toAddress` was provided.
@@ -53,41 +53,9 @@ module.exports = function (options) {
       return Promise.reject(new errors.BadRequest(`The \`addressTxid\` and \`addressVout\` did not match any of those found in the decoded transaction's \`vin\`.`))
     }
 
-    const formattedParams = formatRpcParams([context.data.addressTxid, context.data.addressVout])
-    const currencyType = context.data.currencyType.toLowerCase()
-    return axios({
-      method: 'POST',
-      url: options[currencyType].url,
-      data: {
-        jsonrpc: '1.0',
-        method: 'gettxout',
-        params: formattedParams
-      },
-      auth: {
-        username: options[currencyType].username,
-        password: options[currencyType].password
-      }
-    })
-    // make a request to gettxout and validate
-    .then(response => {
-      // Note: `gettxout` returns null if UTXO has already been spent.
-      if (!response.data.result) {
-        const details = `[${formattedParams[0]}, ${formattedParams[1]}]`
-        return Promise.reject(
-          new errors.BadRequest(`The provided UTXO has already been spent. Result of "gettxout" is null for ${details}.`)
-        )
-      }
-      // Make sure `context.data.address` matches one of the gettxout response's scriptPubKey.addresses.
-      // console.log(`hook.validate-txn: gettxout with formattedParams, result:`, formattedParams, response.data.result)
-      if (response.data.result.scriptPubKey.addresses && !response.data.result.scriptPubKey.addresses.includes(context.data.fromAddress)) {
-        return Promise.reject(
-          new errors.BadRequest(`The provided "address" did not match the "gettxout" verification for ${formattedParams.toString()}`)
-        )
-      }
-
-      // Flag the request as having passed validation and return.
+    return new Promise((resolve, reject) => {
       context.params.passedValidation = true
-      return context
+      resolve(context)
     })
   }
 }

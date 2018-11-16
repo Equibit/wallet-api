@@ -1,7 +1,6 @@
 const { authenticate } = require('feathers-authentication').hooks
 const { iff, isProvider, discard, disallow } = require('feathers-hooks-common')
 const mapUpdateToPatch = require('../../hooks/map-update-to-patch')
-const decodeRawTxn = require('./hooks/hook.decode-raw-txn')
 const validateDecodedTxn = require('./hooks/hook.validate-txn')
 const sendRawTxn = require('./hooks/hook.send-raw-txn')
 const formatTxn = require('./hooks/hook.format-txn')
@@ -33,8 +32,6 @@ module.exports = app => {
         conditionalRequirements(),
         iff(
           isProvider('external'),
-          // turn a transaction hex into transaction details.
-          decodeRawTxn(coreParams),
           /*
           Since `fromAddress` and `toAddress` must be sent from the
           client, we must make sure that they both appear in
